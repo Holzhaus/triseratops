@@ -56,6 +56,10 @@ fn main() {
                 let output = format!("{:#?}", serato_tags::autotags::parse(&data).unwrap());
                 println!("{}", textwrap::indent(&output, "    "));
             }
+            "Serato BeatGrid" => {
+                let output = format!("{:#?}", serato_tags::beatgrid::parse(&data).unwrap());
+                println!("{}", textwrap::indent(&output, "    "));
+            }
             "Serato Markers_" => {
                 let output = format!("{:#?}", serato_tags::markers::parse(&data).unwrap());
                 println!("{}", textwrap::indent(&output, "    "));
