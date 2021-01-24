@@ -49,10 +49,16 @@ fn main() {
         println!("  Data: {} bytes", data.len());
         match &content_desc[..] {
             "Serato Analysis" => {
-                println!("    {:#?}", serato_tags::analysis::parse(&data).unwrap());
+                let output = format!("{:#?}", serato_tags::analysis::parse(&data).unwrap());
+                println!("{}", textwrap::indent(&output, "    "));
+            }
+            "Serato Autotags" => {
+                let output = format!("{:#?}", serato_tags::autotags::parse(&data).unwrap());
+                println!("{}", textwrap::indent(&output, "    "));
             }
             "Serato Markers_" => {
-                println!("    {:#?}", serato_tags::markers::parse(&data).unwrap());
+                let output = format!("{:#?}", serato_tags::markers::parse(&data).unwrap());
+                println!("{}", textwrap::indent(&output, "    "));
             }
             _ => (),
         }
