@@ -51,6 +51,9 @@ fn main() {
             "Serato Analysis" => {
                 println!("    {:#?}", serato_tags::analysis::parse(&data).unwrap());
             }
+            "Serato Markers_" => {
+                println!("    {:#?}", serato_tags::markers::parse(&data).unwrap());
+            }
             _ => (),
         }
     }
