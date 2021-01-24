@@ -46,8 +46,11 @@ fn main() {
         println!("  Filename: {:#?}", filename);
 
         println!("  Data: {} bytes", data.len());
-        if content_desc.starts_with("Serato Analysis") {
-            println!("    {:?}", data);
+        match &content_desc[..] {
+            "Serato Analysis" => {
+                println!("    {:#?}", serato_tags::analysis::parse(&data).unwrap());
+            }
+            _ => (),
         }
     }
 }
