@@ -40,15 +40,8 @@ named!(no_position, take!(4));
 named!(unknown, tag!(b"\x00\x7f\x7f\x7f\x7f\x7f"));
 named!(take_markers<Vec<Marker>>, length_count!(be_u32, marker));
 
-pub fn take_byte(input: &[u8]) -> nom::IResult<&[u8], u8> {
-    if input.is_empty() {
-        return Err(nom::Err::Incomplete(nom::Needed::Unknown));
-    }
-    Ok((&input[1..], input[0]))
-}
-
 pub fn take_bool(input: &[u8]) -> nom::IResult<&[u8], bool> {
-    let (input, position_prefix) = take_byte(input)?;
+    let (input, position_prefix) = nom::number::complete::u8(input)?;
     match position_prefix {
         0x00 => Ok((input, false)),
         0x01 => Ok((input, true)),
@@ -57,7 +50,7 @@ pub fn take_bool(input: &[u8]) -> nom::IResult<&[u8], bool> {
 }
 
 pub fn has_position(input: &[u8]) -> nom::IResult<&[u8], bool> {
-    let (input, position_prefix) = take_byte(input)?;
+    let (input, position_prefix) = nom::number::complete::u8(input)?;
     match position_prefix {
         0x00 => Ok((input, true)),
         0x7f => Ok((input, false)),
@@ -84,7 +77,7 @@ pub fn position(input: &[u8]) -> nom::IResult<&[u8], Option<u32>> {
 }
 
 pub fn entry_type(input: &[u8]) -> nom::IResult<&[u8], EntryType> {
-    let (input, position_prefix) = take_byte(input)?;
+    let (input, position_prefix) = nom::number::complete::u8(input)?;
     match position_prefix {
         0x00 => Ok((input, EntryType::INVALID)),
         0x01 => Ok((input, EntryType::CUE)),

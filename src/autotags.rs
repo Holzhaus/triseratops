@@ -1,4 +1,3 @@
-use crate::markers;
 use crate::util;
 use nom::take_until;
 
@@ -17,7 +16,7 @@ nom::named!(take_until_nullbyte, take_until!(NULL));
 pub fn double_str(input: &[u8]) -> nom::IResult<&[u8], f64> {
     let (input, text) = take_until_nullbyte(input)?;
     let (_, num) = nom::combinator::all_consuming(nom::number::complete::double)(text)?;
-    let (input, _) = markers::take_byte(input)?;
+    let (input, _) = nom::number::complete::u8(input)?;
     Ok((input, num))
 }
 
