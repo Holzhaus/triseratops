@@ -1,5 +1,4 @@
 use crate::util;
-use nom::take_until;
 
 #[derive(Debug)]
 pub struct Autotags {
@@ -9,12 +8,8 @@ pub struct Autotags {
     pub gain_db: f64,
 }
 
-const NULL: &[u8] = &[0x00];
-
-nom::named!(take_until_nullbyte, take_until!(NULL));
-
 pub fn double_str(input: &[u8]) -> nom::IResult<&[u8], f64> {
-    let (input, text) = take_until_nullbyte(input)?;
+    let (input, text) = util::take_until_nullbyte(input)?;
     let (_, num) = nom::combinator::all_consuming(nom::number::complete::double)(text)?;
     let (input, _) = nom::number::complete::u8(input)?;
     Ok((input, num))

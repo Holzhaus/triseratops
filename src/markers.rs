@@ -3,7 +3,6 @@ use nom::length_count;
 use nom::named;
 use nom::number::complete::be_u32;
 use nom::tag;
-use nom::take;
 use std::convert::TryInto;
 
 #[derive(Debug)]
@@ -36,7 +35,7 @@ pub enum EntryType {
     LOOP,
 }
 
-named!(no_position, take!(4));
+named!(no_position, tag!(b"\x7f\x7f\x7f\x7f"));
 named!(unknown, tag!(b"\x00\x7f\x7f\x7f\x7f\x7f"));
 named!(take_markers<Vec<Marker>>, length_count!(be_u32, marker));
 

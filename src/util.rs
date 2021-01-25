@@ -1,5 +1,6 @@
 extern crate nom;
 
+use nom::bytes::complete::take_until;
 use nom::named;
 use nom::take;
 use nom::IResult;
@@ -21,6 +22,12 @@ pub fn version_info(input: &[u8]) -> IResult<&[u8], Version> {
             minor: version[1],
         },
     ))
+}
+
+const NULL: &[u8] = &[0x00];
+
+pub fn take_until_nullbyte(input: &[u8]) -> IResult<&[u8], &[u8]> {
+    take_until(NULL)(input)
 }
 
 /// These functions convert between a custom 4-byte format (that we'll call
