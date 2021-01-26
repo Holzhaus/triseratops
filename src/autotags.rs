@@ -16,7 +16,7 @@ pub fn double_str(input: &[u8]) -> nom::IResult<&[u8], f64> {
 }
 
 pub fn parse(input: &[u8]) -> Result<Autotags, nom::Err<nom::error::Error<&[u8]>>> {
-    let (input, version) = util::version_info(input).unwrap();
+    let (input, version) = util::take_version(input).unwrap();
     let (input, bpm) = double_str(input)?;
     let (input, auto_gain) = double_str(input)?;
     let (_, gain_db) = nom::combinator::all_consuming(double_str)(input)?;

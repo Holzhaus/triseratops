@@ -57,7 +57,7 @@ pub fn terminal_marker(input: &[u8]) -> nom::IResult<&[u8], TerminalMarker> {
 }
 
 pub fn parse(input: &[u8]) -> Result<Beatgrid, nom::Err<nom::error::Error<&[u8]>>> {
-    let (input, version) = util::version_info(&input)?;
+    let (input, version) = util::take_version(&input)?;
     let (input, non_terminal_markers) = take_non_terminal_markers(input)?;
     let (input, terminal_marker) = terminal_marker(input)?;
     let (_, footer) = nom::combinator::all_consuming(nom::number::complete::u8)(input)?;

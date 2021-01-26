@@ -113,7 +113,7 @@ pub fn marker(input: &[u8]) -> nom::IResult<&[u8], Marker> {
 }
 
 pub fn parse(input: &[u8]) -> Result<Markers, nom::Err<nom::error::Error<&[u8]>>> {
-    let (input, version) = util::version_info(&input)?;
+    let (input, version) = util::take_version(&input)?;
     let (input, entries) = take_markers(input)?;
     //let (_, track_color) = serato32_color(input)?;
     let (_, track_color) = nom::combinator::all_consuming(serato32_color)(input)?;

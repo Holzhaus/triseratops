@@ -1,8 +1,7 @@
 extern crate nom;
 
+use nom::bytes::complete::take;
 use nom::bytes::complete::take_until;
-use nom::named;
-use nom::take;
 use nom::IResult;
 
 #[derive(Debug)]
@@ -11,10 +10,8 @@ pub struct Version {
     pub minor: u8,
 }
 
-named!(take_version, take!(2));
-
-pub fn version_info(input: &[u8]) -> IResult<&[u8], Version> {
-    let (input, version) = take_version(input)?;
+pub fn take_version(input: &[u8]) -> IResult<&[u8], Version> {
+    let (input, version) = take(2usize)(input)?;
     Ok((
         input,
         Version {

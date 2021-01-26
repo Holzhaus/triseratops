@@ -107,7 +107,7 @@ pub fn take_marker(input: &[u8]) -> nom::IResult<&[u8], Marker> {
 }
 
 pub fn parse_markers2_content(input: &[u8]) -> nom::IResult<&[u8], Markers2Content> {
-    let (input, version) = util::version_info(&input)?;
+    let (input, version) = util::take_version(&input)?;
     let (input, markers) = many0(take_marker)(&input)?;
 
     Ok((input, Markers2Content { version, markers }))
@@ -115,7 +115,7 @@ pub fn parse_markers2_content(input: &[u8]) -> nom::IResult<&[u8], Markers2Conte
 
 pub fn parse(input: &[u8]) -> Result<Markers2, nom::Err<nom::error::Error<&[u8]>>> {
     let size = input.len();
-    let (input, version) = util::version_info(&input)?;
+    let (input, version) = util::take_version(&input)?;
     let (_, base64_chunks) = take_base64_chunks(&input)?;
     let base64_decoded = decode_base64_chunks(base64_chunks)?;
     let markers2_result = parse_markers2_content(&base64_decoded);
