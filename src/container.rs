@@ -262,6 +262,15 @@ impl Container {
 
         track_color
     }
+
+    /// Returns the waveform overview data color from the `Serato Overview` tag.
+    pub fn overview(&self) -> Option<&Vec<Vec<u8>>> {
+        if let Some(tag) = &self.overview {
+            return Some(&tag.data);
+        }
+
+        None
+    }
 }
 
 impl Default for Container {
