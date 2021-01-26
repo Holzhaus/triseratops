@@ -68,6 +68,10 @@ fn main() {
                 let output = format!("{:#?}", serato_tags::markers2::parse(&data).unwrap());
                 println!("{}", textwrap::indent(&output, "    "));
             }
+            "Serato Overview" => {
+                let output = format!("{:?}", serato_tags::overview::parse(&data).unwrap());
+                println!("{}", textwrap::indent(&output, "    "));
+            }
             _ => (),
         }
     }
