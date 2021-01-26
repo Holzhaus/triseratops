@@ -17,6 +17,14 @@ pub struct Version {
     pub minor: u8,
 }
 
+/// Returns a `Color` struct parsed from the first 3 input bytes.
+pub fn take_color(input: &[u8]) -> IResult<&[u8], Color> {
+    let (input, red) = nom::number::complete::u8(input)?;
+    let (input, green) = nom::number::complete::u8(input)?;
+    let (input, blue) = nom::number::complete::u8(input)?;
+    Ok((input, Color { red, green, blue }))
+}
+
 /// Returns a `Version` struct parsed from the first 2 input bytes.
 pub fn take_version(input: &[u8]) -> IResult<&[u8], Version> {
     let (input, version) = take(2usize)(input)?;
