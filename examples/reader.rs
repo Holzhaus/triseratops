@@ -87,6 +87,9 @@ fn main() {
     println!();
     println!("Merged values");
 
+    println!("  Auto Gain: {:?}", container.auto_gain());
+    println!("  Gain DB: {:?}", container.gain_db());
+
     println!("  Cues");
     let output = format!("{:#?}", container.cues());
     println!("{}", textwrap::indent(&output, "    "));

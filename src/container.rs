@@ -82,6 +82,35 @@ impl Container {
         value
     }
 
+    /// Returns the auto_gain value from the `Serato Autotags` tag.
+    pub fn auto_gain(&self) -> Option<f64> {
+        if let Some(tag) = &self.autotags {
+            return Some(tag.auto_gain);
+        }
+
+        None
+    }
+
+    /// Returns the gain_db value from the `Serato Autotags` tag.
+    pub fn gain_db(&self) -> Option<f64> {
+        if let Some(tag) = &self.autotags {
+            return Some(tag.gain_db);
+        }
+
+        None
+    }
+
+    /// Returns the beatgrid from the `Serato BeatGrid` tag.
+    pub fn beatgrid(
+        &self,
+    ) -> Option<(&Vec<beatgrid::NonTerminalMarker>, &beatgrid::TerminalMarker)> {
+        if let Some(tag) = &self.beatgrid {
+            return Some((&tag.non_terminal_markers, &tag.terminal_marker));
+        }
+
+        None
+    }
+
     /// Returns BPM lock status from the `Serato Markers2` tag.
     pub fn bpm_locked(&self) -> Option<bool> {
         if let Some(m) = &self.markers2 {
