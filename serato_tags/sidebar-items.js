@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["analysis",""],["autotags",""],["beatgrid",""],["markers",""],["markers2",""],["util",""]]});
+initSidebarItems({"mod":[["analysis",""],["autotags",""],["beatgrid",""],["markers",""],["markers2",""],["overview",""],["util",""]]});
