@@ -511,7 +511,7 @@
     <span class="ident">Unknown</span>(<span class="ident">UnknownFlipAction</span>),
 }
 
-<span class="doccomment">/// An Censor action inside a `FLIP` marker.</span>
+<span class="doccomment">/// A Censor action inside a `FLIP` marker.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// Actions of this type are used for censoring (playback speed factor is -1.0) and are followed</span>
 <span class="doccomment">/// with a jump marker from `end_position_seconds` to the playback position that the track would be</span>
@@ -530,7 +530,7 @@
     <span class="kw">pub</span> <span class="ident">speed_factor</span>: <span class="ident">f64</span>,
 }
 
-<span class="doccomment">/// An Jump action inside a `FLIP` marker.</span>
+<span class="doccomment">/// A Jump action inside a `FLIP` marker.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">JumpFlipAction</span> {
     <span class="doccomment">/// The source position of the jump.</span>
