@@ -60,7 +60,7 @@ pub struct BPMLockMarker {
 ///
 /// Each `CUE` marker contains information about a [cue
 /// point](https://support.serato.com/hc/en-us/articles/360000067696-Cue-Points).
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct CueMarker {
     pub index: u8,
     pub position_millis: u32,
@@ -72,7 +72,7 @@ pub struct CueMarker {
 ///
 /// `LOOP` markers are used to store [saved
 /// loops](https://serato.com/latest/blog/17885/pro-tip-trigger-saved-loops).
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct LoopMarker {
     pub index: u8,
     pub start_position_millis: u32,
@@ -154,6 +154,46 @@ pub struct Markers2 {
     pub version: util::Version,
     pub size: usize,
     pub content: Markers2Content,
+}
+
+impl Markers2 {
+    pub fn bpm_locked(&self) -> Option<bool> {
+        for marker in &self.content.markers {
+            if let Marker::BPMLock(m) = marker {
+                return Some(m.is_locked);
+            }
+        }
+        None
+    }
+
+    pub fn cues(&self) -> Vec<CueMarker> {
+        let mut cues: Vec<CueMarker> = Vec::new();
+        for marker in &self.content.markers {
+            if let Marker::Cue(m) = marker {
+                cues.push(m.clone());
+            }
+        }
+        cues
+    }
+
+    pub fn loops(&self) -> Vec<LoopMarker> {
+        let mut loops: Vec<LoopMarker> = Vec::new();
+        for marker in &self.content.markers {
+            if let Marker::Loop(m) = marker {
+                loops.push(m.clone());
+            }
+        }
+        loops
+    }
+
+    pub fn track_color(&self) -> Option<util::Color> {
+        for marker in &self.content.markers {
+            if let Marker::Color(m) = marker {
+                return Some(m.color);
+            }
+        }
+        None
+    }
 }
 
 /// Represents the base64-encoded content of the `Serato Markers2` tag.

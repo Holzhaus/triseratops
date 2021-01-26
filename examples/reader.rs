@@ -21,6 +21,8 @@ fn main() {
     let args: Vec<String> = env::args().collect();
     let filename = &args[1];
 
+    let mut container = serato_tags::container::Container::new();
+
     let tag = Tag::read_from_path(filename).unwrap();
     for frame in tag.frames() {
         if frame.id() != "GEOB" {
@@ -49,30 +51,55 @@ fn main() {
         println!("  Data: {} bytes", data.len());
         match &content_desc[..] {
             "Serato Analysis" => {
+                container.parse_analysis(&data);
                 let output = format!("{:#?}", serato_tags::analysis::parse(&data).unwrap());
                 println!("{}", textwrap::indent(&output, "    "));
             }
             "Serato Autotags" => {
+                container.parse_autotags(&data);
                 let output = format!("{:#?}", serato_tags::autotags::parse(&data).unwrap());
                 println!("{}", textwrap::indent(&output, "    "));
             }
             "Serato BeatGrid" => {
+                container.parse_beatgrid(&data);
                 let output = format!("{:#?}", serato_tags::beatgrid::parse(&data).unwrap());
                 println!("{}", textwrap::indent(&output, "    "));
             }
             "Serato Markers_" => {
+                container.parse_markers(&data);
                 let output = format!("{:#?}", serato_tags::markers::parse(&data).unwrap());
                 println!("{}", textwrap::indent(&output, "    "));
             }
             "Serato Markers2" => {
+                container.parse_markers2(&data);
                 let output = format!("{:#?}", serato_tags::markers2::parse(&data).unwrap());
                 println!("{}", textwrap::indent(&output, "    "));
             }
             "Serato Overview" => {
+                container.parse_overview(&data);
                 let output = format!("{:?}", serato_tags::overview::parse(&data).unwrap());
                 println!("{}", textwrap::indent(&output, "    "));
             }
             _ => (),
         }
     }
+
+    println!();
+    println!("Merged values");
+
+    println!("  Cues");
+    let output = format!("{:#?}", container.cues());
+    println!("{}", textwrap::indent(&output, "    "));
+
+    println!("  Loops");
+    let output = format!("{:#?}", container.loops());
+    println!("{}", textwrap::indent(&output, "    "));
+
+    println!("  Track Color");
+    let output = format!("{:#?}", container.track_color());
+    println!("{}", textwrap::indent(&output, "    "));
+
+    println!("  BPM Locked");
+    let output = format!("{:?}", container.bpm_locked());
+    println!("{}", textwrap::indent(&output, "    "));
 }

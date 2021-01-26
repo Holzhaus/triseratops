@@ -46,6 +46,40 @@ pub struct Markers {
     pub track_color: util::Color,
 }
 
+impl Markers {
+    pub fn cues(&self) -> Vec<(u8, &Marker)> {
+        let mut index: u8 = 0;
+        let mut cues = Vec::new();
+        for marker in &self.entries {
+            if marker.entry_type != EntryType::INVALID && marker.entry_type != EntryType::CUE {
+                continue;
+            }
+
+            cues.push((index, marker));
+            index += 1;
+        }
+        cues
+    }
+
+    pub fn loops(&self) -> Vec<(u8, &Marker)> {
+        let mut index: u8 = 0;
+        let mut loops = Vec::new();
+        for marker in &self.entries {
+            if marker.entry_type != EntryType::LOOP {
+                continue;
+            }
+
+            loops.push((index, marker));
+            index += 1;
+        }
+        loops
+    }
+
+    pub fn track_color(&self) -> util::Color {
+        self.track_color
+    }
+}
+
 /// The Type of a Marker.
 ///
 /// # Values
@@ -55,7 +89,7 @@ pub struct Markers {
 /// | `0x00` | `INVALID`   | Used for unset cues.
 /// | `0x01` | `CUE`       | Used for cues.
 /// | `0x03` | `LOOP`      | Used for loops (both set and unset ones).
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum EntryType {
     INVALID,
     CUE,

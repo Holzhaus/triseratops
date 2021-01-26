@@ -6,7 +6,7 @@ use nom::bytes::complete::take_until;
 use nom::IResult;
 
 /// Represents a 3-Byte RGB color value.
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Copy, Clone)]
 pub struct Color {
     pub red: u8,
     pub green: u8,
