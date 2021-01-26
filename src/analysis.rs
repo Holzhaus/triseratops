@@ -1,7 +1,13 @@
+//! The `Serato Analysis` tag stores the analysis version.
+//!
+//! This is probably the Serato Version number that performed the analysis.
+
 use crate::util;
 
+/// Represents the  `Serato Analysis` tag.
 #[derive(Debug)]
 pub struct Analysis {
+    /// The analysis version.
     pub version: util::Version,
 }
 

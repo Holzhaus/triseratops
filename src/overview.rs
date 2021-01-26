@@ -1,8 +1,15 @@
+//! The `Serato Overview` tag stores the waveform overview data.
+//!
+//! The overview data consists of multiple chunks of 16 bytes.
+
 use crate::util;
 
+/// Represents the `Serato Overview` tag.
 #[derive(Debug)]
 pub struct Overview {
+    /// The tag version.
     pub version: util::Version,
+    /// The Waveform overview data.
     pub data: Vec<Vec<u8>>,
 }
 

@@ -1,3 +1,11 @@
+//! The `Serato Markers2` tag stores various kinds of track "markers" like Cue Points, Saved Loops, Flips.
+//!
+//! It also stores information about the tracks' color in the tracklist and if the track's beatgrid is locked.
+//!
+//! Note that some of this information is also stored in `Serato Markers_`, and Serato will prefer that data over the information stored in `Serato Markers2` if it is present.
+//!
+//! The minimum length of this tag seems to be 470 bytes, and shorter contents are padded with null bytes.
+
 use crate::util;
 use nom::alt;
 use nom::multi::many0;
@@ -5,6 +13,15 @@ use nom::named;
 use nom::peek;
 use nom::tag;
 
+/// A marker in the `Serato Markers2` tag.
+///
+/// Each marker is described by a header that contains type and length. The type is a
+/// null-terminated ASCII string.
+///
+/// The length of the entry's data depends heavily on the entry type. BPMLOCK entries contain only
+/// a single byte of data, while FLIP might become quite large. By storing the length explicitly
+/// instead of deriving it from the type, a parser could ignore unknown entry types and still be
+/// able to parse known ones.
 #[derive(Debug)]
 pub enum Marker {
     Unknown(UnknownMarker),
@@ -15,22 +32,34 @@ pub enum Marker {
     Flip(FlipMarker),
 }
 
+/// An unknown marker that we don't have a parser for.
 #[derive(Debug)]
 pub struct UnknownMarker {
     pub name: String,
     pub data: Vec<u8>,
 }
 
+/// A `COLOR` marker.
+///
+/// `COLOR` markers describe a track's color.
 #[derive(Debug)]
 pub struct TrackColorMarker {
     pub color: util::Color,
 }
 
+/// A `BPMLOCK` marker.
+///
+/// The `BPMLOCK` marker contains a single boolean value that determines if [Beatgrid is
+/// locked](https://support.serato.com/hc/en-us/articles/235214887-Lock-Beatgrids).
 #[derive(Debug)]
 pub struct BPMLockMarker {
     pub is_locked: bool,
 }
 
+/// A `CUE` marker.
+///
+/// Each `CUE` marker contains information about a [cue
+/// point](https://support.serato.com/hc/en-us/articles/360000067696-Cue-Points).
 #[derive(Debug)]
 pub struct CueMarker {
     pub index: u8,
@@ -39,6 +68,10 @@ pub struct CueMarker {
     pub label: String,
 }
 
+/// A `LOOP` marker.
+///
+/// `LOOP` markers are used to store [saved
+/// loops](https://serato.com/latest/blog/17885/pro-tip-trigger-saved-loops).
 #[derive(Debug)]
 pub struct LoopMarker {
     pub index: u8,
@@ -49,6 +82,10 @@ pub struct LoopMarker {
     pub label: String,
 }
 
+/// A `FLIP` marker.
+///
+/// `FLIP` markers are used for storing [Serato Flip](https://serato.com/dj/pro/expansions/flip)
+/// performances.
 #[derive(Debug)]
 pub struct FlipMarker {
     pub index: u8,
@@ -58,6 +95,14 @@ pub struct FlipMarker {
     pub actions: Vec<FlipAction>,
 }
 
+/// An action inside a `FLIP` marker.
+///
+/// Each `FLIP` action with a header that contains its type and length.
+///
+/// The last action is always a jump action where the source position is the time when the Flip
+/// recording was stopped. If looping is enabled, it's target position is the source position of
+/// the first entry. If not, the target position of that last entry is the same as its source
+/// position.
 #[derive(Debug)]
 pub enum FlipAction {
     Censor(CensorFlipAction),
@@ -65,25 +110,45 @@ pub enum FlipAction {
     Unknown(UnknownFlipAction),
 }
 
+/// A Censor action inside a `FLIP` marker.
+///
+/// Actions of this type are used for censoring (playback speed factor is -1.0) and are followed
+/// with a jump marker from `end_position_seconds` to the playback position that the track would be
+/// at without the reverse playback.
 #[derive(Debug)]
 pub struct CensorFlipAction {
+    /// The start position of the censoring.
+    ///
+    /// When playback reaches this position, the censoring starts.
     pub start_position_seconds: f64,
+
+    /// The end position of the censoring.
     pub end_position_seconds: f64,
+
+    /// The playback speed factor (usually -1.0).
     pub speed_factor: f64,
 }
 
+/// A Jump action inside a `FLIP` marker.
 #[derive(Debug)]
 pub struct JumpFlipAction {
+    /// The source position of the jump.
+    ///
+    /// When playback reaches this position, the jump is performed.
     pub source_position_seconds: f64,
+
+    /// The target position of the jump.
     pub target_position_seconds: f64,
 }
 
+/// An unknown `FLIP` action that we don't have a parser for.
 #[derive(Debug)]
 pub struct UnknownFlipAction {
     pub id: u8,
     pub data: Vec<u8>,
 }
 
+/// Represents the `Serato Markers2` tag.
 #[derive(Debug)]
 pub struct Markers2 {
     pub version: util::Version,
@@ -91,6 +156,7 @@ pub struct Markers2 {
     pub content: Markers2Content,
 }
 
+/// Represents the base64-encoded content of the `Serato Markers2` tag.
 #[derive(Debug)]
 pub struct Markers2Content {
     pub version: util::Version,

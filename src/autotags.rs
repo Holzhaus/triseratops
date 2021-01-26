@@ -1,10 +1,17 @@
+//! The `Serato Autotags` tag stores BPM and Gain values.
+
 use crate::util;
 
+/// Represents the  `Serato AutoTags` tag.
 #[derive(Debug)]
 pub struct Autotags {
+    /// The tag version.
     pub version: util::Version,
+    /// The track's number of beats per minute (BPM).
     pub bpm: f64,
+    /// The track's autogain values (probably comparable to ReplayGain).
     pub auto_gain: f64,
+    /// The track's gain value (manual?).
     pub gain_db: f64,
 }
 

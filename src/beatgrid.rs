@@ -1,30 +1,43 @@
+//! The `Serato BeatGrid` tag stores the beatgrid markers.
+
 use crate::util;
 use nom::length_count;
 use nom::named;
 
+/// Represents the terminal beatgrid marker in the `Serato BeatGrid` tag.
+///
+/// The last beatgrid marker always has to be a terminal one. This is also the case if the tag only
+/// contains a single beatgrid marker.
 #[derive(Debug)]
 pub struct TerminalMarker {
+    /// The position in seconds.
     pub position: f32,
+    /// The track's beats per minute (BPM).
     pub bpm: f32,
 }
 
+/// Represents a non-terminal beatgrid marker in the `Serato BeatGrid` tag.
+///
+/// All beatgrid markers before the last one are non-terminal beatgrid markers.
+
 #[derive(Debug)]
 pub struct NonTerminalMarker {
+    /// The position in seconds.
     pub position: f32,
+    /// The number of beats between this marker and the next one (inclusive).
     pub beats_till_next_marker: u32,
 }
 
-#[derive(Debug)]
-pub enum BeatgridMarker {
-    Terminal(TerminalMarker),
-    NonTerminal(NonTerminalMarker),
-}
-
+/// Represents the `Serato BeatGrid` tag.
 #[derive(Debug)]
 pub struct Beatgrid {
+    /// The analysis version.
     pub version: util::Version,
+    /// Zero or more non-terminal beatgrid markers.
     pub non_terminal_markers: Vec<NonTerminalMarker>,
+    /// The terminal beatgrid marker.
     pub terminal_marker: TerminalMarker,
+    /// A single footer byte that is apparently random (?).
     pub footer: u8,
 }
 

@@ -1,25 +1,60 @@
+//! The `Serato Markers_` tag stores information about the first 5 Cues, 9 Loops and the track
+//! color.
+//!
+//! This is redundant with some of the information from the `Serato Markers2` tag. Serato will
+//! prefer information from `Serato Markers_` if it's present.
+
 use crate::util;
 use nom::length_count;
 use nom::named;
 use nom::number::complete::be_u32;
 use nom::tag;
 
+/// Represents a single marker in the `Serato Markers_` tag.
 #[derive(Debug)]
 pub struct Marker {
+    /// The position of the loop or cue.
     pub start_position_millis: Option<u32>,
+
+    /// If this is a loop, this field stores the end position.
     pub end_position_millis: Option<u32>,
+
+    /// The color of the cue.
+    ///
+    /// For loop, this field should always be `#27AAE1`.
     pub color: util::Color,
+
+    /// The type of this marker.
     pub entry_type: EntryType,
-    pub locked: bool,
+
+    /// Indicates whether the loop is locked.
+    ///
+    /// For cues, this field should always be `false`.
+    pub is_locked: bool,
 }
 
+/// Represents the `Serato Markers_` tag.
 #[derive(Debug)]
 pub struct Markers {
+    /// The tag version.
     pub version: util::Version,
+
+    /// The marker entries.
     pub entries: Vec<Marker>,
+
+    /// The color of the track in Serato's library view.
     pub track_color: util::Color,
 }
 
+/// The Type of a Marker.
+///
+/// # Values
+///
+/// | Value  | `EntryType` | Description
+/// | ------ | ----------- | ----------------------------------------
+/// | `0x00` | `INVALID`   | Used for unset cues.
+/// | `0x01` | `CUE`       | Used for cues.
+/// | `0x03` | `LOOP`      | Used for loops (both set and unset ones).
 #[derive(Debug)]
 pub enum EntryType {
     INVALID,
@@ -83,7 +118,7 @@ pub fn marker(input: &[u8]) -> nom::IResult<&[u8], Marker> {
     let (input, _) = unknown(input)?;
     let (input, color) = util::serato32::take_color(input)?;
     let (input, entry_type) = entry_type(input)?;
-    let (input, locked) = take_bool(input)?;
+    let (input, is_locked) = take_bool(input)?;
     Ok((
         input,
         Marker {
@@ -91,7 +126,7 @@ pub fn marker(input: &[u8]) -> nom::IResult<&[u8], Marker> {
             end_position_millis,
             color,
             entry_type,
-            locked,
+            is_locked,
         },
     ))
 }

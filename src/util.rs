@@ -1,9 +1,11 @@
+//! Various helper utilities for simplify parsing.
 extern crate nom;
 
 use nom::bytes::complete::take;
 use nom::bytes::complete::take_until;
 use nom::IResult;
 
+/// Represents a 3-Byte RGB color value.
 #[derive(Debug)]
 pub struct Color {
     pub red: u8,
@@ -11,6 +13,7 @@ pub struct Color {
     pub blue: u8,
 }
 
+/// Represents 2-Byte version value.
 #[derive(Debug)]
 pub struct Version {
     pub major: u8,
