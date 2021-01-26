@@ -12,6 +12,7 @@ pub enum Marker {
     BPMLock(BPMLockMarker),
     Cue(CueMarker),
     Loop(LoopMarker),
+    Flip(FlipMarker),
 }
 
 #[derive(Debug)]
@@ -46,6 +47,41 @@ pub struct LoopMarker {
     pub color: util::Color,
     pub is_locked: bool,
     pub label: String,
+}
+
+#[derive(Debug)]
+pub struct FlipMarker {
+    pub index: u8,
+    pub is_enabled: bool,
+    pub label: String,
+    pub is_loop: bool,
+    pub actions: Vec<FlipAction>,
+}
+
+#[derive(Debug)]
+pub enum FlipAction {
+    Censor(CensorFlipAction),
+    Jump(JumpFlipAction),
+    Unknown(UnknownFlipAction),
+}
+
+#[derive(Debug)]
+pub struct CensorFlipAction {
+    pub start_position_seconds: f64,
+    pub end_position_seconds: f64,
+    pub speed_factor: f64,
+}
+
+#[derive(Debug)]
+pub struct JumpFlipAction {
+    pub source_position_seconds: f64,
+    pub target_position_seconds: f64,
+}
+
+#[derive(Debug)]
+pub struct UnknownFlipAction {
+    pub id: u8,
+    pub data: Vec<u8>,
 }
 
 #[derive(Debug)]
@@ -140,6 +176,7 @@ pub fn take_marker(input: &[u8]) -> nom::IResult<&[u8], Marker> {
         "COLOR" => nom::combinator::all_consuming(take_color_marker)(data)?,
         "CUE" => nom::combinator::all_consuming(take_cue_marker)(data)?,
         "LOOP" => nom::combinator::all_consuming(take_loop_marker)(data)?,
+        "FLIP" => nom::combinator::all_consuming(take_flip_marker)(data)?,
         _ => (
             input,
             Marker::Unknown(UnknownMarker {
@@ -208,6 +245,64 @@ pub fn take_loop_marker(input: &[u8]) -> nom::IResult<&[u8], Marker> {
         label,
     };
     Ok((input, Marker::Loop(marker)))
+}
+
+pub fn take_flip_marker(input: &[u8]) -> nom::IResult<&[u8], Marker> {
+    let (input, _) = nom::bytes::complete::tag(b"\x00")(input)?;
+    let (input, index) = nom::number::complete::u8(input)?;
+    let (input, is_enabled) = take_bool(input)?;
+    let (input, label) = take_utf8(input)?;
+    let (input, is_loop) = take_bool(input)?;
+    let (input, actions) =
+        nom::multi::length_count(nom::number::complete::be_u32, take_flip_marker_action)(input)?;
+    let marker = FlipMarker {
+        index,
+        is_enabled,
+        label,
+        is_loop,
+        actions,
+    };
+    Ok((input, Marker::Flip(marker)))
+}
+
+pub fn take_flip_marker_action(input: &[u8]) -> nom::IResult<&[u8], FlipAction> {
+    let (input, id) = nom::number::complete::u8(input)?;
+    let (input, data) = nom::multi::length_data(nom::number::complete::be_u32)(input)?;
+    let (_, action) = match id {
+        0 => nom::combinator::all_consuming(take_flip_marker_action_jump)(data)?,
+        1 => nom::combinator::all_consuming(take_flip_marker_action_censor)(data)?,
+        _ => (
+            input,
+            FlipAction::Unknown(UnknownFlipAction {
+                id,
+                data: data.to_vec(),
+            }),
+        ),
+    };
+
+    Ok((input, action))
+}
+
+pub fn take_flip_marker_action_jump(input: &[u8]) -> nom::IResult<&[u8], FlipAction> {
+    let (input, source_position_seconds) = nom::number::complete::be_f64(input)?;
+    let (input, target_position_seconds) = nom::number::complete::be_f64(input)?;
+    let action = JumpFlipAction {
+        source_position_seconds,
+        target_position_seconds,
+    };
+    Ok((input, FlipAction::Jump(action)))
+}
+
+pub fn take_flip_marker_action_censor(input: &[u8]) -> nom::IResult<&[u8], FlipAction> {
+    let (input, start_position_seconds) = nom::number::complete::be_f64(input)?;
+    let (input, end_position_seconds) = nom::number::complete::be_f64(input)?;
+    let (input, speed_factor) = nom::number::complete::be_f64(input)?;
+    let action = CensorFlipAction {
+        start_position_seconds,
+        end_position_seconds,
+        speed_factor,
+    };
+    Ok((input, FlipAction::Censor(action)))
 }
 
 pub fn parse_markers2_content(input: &[u8]) -> nom::IResult<&[u8], Markers2Content> {
