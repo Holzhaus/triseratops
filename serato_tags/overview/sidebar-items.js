@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["parse",""],["take_chunk",""],["take_data",""]],"struct":[["Overview",""]]});
+initSidebarItems({"fn":[["parse",""],["take_chunk",""],["take_data",""]],"struct":[["Overview","Represents the `Serato Overview` tag."]]});

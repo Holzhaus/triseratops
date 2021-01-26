@@ -14,11 +14,23 @@
 <span id="11">11</span>
 <span id="12">12</span>
 <span id="13">13</span>
+<span id="14">14</span>
+<span id="15">15</span>
+<span id="16">16</span>
+<span id="17">17</span>
+<span id="18">18</span>
+<span id="19">19</span>
 </pre><div class="example-wrap"><pre class="rust ">
+<span class="doccomment">//! The `Serato Analysis` tag stores the analysis version.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! This is probably the Serato Version number that performed the analysis.</span>
+
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">util</span>;
 
+<span class="doccomment">/// Represents the  `Serato Analysis` tag.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Analysis</span> {
+    <span class="doccomment">/// The analysis version.</span>
     <span class="kw">pub</span> <span class="ident">version</span>: <span class="ident">util</span>::<span class="ident">Version</span>,
 }
 

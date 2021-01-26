@@ -111,29 +111,99 @@
 <span id="108">108</span>
 <span id="109">109</span>
 <span id="110">110</span>
+<span id="111">111</span>
+<span id="112">112</span>
+<span id="113">113</span>
+<span id="114">114</span>
+<span id="115">115</span>
+<span id="116">116</span>
+<span id="117">117</span>
+<span id="118">118</span>
+<span id="119">119</span>
+<span id="120">120</span>
+<span id="121">121</span>
+<span id="122">122</span>
+<span id="123">123</span>
+<span id="124">124</span>
+<span id="125">125</span>
+<span id="126">126</span>
+<span id="127">127</span>
+<span id="128">128</span>
+<span id="129">129</span>
+<span id="130">130</span>
+<span id="131">131</span>
+<span id="132">132</span>
+<span id="133">133</span>
+<span id="134">134</span>
+<span id="135">135</span>
+<span id="136">136</span>
+<span id="137">137</span>
+<span id="138">138</span>
+<span id="139">139</span>
+<span id="140">140</span>
+<span id="141">141</span>
+<span id="142">142</span>
+<span id="143">143</span>
+<span id="144">144</span>
+<span id="145">145</span>
 </pre><div class="example-wrap"><pre class="rust ">
+<span class="doccomment">//! The `Serato Markers_` tag stores information about the first 5 Cues, 9 Loops and the track</span>
+<span class="doccomment">//! color.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! This is redundant with some of the information from the `Serato Markers2` tag. Serato will</span>
+<span class="doccomment">//! prefer information from `Serato Markers_` if it&#39;s present.</span>
+
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">util</span>;
 <span class="kw">use</span> <span class="ident">nom</span>::<span class="ident">length_count</span>;
 <span class="kw">use</span> <span class="ident">nom</span>::<span class="ident">named</span>;
 <span class="kw">use</span> <span class="ident">nom</span>::<span class="ident">number</span>::<span class="ident">complete</span>::<span class="ident">be_u32</span>;
 <span class="kw">use</span> <span class="ident">nom</span>::<span class="ident">tag</span>;
 
+<span class="doccomment">/// Represents a single marker in the `Serato Markers_` tag.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Marker</span> {
+    <span class="doccomment">/// The position of the loop or cue.</span>
     <span class="kw">pub</span> <span class="ident">start_position_millis</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>,
+
+    <span class="doccomment">/// If this is a loop, this field stores the end position.</span>
     <span class="kw">pub</span> <span class="ident">end_position_millis</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>,
+
+    <span class="doccomment">/// The color of the cue.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// For loop, this field should always be `#27AAE1`.</span>
     <span class="kw">pub</span> <span class="ident">color</span>: <span class="ident">util</span>::<span class="ident">Color</span>,
+
+    <span class="doccomment">/// The type of this marker.</span>
     <span class="kw">pub</span> <span class="ident">entry_type</span>: <span class="ident">EntryType</span>,
-    <span class="kw">pub</span> <span class="ident">locked</span>: <span class="ident">bool</span>,
+
+    <span class="doccomment">/// Indicates whether the loop is locked.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// For cues, this field should always be `false`.</span>
+    <span class="kw">pub</span> <span class="ident">is_locked</span>: <span class="ident">bool</span>,
 }
 
+<span class="doccomment">/// Represents the `Serato Markers_` tag.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Markers</span> {
+    <span class="doccomment">/// The tag version.</span>
     <span class="kw">pub</span> <span class="ident">version</span>: <span class="ident">util</span>::<span class="ident">Version</span>,
+
+    <span class="doccomment">/// The marker entries.</span>
     <span class="kw">pub</span> <span class="ident">entries</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Marker</span><span class="op">&gt;</span>,
+
+    <span class="doccomment">/// The color of the track in Serato&#39;s library view.</span>
     <span class="kw">pub</span> <span class="ident">track_color</span>: <span class="ident">util</span>::<span class="ident">Color</span>,
 }
 
+<span class="doccomment">/// The Type of a Marker.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// # Values</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// | Value  | `EntryType` | Description</span>
+<span class="doccomment">/// | ------ | ----------- | ----------------------------------------</span>
+<span class="doccomment">/// | `0x00` | `INVALID`   | Used for unset cues.</span>
+<span class="doccomment">/// | `0x01` | `CUE`       | Used for cues.</span>
+<span class="doccomment">/// | `0x03` | `LOOP`      | Used for loops (both set and unset ones).</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">EntryType</span> {
     <span class="ident">INVALID</span>,
@@ -197,7 +267,7 @@
     <span class="kw">let</span> (<span class="ident">input</span>, <span class="kw">_</span>) <span class="op">=</span> <span class="ident">unknown</span>(<span class="ident">input</span>)<span class="question-mark">?</span>;
     <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">color</span>) <span class="op">=</span> <span class="ident">util</span>::<span class="ident">serato32</span>::<span class="ident">take_color</span>(<span class="ident">input</span>)<span class="question-mark">?</span>;
     <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">entry_type</span>) <span class="op">=</span> <span class="ident">entry_type</span>(<span class="ident">input</span>)<span class="question-mark">?</span>;
-    <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">locked</span>) <span class="op">=</span> <span class="ident">take_bool</span>(<span class="ident">input</span>)<span class="question-mark">?</span>;
+    <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">is_locked</span>) <span class="op">=</span> <span class="ident">take_bool</span>(<span class="ident">input</span>)<span class="question-mark">?</span>;
     <span class="prelude-val">Ok</span>((
         <span class="ident">input</span>,
         <span class="ident">Marker</span> {
@@ -205,7 +275,7 @@
             <span class="ident">end_position_millis</span>,
             <span class="ident">color</span>,
             <span class="ident">entry_type</span>,
-            <span class="ident">locked</span>,
+            <span class="ident">is_locked</span>,
         },
     ))
 }

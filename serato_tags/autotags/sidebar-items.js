@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["double_str",""],["parse",""]],"struct":[["Autotags",""]]});
+initSidebarItems({"fn":[["double_str",""],["parse",""]],"struct":[["Autotags","Represents the  `Serato AutoTags` tag."]]});

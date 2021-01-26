@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["EntryType",""]],"fn":[["entry_type",""],["has_position",""],["marker",""],["parse",""],["position",""],["take_bool",""]],"struct":[["Marker",""],["Markers",""]]});
+initSidebarItems({"enum":[["EntryType","The Type of a Marker."]],"fn":[["entry_type",""],["has_position",""],["marker",""],["parse",""],["position",""],["take_bool",""]],"struct":[["Marker","Represents a single marker in the `Serato Markers_` tag."],["Markers","Represents the `Serato Markers_` tag."]]});

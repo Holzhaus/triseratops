@@ -130,13 +130,18 @@
 <span id="127">127</span>
 <span id="128">128</span>
 <span id="129">129</span>
+<span id="130">130</span>
+<span id="131">131</span>
+<span id="132">132</span>
 </pre><div class="example-wrap"><pre class="rust ">
+<span class="doccomment">//! Various helper utilities for simplify parsing.</span>
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">nom</span>;
 
 <span class="kw">use</span> <span class="ident">nom</span>::<span class="ident">bytes</span>::<span class="ident">complete</span>::<span class="ident">take</span>;
 <span class="kw">use</span> <span class="ident">nom</span>::<span class="ident">bytes</span>::<span class="ident">complete</span>::<span class="ident">take_until</span>;
 <span class="kw">use</span> <span class="ident">nom</span>::<span class="ident">IResult</span>;
 
+<span class="doccomment">/// Represents a 3-Byte RGB color value.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Color</span> {
     <span class="kw">pub</span> <span class="ident">red</span>: <span class="ident">u8</span>,
@@ -144,6 +149,7 @@
     <span class="kw">pub</span> <span class="ident">blue</span>: <span class="ident">u8</span>,
 }
 
+<span class="doccomment">/// Represents 2-Byte version value.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Version</span> {
     <span class="kw">pub</span> <span class="ident">major</span>: <span class="ident">u8</span>,

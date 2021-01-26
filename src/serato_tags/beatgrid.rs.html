@@ -72,34 +72,60 @@
 <span id="69">69</span>
 <span id="70">70</span>
 <span id="71">71</span>
+<span id="72">72</span>
+<span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
+<span id="76">76</span>
+<span id="77">77</span>
+<span id="78">78</span>
+<span id="79">79</span>
+<span id="80">80</span>
+<span id="81">81</span>
+<span id="82">82</span>
+<span id="83">83</span>
+<span id="84">84</span>
 </pre><div class="example-wrap"><pre class="rust ">
+<span class="doccomment">//! The `Serato BeatGrid` tag stores the beatgrid markers.</span>
+
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">util</span>;
 <span class="kw">use</span> <span class="ident">nom</span>::<span class="ident">length_count</span>;
 <span class="kw">use</span> <span class="ident">nom</span>::<span class="ident">named</span>;
 
+<span class="doccomment">/// Represents the terminal beatgrid marker in the `Serato BeatGrid` tag.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// The last beatgrid marker always has to be a terminal one. This is also the case if the tag only</span>
+<span class="doccomment">/// contains a single beatgrid marker.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">TerminalMarker</span> {
+    <span class="doccomment">/// The position in seconds.</span>
     <span class="kw">pub</span> <span class="ident">position</span>: <span class="ident">f32</span>,
+    <span class="doccomment">/// The track&#39;s beats per minute (BPM).</span>
     <span class="kw">pub</span> <span class="ident">bpm</span>: <span class="ident">f32</span>,
 }
 
+<span class="doccomment">/// Represents a non-terminal beatgrid marker in the `Serato BeatGrid` tag.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// All beatgrid markers before the last one are non-terminal beatgrid markers.</span>
+
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">NonTerminalMarker</span> {
+    <span class="doccomment">/// The position in seconds.</span>
     <span class="kw">pub</span> <span class="ident">position</span>: <span class="ident">f32</span>,
+    <span class="doccomment">/// The number of beats between this marker and the next one (inclusive).</span>
     <span class="kw">pub</span> <span class="ident">beats_till_next_marker</span>: <span class="ident">u32</span>,
 }
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
-<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">BeatgridMarker</span> {
-    <span class="ident">Terminal</span>(<span class="ident">TerminalMarker</span>),
-    <span class="ident">NonTerminal</span>(<span class="ident">NonTerminalMarker</span>),
-}
-
+<span class="doccomment">/// Represents the `Serato BeatGrid` tag.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Beatgrid</span> {
+    <span class="doccomment">/// The analysis version.</span>
     <span class="kw">pub</span> <span class="ident">version</span>: <span class="ident">util</span>::<span class="ident">Version</span>,
+    <span class="doccomment">/// Zero or more non-terminal beatgrid markers.</span>
     <span class="kw">pub</span> <span class="ident">non_terminal_markers</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">NonTerminalMarker</span><span class="op">&gt;</span>,
+    <span class="doccomment">/// The terminal beatgrid marker.</span>
     <span class="kw">pub</span> <span class="ident">terminal_marker</span>: <span class="ident">TerminalMarker</span>,
+    <span class="doccomment">/// A single footer byte that is apparently random (?).</span>
     <span class="kw">pub</span> <span class="ident">footer</span>: <span class="ident">u8</span>,
 }
 

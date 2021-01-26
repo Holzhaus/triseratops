@@ -31,14 +31,28 @@
 <span id="28">28</span>
 <span id="29">29</span>
 <span id="30">30</span>
+<span id="31">31</span>
+<span id="32">32</span>
+<span id="33">33</span>
+<span id="34">34</span>
+<span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
 </pre><div class="example-wrap"><pre class="rust ">
+<span class="doccomment">//! The `Serato Autotags` tag stores BPM and Gain values.</span>
+
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">util</span>;
 
+<span class="doccomment">/// Represents the  `Serato AutoTags` tag.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Autotags</span> {
+    <span class="doccomment">/// The tag version.</span>
     <span class="kw">pub</span> <span class="ident">version</span>: <span class="ident">util</span>::<span class="ident">Version</span>,
+    <span class="doccomment">/// The track&#39;s number of beats per minute (BPM).</span>
     <span class="kw">pub</span> <span class="ident">bpm</span>: <span class="ident">f64</span>,
+    <span class="doccomment">/// The track&#39;s autogain values (probably comparable to ReplayGain).</span>
     <span class="kw">pub</span> <span class="ident">auto_gain</span>: <span class="ident">f64</span>,
+    <span class="doccomment">/// The track&#39;s gain value (manual?).</span>
     <span class="kw">pub</span> <span class="ident">gain_db</span>: <span class="ident">f64</span>,
 }
 

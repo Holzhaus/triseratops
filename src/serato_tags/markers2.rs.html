@@ -332,7 +332,81 @@
 <span id="329">329</span>
 <span id="330">330</span>
 <span id="331">331</span>
+<span id="332">332</span>
+<span id="333">333</span>
+<span id="334">334</span>
+<span id="335">335</span>
+<span id="336">336</span>
+<span id="337">337</span>
+<span id="338">338</span>
+<span id="339">339</span>
+<span id="340">340</span>
+<span id="341">341</span>
+<span id="342">342</span>
+<span id="343">343</span>
+<span id="344">344</span>
+<span id="345">345</span>
+<span id="346">346</span>
+<span id="347">347</span>
+<span id="348">348</span>
+<span id="349">349</span>
+<span id="350">350</span>
+<span id="351">351</span>
+<span id="352">352</span>
+<span id="353">353</span>
+<span id="354">354</span>
+<span id="355">355</span>
+<span id="356">356</span>
+<span id="357">357</span>
+<span id="358">358</span>
+<span id="359">359</span>
+<span id="360">360</span>
+<span id="361">361</span>
+<span id="362">362</span>
+<span id="363">363</span>
+<span id="364">364</span>
+<span id="365">365</span>
+<span id="366">366</span>
+<span id="367">367</span>
+<span id="368">368</span>
+<span id="369">369</span>
+<span id="370">370</span>
+<span id="371">371</span>
+<span id="372">372</span>
+<span id="373">373</span>
+<span id="374">374</span>
+<span id="375">375</span>
+<span id="376">376</span>
+<span id="377">377</span>
+<span id="378">378</span>
+<span id="379">379</span>
+<span id="380">380</span>
+<span id="381">381</span>
+<span id="382">382</span>
+<span id="383">383</span>
+<span id="384">384</span>
+<span id="385">385</span>
+<span id="386">386</span>
+<span id="387">387</span>
+<span id="388">388</span>
+<span id="389">389</span>
+<span id="390">390</span>
+<span id="391">391</span>
+<span id="392">392</span>
+<span id="393">393</span>
+<span id="394">394</span>
+<span id="395">395</span>
+<span id="396">396</span>
+<span id="397">397</span>
 </pre><div class="example-wrap"><pre class="rust ">
+<span class="doccomment">//! The `Serato Markers2` tag stores various kinds of track &quot;markers&quot; like Cue Points, Saved Loops, Flips.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! It also stores information about the tracks&#39; color in the tracklist and if the track&#39;s beatgrid is locked.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! Note that some of this information is also stored in `Serato Markers_`, and Serato will prefer that data over the information stored in `Serato Markers2` if it is present.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! The minimum length of this tag seems to be 470 bytes, and shorter contents are padded with null bytes.</span>
+
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">util</span>;
 <span class="kw">use</span> <span class="ident">nom</span>::<span class="ident">alt</span>;
 <span class="kw">use</span> <span class="ident">nom</span>::<span class="ident">multi</span>::<span class="ident">many0</span>;
@@ -340,6 +414,15 @@
 <span class="kw">use</span> <span class="ident">nom</span>::<span class="ident">peek</span>;
 <span class="kw">use</span> <span class="ident">nom</span>::<span class="ident">tag</span>;
 
+<span class="doccomment">/// A marker in the `Serato Markers2` tag.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// Each marker is described by a header that contains type and length. The type is a</span>
+<span class="doccomment">/// null-terminated ASCII string.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// The length of the entry&#39;s data depends heavily on the entry type. BPMLOCK entries contain only</span>
+<span class="doccomment">/// a single byte of data, while FLIP might become quite large. By storing the length explicitly</span>
+<span class="doccomment">/// instead of deriving it from the type, a parser could ignore unknown entry types and still be</span>
+<span class="doccomment">/// able to parse known ones.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Marker</span> {
     <span class="ident">Unknown</span>(<span class="ident">UnknownMarker</span>),
@@ -350,22 +433,34 @@
     <span class="ident">Flip</span>(<span class="ident">FlipMarker</span>),
 }
 
+<span class="doccomment">/// An unknown marker that we don&#39;t have a parser for.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">UnknownMarker</span> {
     <span class="kw">pub</span> <span class="ident">name</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">data</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
 }
 
+<span class="doccomment">/// A `COLOR` marker.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// `COLOR` markers describe a track&#39;s color.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">TrackColorMarker</span> {
     <span class="kw">pub</span> <span class="ident">color</span>: <span class="ident">util</span>::<span class="ident">Color</span>,
 }
 
+<span class="doccomment">/// A `BPMLOCK` marker.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// The `BPMLOCK` marker contains a single boolean value that determines if [Beatgrid is</span>
+<span class="doccomment">/// locked](https://support.serato.com/hc/en-us/articles/235214887-Lock-Beatgrids).</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">BPMLockMarker</span> {
     <span class="kw">pub</span> <span class="ident">is_locked</span>: <span class="ident">bool</span>,
 }
 
+<span class="doccomment">/// A `CUE` marker.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// Each `CUE` marker contains information about a [cue</span>
+<span class="doccomment">/// point](https://support.serato.com/hc/en-us/articles/360000067696-Cue-Points).</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CueMarker</span> {
     <span class="kw">pub</span> <span class="ident">index</span>: <span class="ident">u8</span>,
@@ -374,6 +469,10 @@
     <span class="kw">pub</span> <span class="ident">label</span>: <span class="ident">String</span>,
 }
 
+<span class="doccomment">/// A `LOOP` marker.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// `LOOP` markers are used to store [saved</span>
+<span class="doccomment">/// loops](https://serato.com/latest/blog/17885/pro-tip-trigger-saved-loops).</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">LoopMarker</span> {
     <span class="kw">pub</span> <span class="ident">index</span>: <span class="ident">u8</span>,
@@ -384,6 +483,10 @@
     <span class="kw">pub</span> <span class="ident">label</span>: <span class="ident">String</span>,
 }
 
+<span class="doccomment">/// A `FLIP` marker.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// `FLIP` markers are used for storing [Serato Flip](https://serato.com/dj/pro/expansions/flip)</span>
+<span class="doccomment">/// performances.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">FlipMarker</span> {
     <span class="kw">pub</span> <span class="ident">index</span>: <span class="ident">u8</span>,
@@ -393,6 +496,14 @@
     <span class="kw">pub</span> <span class="ident">actions</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">FlipAction</span><span class="op">&gt;</span>,
 }
 
+<span class="doccomment">/// An action inside a `FLIP` marker.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// Each `FLIP` action with a header that contains its type and length.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// The last action is always a jump action where the source position is the time when the Flip</span>
+<span class="doccomment">/// recording was stopped. If looping is enabled, it&#39;s target position is the source position of</span>
+<span class="doccomment">/// the first entry. If not, the target position of that last entry is the same as its source</span>
+<span class="doccomment">/// position.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">FlipAction</span> {
     <span class="ident">Censor</span>(<span class="ident">CensorFlipAction</span>),
@@ -400,25 +511,45 @@
     <span class="ident">Unknown</span>(<span class="ident">UnknownFlipAction</span>),
 }
 
+<span class="doccomment">/// An Censor action inside a `FLIP` marker.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// Actions of this type are used for censoring (playback speed factor is -1.0) and are followed</span>
+<span class="doccomment">/// with a jump marker from `end_position_seconds` to the playback position that the track would be</span>
+<span class="doccomment">/// at without the reverse playback.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CensorFlipAction</span> {
+    <span class="doccomment">/// The start position of the censoring.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// When playback reaches this position, the censoring starts.</span>
     <span class="kw">pub</span> <span class="ident">start_position_seconds</span>: <span class="ident">f64</span>,
+
+    <span class="doccomment">/// The end position of the censoring.</span>
     <span class="kw">pub</span> <span class="ident">end_position_seconds</span>: <span class="ident">f64</span>,
+
+    <span class="doccomment">/// The playback speed factor (usually -1.0).</span>
     <span class="kw">pub</span> <span class="ident">speed_factor</span>: <span class="ident">f64</span>,
 }
 
+<span class="doccomment">/// An Jump action inside a `FLIP` marker.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">JumpFlipAction</span> {
+    <span class="doccomment">/// The source position of the jump.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// When playback reaches this position, the jump is performed.</span>
     <span class="kw">pub</span> <span class="ident">source_position_seconds</span>: <span class="ident">f64</span>,
+
+    <span class="doccomment">/// The target position of the jump.</span>
     <span class="kw">pub</span> <span class="ident">target_position_seconds</span>: <span class="ident">f64</span>,
 }
 
+<span class="doccomment">/// An unknown `FLIP` action that we don&#39;t have a parser for.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">UnknownFlipAction</span> {
     <span class="kw">pub</span> <span class="ident">id</span>: <span class="ident">u8</span>,
     <span class="kw">pub</span> <span class="ident">data</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
 }
 
+<span class="doccomment">/// Represents the `Serato Markers2` tag.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Markers2</span> {
     <span class="kw">pub</span> <span class="ident">version</span>: <span class="ident">util</span>::<span class="ident">Version</span>,
@@ -426,6 +557,7 @@
     <span class="kw">pub</span> <span class="ident">content</span>: <span class="ident">Markers2Content</span>,
 }
 
+<span class="doccomment">/// Represents the base64-encoded content of the `Serato Markers2` tag.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Markers2Content</span> {
     <span class="kw">pub</span> <span class="ident">version</span>: <span class="ident">util</span>::<span class="ident">Version</span>,

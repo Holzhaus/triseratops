@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["BeatgridMarker",""]],"fn":[["non_terminal_marker",""],["parse",""],["terminal_marker",""]],"struct":[["Beatgrid",""],["NonTerminalMarker",""],["TerminalMarker",""]]});
+initSidebarItems({"fn":[["non_terminal_marker",""],["parse",""],["terminal_marker",""]],"struct":[["Beatgrid","Represents the `Serato BeatGrid` tag."],["NonTerminalMarker","Represents a non-terminal beatgrid marker in the `Serato BeatGrid` tag."],["TerminalMarker","Represents the terminal beatgrid marker in the `Serato BeatGrid` tag."]]});
