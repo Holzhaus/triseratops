@@ -142,7 +142,7 @@
 <span class="kw">use</span> <span class="ident">nom</span>::<span class="ident">IResult</span>;
 
 <span class="doccomment">/// Represents a 3-Byte RGB color value.</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Copy</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Color</span> {
     <span class="kw">pub</span> <span class="ident">red</span>: <span class="ident">u8</span>,
     <span class="kw">pub</span> <span class="ident">green</span>: <span class="ident">u8</span>,
