@@ -9,6 +9,7 @@ use nom::tag;
 pub enum Marker {
     Unknown(UnknownMarker),
     Color(TrackColorMarker),
+    BPMLock(BPMLockMarker),
 }
 
 #[derive(Debug)]
@@ -20,6 +21,11 @@ pub struct UnknownMarker {
 #[derive(Debug)]
 pub struct TrackColorMarker {
     pub color: util::Color,
+}
+
+#[derive(Debug)]
+pub struct BPMLockMarker {
+    pub is_locked: bool,
 }
 
 #[derive(Debug)]
@@ -105,6 +111,7 @@ pub fn take_marker(input: &[u8]) -> nom::IResult<&[u8], Marker> {
     let (input, data) = nom::multi::length_data(nom::number::complete::be_u32)(input)?;
 
     let (_, marker) = match name.as_str() {
+        "BPMLOCK" => nom::combinator::all_consuming(take_bpmlock_marker)(data)?,
         "COLOR" => nom::combinator::all_consuming(take_color_marker)(data)?,
         _ => (
             input,
@@ -118,12 +125,25 @@ pub fn take_marker(input: &[u8]) -> nom::IResult<&[u8], Marker> {
     Ok((input, marker))
 }
 
+pub fn take_bool(input: &[u8]) -> nom::IResult<&[u8], bool> {
+    let (input, number) = nom::number::complete::u8(input)?;
+    let value = number != 0;
+    Ok((input, value))
+}
+
+pub fn take_bpmlock_marker(input: &[u8]) -> nom::IResult<&[u8], Marker> {
+    let (input, is_locked) = take_bool(input)?;
+    let marker = BPMLockMarker { is_locked };
+    Ok((input, Marker::BPMLock(marker)))
+}
+
 pub fn take_color_marker(input: &[u8]) -> nom::IResult<&[u8], Marker> {
     let (input, _) = nom::bytes::complete::tag(b"\x00")(input)?;
     let (input, color) = util::take_color(input)?;
     let marker = TrackColorMarker { color };
     Ok((input, Marker::Color(marker)))
 }
+
 pub fn parse_markers2_content(input: &[u8]) -> nom::IResult<&[u8], Markers2Content> {
     let (input, version) = util::take_version(&input)?;
     let (input, markers) = many0(take_marker)(&input)?;
