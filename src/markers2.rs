@@ -8,12 +8,18 @@ use nom::tag;
 #[derive(Debug)]
 pub enum Marker {
     Unknown(UnknownMarker),
+    Color(TrackColorMarker),
 }
 
 #[derive(Debug)]
 pub struct UnknownMarker {
     pub name: String,
     pub data: Vec<u8>,
+}
+
+#[derive(Debug)]
+pub struct TrackColorMarker {
+    pub color: util::Color,
 }
 
 #[derive(Debug)]
@@ -98,14 +104,26 @@ pub fn take_marker(input: &[u8]) -> nom::IResult<&[u8], Marker> {
     let (input, name) = take_utf8(input)?;
     let (input, data) = nom::multi::length_data(nom::number::complete::be_u32)(input)?;
 
-    let marker = UnknownMarker {
-        name,
-        data: data.to_vec(),
+    let (_, marker) = match name.as_str() {
+        "COLOR" => nom::combinator::all_consuming(take_color_marker)(data)?,
+        _ => (
+            input,
+            Marker::Unknown(UnknownMarker {
+                name,
+                data: data.to_vec(),
+            }),
+        ),
     };
 
-    Ok((input, Marker::Unknown(marker)))
+    Ok((input, marker))
 }
 
+pub fn take_color_marker(input: &[u8]) -> nom::IResult<&[u8], Marker> {
+    let (input, _) = nom::bytes::complete::tag(b"\x00")(input)?;
+    let (input, color) = util::take_color(input)?;
+    let marker = TrackColorMarker { color };
+    Ok((input, Marker::Color(marker)))
+}
 pub fn parse_markers2_content(input: &[u8]) -> nom::IResult<&[u8], Markers2Content> {
     let (input, version) = util::take_version(&input)?;
     let (input, markers) = many0(take_marker)(&input)?;
