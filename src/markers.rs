@@ -3,20 +3,12 @@ use nom::length_count;
 use nom::named;
 use nom::number::complete::be_u32;
 use nom::tag;
-use std::convert::TryInto;
-
-#[derive(Debug)]
-pub struct Color {
-    pub red: u8,
-    pub green: u8,
-    pub blue: u8,
-}
 
 #[derive(Debug)]
 pub struct Marker {
     pub start_position_millis: Option<u32>,
     pub end_position_millis: Option<u32>,
-    pub color: Color,
+    pub color: util::Color,
     pub entry_type: EntryType,
     pub locked: bool,
 }
@@ -25,7 +17,7 @@ pub struct Marker {
 pub struct Markers {
     pub version: util::Version,
     pub entries: Vec<Marker>,
-    pub track_color: Color,
+    pub track_color: util::Color,
 }
 
 #[derive(Debug)]
@@ -65,7 +57,7 @@ pub fn position(input: &[u8]) -> nom::IResult<&[u8], Option<u32>> {
     }
     match has_position {
         true => {
-            let (input, data) = util::serato32_decode(input)?;
+            let (input, data) = util::serato32::take_u32(input)?;
             Ok((input, Some(data)))
         }
         false => {
@@ -85,19 +77,11 @@ pub fn entry_type(input: &[u8]) -> nom::IResult<&[u8], EntryType> {
     }
 }
 
-pub fn serato32_color(input: &[u8]) -> nom::IResult<&[u8], Color> {
-    let (input, data) = util::serato32_decode(input)?;
-    let red: u8 = ((data >> 16) & 0xFF).try_into().unwrap();
-    let green: u8 = ((data >> 8) & 0xFF).try_into().unwrap();
-    let blue: u8 = (data & 0xFF).try_into().unwrap();
-    Ok((input, Color { red, green, blue }))
-}
-
 pub fn marker(input: &[u8]) -> nom::IResult<&[u8], Marker> {
     let (input, start_position_millis) = position(input)?;
     let (input, end_position_millis) = position(input)?;
     let (input, _) = unknown(input)?;
-    let (input, color) = serato32_color(input)?;
+    let (input, color) = util::serato32::take_color(input)?;
     let (input, entry_type) = entry_type(input)?;
     let (input, locked) = take_bool(input)?;
     Ok((
@@ -115,8 +99,8 @@ pub fn marker(input: &[u8]) -> nom::IResult<&[u8], Marker> {
 pub fn parse(input: &[u8]) -> Result<Markers, nom::Err<nom::error::Error<&[u8]>>> {
     let (input, version) = util::take_version(&input)?;
     let (input, entries) = take_markers(input)?;
-    //let (_, track_color) = serato32_color(input)?;
-    let (_, track_color) = nom::combinator::all_consuming(serato32_color)(input)?;
+    //let (_, track_color) = util::serato32::take_color(input)?;
+    let (_, track_color) = nom::combinator::all_consuming(util::serato32::take_color)(input)?;
 
     Ok(Markers {
         version,
