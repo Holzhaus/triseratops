@@ -96,18 +96,23 @@ pub fn parse_utf8(input: &[u8]) -> nom::IResult<&[u8], String> {
 }
 
 pub fn take_utf8(input: &[u8]) -> nom::IResult<&[u8], String> {
-    let (input, data) =
-        nom::branch::alt((nom::bytes::complete::tag(b"\0"), util::take_until_nullbyte))(&input)?;
-    if data.is_empty() {
-        return Err(nom::Err::Incomplete(nom::Needed::Unknown));
-    }
+    let (input, data) = util::take_until_nullbyte(&input)?;
     let (_, value) = parse_utf8(&data)?;
     let (input, _) = nom::bytes::complete::take(1usize)(input)?;
     Ok((input, value))
 }
 
-pub fn take_marker(input: &[u8]) -> nom::IResult<&[u8], Marker> {
+pub fn take_marker_name(input: &[u8]) -> nom::IResult<&[u8], String> {
+    let (input, _) = nom::combinator::not(nom::bytes::complete::tag(b"\0"))(input)?;
     let (input, name) = take_utf8(input)?;
+    if name.is_empty() {
+        return Err(nom::Err::Incomplete(nom::Needed::Unknown));
+    }
+    Ok((input, name))
+}
+
+pub fn take_marker(input: &[u8]) -> nom::IResult<&[u8], Marker> {
+    let (input, name) = take_marker_name(input)?;
     let (input, data) = nom::multi::length_data(nom::number::complete::be_u32)(input)?;
 
     let (_, marker) = match name.as_str() {
