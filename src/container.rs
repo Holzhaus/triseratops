@@ -22,6 +22,7 @@ pub struct Container {
 }
 
 impl Container {
+    /// Create an empty Serato tag container.
     pub fn new() -> Self {
         Self {
             analysis: None,
@@ -32,6 +33,8 @@ impl Container {
             overview: None,
         }
     }
+
+    /// Parse the `Serato Analysis` tag data.
     pub fn parse_analysis(&mut self, input: &[u8]) -> bool {
         let res = analysis::parse(input);
         let value = res.is_err();
@@ -39,6 +42,7 @@ impl Container {
         value
     }
 
+    /// Parse the `Serato AutoTags` tag data.
     pub fn parse_autotags(&mut self, input: &[u8]) -> bool {
         let res = autotags::parse(input);
         let value = res.is_err();
@@ -46,6 +50,7 @@ impl Container {
         value
     }
 
+    /// Parse the `Serato BeatGrid` tag data.
     pub fn parse_beatgrid(&mut self, input: &[u8]) -> bool {
         let res = beatgrid::parse(input);
         let value = res.is_err();
@@ -53,6 +58,7 @@ impl Container {
         value
     }
 
+    /// Parse the `Serato Markers_` tag data.
     pub fn parse_markers(&mut self, input: &[u8]) -> bool {
         let res = markers::parse(input);
         let value = res.is_err();
@@ -60,6 +66,7 @@ impl Container {
         value
     }
 
+    /// Parse the `Serato Markers2` tag data.
     pub fn parse_markers2(&mut self, input: &[u8]) -> bool {
         let res = markers2::parse(input);
         let value = res.is_err();
@@ -67,6 +74,7 @@ impl Container {
         value
     }
 
+    /// Parse the `Serato Overview` tag data.
     pub fn parse_overview(&mut self, input: &[u8]) -> bool {
         let res = overview::parse(input);
         let value = res.is_err();
