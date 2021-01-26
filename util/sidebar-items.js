@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["serato32_decode","These functions convert between a custom 4-byte format (that we'll call \"serato32\" for brevity) and 3-byte plaintext (both quint32). Serato's custom format inserts a single null bit after every 7 payload bits, starting from the rightmost bit."],["take_until_nullbyte",""],["version_info",""]],"struct":[["Version",""]]});

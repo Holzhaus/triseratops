@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["EntryType",""]],"fn":[["entry_type",""],["has_position",""],["marker",""],["parse",""],["position",""],["serato32_color",""],["take_bool",""]],"struct":[["Color",""],["Marker",""],["Markers",""]]});

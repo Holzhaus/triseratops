@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["Marker",""]],"fn":[["decode_base64_chunks",""],["parse",""],["parse_markers2_content",""],["parse_utf8",""],["take_base64_chunk",""],["take_base64_chunks",""],["take_marker",""],["take_utf8",""]],"struct":[["Markers2",""],["Markers2Content",""],["UnknownMarker",""]]});
