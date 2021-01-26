@@ -10,6 +10,7 @@ pub enum Marker {
     Unknown(UnknownMarker),
     Color(TrackColorMarker),
     BPMLock(BPMLockMarker),
+    Cue(CueMarker),
 }
 
 #[derive(Debug)]
@@ -26,6 +27,14 @@ pub struct TrackColorMarker {
 #[derive(Debug)]
 pub struct BPMLockMarker {
     pub is_locked: bool,
+}
+
+#[derive(Debug)]
+pub struct CueMarker {
+    pub index: u8,
+    pub position_millis: u32,
+    pub color: util::Color,
+    pub label: String,
 }
 
 #[derive(Debug)]
@@ -118,6 +127,7 @@ pub fn take_marker(input: &[u8]) -> nom::IResult<&[u8], Marker> {
     let (_, marker) = match name.as_str() {
         "BPMLOCK" => nom::combinator::all_consuming(take_bpmlock_marker)(data)?,
         "COLOR" => nom::combinator::all_consuming(take_color_marker)(data)?,
+        "CUE" => nom::combinator::all_consuming(take_cue_marker)(data)?,
         _ => (
             input,
             Marker::Unknown(UnknownMarker {
@@ -147,6 +157,23 @@ pub fn take_color_marker(input: &[u8]) -> nom::IResult<&[u8], Marker> {
     let (input, color) = util::take_color(input)?;
     let marker = TrackColorMarker { color };
     Ok((input, Marker::Color(marker)))
+}
+
+pub fn take_cue_marker(input: &[u8]) -> nom::IResult<&[u8], Marker> {
+    let (input, _) = nom::bytes::complete::tag(b"\x00")(input)?;
+    let (input, index) = nom::number::complete::u8(input)?;
+    let (input, position_millis) = nom::number::complete::be_u32(input)?;
+    let (input, _) = nom::bytes::complete::tag(b"\x00")(input)?;
+    let (input, color) = util::take_color(input)?;
+    let (input, _) = nom::bytes::complete::tag(b"\x00\x00")(input)?;
+    let (input, label) = take_utf8(input)?;
+    let marker = CueMarker {
+        index,
+        position_millis,
+        color,
+        label,
+    };
+    Ok((input, Marker::Cue(marker)))
 }
 
 pub fn parse_markers2_content(input: &[u8]) -> nom::IResult<&[u8], Markers2Content> {
