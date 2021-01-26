@@ -11,6 +11,7 @@ pub enum Marker {
     Color(TrackColorMarker),
     BPMLock(BPMLockMarker),
     Cue(CueMarker),
+    Loop(LoopMarker),
 }
 
 #[derive(Debug)]
@@ -34,6 +35,16 @@ pub struct CueMarker {
     pub index: u8,
     pub position_millis: u32,
     pub color: util::Color,
+    pub label: String,
+}
+
+#[derive(Debug)]
+pub struct LoopMarker {
+    pub index: u8,
+    pub start_position_millis: u32,
+    pub end_position_millis: u32,
+    pub color: util::Color,
+    pub is_locked: bool,
     pub label: String,
 }
 
@@ -128,6 +139,7 @@ pub fn take_marker(input: &[u8]) -> nom::IResult<&[u8], Marker> {
         "BPMLOCK" => nom::combinator::all_consuming(take_bpmlock_marker)(data)?,
         "COLOR" => nom::combinator::all_consuming(take_color_marker)(data)?,
         "CUE" => nom::combinator::all_consuming(take_cue_marker)(data)?,
+        "LOOP" => nom::combinator::all_consuming(take_loop_marker)(data)?,
         _ => (
             input,
             Marker::Unknown(UnknownMarker {
@@ -174,6 +186,28 @@ pub fn take_cue_marker(input: &[u8]) -> nom::IResult<&[u8], Marker> {
         label,
     };
     Ok((input, Marker::Cue(marker)))
+}
+
+pub fn take_loop_marker(input: &[u8]) -> nom::IResult<&[u8], Marker> {
+    let (input, _) = nom::bytes::complete::tag(b"\x00")(input)?;
+    let (input, index) = nom::number::complete::u8(input)?;
+    let (input, start_position_millis) = nom::number::complete::be_u32(input)?;
+    let (input, end_position_millis) = nom::number::complete::be_u32(input)?;
+    let (input, _) = nom::bytes::complete::tag(b"\xff\xff\xff\xff")(input)?;
+    let (input, _) = nom::bytes::complete::tag(b"\x00")(input)?;
+    let (input, color) = util::take_color(input)?;
+    let (input, _) = nom::bytes::complete::tag(b"\x00")(input)?;
+    let (input, is_locked) = take_bool(input)?;
+    let (input, label) = take_utf8(input)?;
+    let marker = LoopMarker {
+        index,
+        start_position_millis,
+        end_position_millis,
+        color,
+        is_locked,
+        label,
+    };
+    Ok((input, Marker::Loop(marker)))
 }
 
 pub fn parse_markers2_content(input: &[u8]) -> nom::IResult<&[u8], Markers2Content> {
