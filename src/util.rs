@@ -122,10 +122,11 @@ pub mod serato32 {
 
     /// Returns a 3-byte tuple decoded from the first 4 input bytes.
     pub fn take(input: &[u8]) -> IResult<&[u8], (u8, u8, u8)> {
-        let (input, byte1) = u8(input)?;
-        let (input, byte2) = u8(input)?;
-        let (input, byte3) = u8(input)?;
-        let (input, byte4) = u8(input)?;
+        let (input, bytes) = nom::bytes::complete::take(4usize)(input)?;
+        let (bytes, byte1) = u8(bytes)?;
+        let (bytes, byte2) = u8(bytes)?;
+        let (bytes, byte3) = u8(bytes)?;
+        let (_, byte4) = nom::combinator::all_consuming(u8)(bytes)?;
         let value = decode(byte1, byte2, byte3, byte4);
         Ok((input, value))
     }
