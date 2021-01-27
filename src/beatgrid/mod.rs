@@ -1,8 +1,6 @@
 //! The `Serato BeatGrid` tag stores the beatgrid markers.
 
 use crate::util;
-use nom::length_count;
-use nom::named;
 
 /// Represents the terminal beatgrid marker in the `Serato BeatGrid` tag.
 ///
@@ -19,7 +17,6 @@ pub struct TerminalMarker {
 /// Represents a non-terminal beatgrid marker in the `Serato BeatGrid` tag.
 ///
 /// All beatgrid markers before the last one are non-terminal beatgrid markers.
-
 #[derive(Debug)]
 pub struct NonTerminalMarker {
     /// The position in seconds.
@@ -41,17 +38,28 @@ pub struct Beatgrid {
     pub footer: u8,
 }
 
-fn non_terminal_marker_count(input: &[u8]) -> nom::IResult<&[u8], u32> {
-    let (input, count) = nom::number::complete::be_u32(input)?;
+/// Returns a `u32` parsed from the input slice, decremented by 1.
+///
+/// This is necessary to get the number of *non*-terminal beatgrid markers (in contrast to *all* markers).
+///
+/// # Example
+/// ```
+/// use serato_tags::beatgrid::take_non_terminal_marker_count;
+/// use nom::Err;
+/// use nom::error::{Error, ErrorKind};
+///
+/// assert_eq!(take_non_terminal_marker_count(&[0x00, 0x00, 0x00, 0x01]), Ok((&[][..], 0x00)));
+/// assert_eq!(take_non_terminal_marker_count(&[0x89, 0xAB, 0xCD, 0xEF, 0x12]), Ok((&[0x12][..], 0x89ABCDEE)));
+/// assert_eq!(take_non_terminal_marker_count(&[0x00, 0x00, 0x00, 0x00]), Err(nom::Err::Error(Error::new(&[0x00, 0x00, 0x00, 0x00][..], ErrorKind::Verify))));
+/// assert_eq!(take_non_terminal_marker_count(&[0xC0, 0xFF, 0xEE]), Err(nom::Err::Error(Error::new(&[0xC0, 0xFF, 0xEE][..], ErrorKind::Eof))));
+/// ```
+pub fn take_non_terminal_marker_count(input: &[u8]) -> nom::IResult<&[u8], u32> {
+    let (input, count) = nom::combinator::verify(nom::number::complete::be_u32, |x: &u32| x > &0u32)(input)?;
     Ok((input, count - 1))
 }
 
-named!(
-    take_non_terminal_markers<Vec<NonTerminalMarker>>,
-    length_count!(non_terminal_marker_count, non_terminal_marker)
-);
-
-pub fn non_terminal_marker(input: &[u8]) -> nom::IResult<&[u8], NonTerminalMarker> {
+/// Returns a non-terminal beatgrid marker parsed from the input slice.
+pub fn take_non_terminal_marker(input: &[u8]) -> nom::IResult<&[u8], NonTerminalMarker> {
     let (input, position) = nom::number::complete::be_f32(input)?;
     let (input, beats_till_next_marker) = nom::number::complete::be_u32(input)?;
     Ok((
@@ -63,7 +71,8 @@ pub fn non_terminal_marker(input: &[u8]) -> nom::IResult<&[u8], NonTerminalMarke
     ))
 }
 
-pub fn terminal_marker(input: &[u8]) -> nom::IResult<&[u8], TerminalMarker> {
+/// Returns a terminal beatgrid marker parsed from the input slice.
+fn take_terminal_marker(input: &[u8]) -> nom::IResult<&[u8], TerminalMarker> {
     let (input, position) = nom::number::complete::be_f32(input)?;
     let (input, bpm) = nom::number::complete::be_f32(input)?;
     Ok((input, TerminalMarker { position, bpm }))
@@ -71,8 +80,8 @@ pub fn terminal_marker(input: &[u8]) -> nom::IResult<&[u8], TerminalMarker> {
 
 pub fn parse(input: &[u8]) -> Result<Beatgrid, nom::Err<nom::error::Error<&[u8]>>> {
     let (input, version) = util::take_version(&input)?;
-    let (input, non_terminal_markers) = take_non_terminal_markers(input)?;
-    let (input, terminal_marker) = terminal_marker(input)?;
+    let (input, non_terminal_markers) = nom::multi::length_count(take_non_terminal_marker_count, take_non_terminal_marker)(input)?;
+    let (input, terminal_marker) = take_terminal_marker(input)?;
     let (_, footer) = nom::combinator::all_consuming(nom::number::complete::u8)(input)?;
 
     Ok(Beatgrid {
