@@ -5,10 +5,6 @@
 //! prefer information from `Serato Markers_` if it's present.
 
 use crate::util;
-use nom::length_count;
-use nom::named;
-use nom::number::complete::be_u32;
-use nom::tag;
 
 /// Represents a single marker in the `Serato Markers_` tag.
 #[derive(Debug)]
@@ -96,10 +92,6 @@ pub enum EntryType {
     LOOP,
 }
 
-named!(no_position, tag!(b"\x7f\x7f\x7f\x7f"));
-named!(unknown, tag!(b"\x00\x7f\x7f\x7f\x7f\x7f"));
-named!(take_markers<Vec<Marker>>, length_count!(be_u32, marker));
-
 /// Returns a bool parsed from the next input byte.
 ///
 /// This function returns `false` if the byte is `0x00`, else `true`.
@@ -183,7 +175,7 @@ pub fn take_position(input: &[u8]) -> nom::IResult<&[u8], Option<u32>> {
             Ok((input, Some(data)))
         }
         false => {
-            let (input, _) = no_position(input)?;
+            let (input, _) = nom::bytes::complete::tag(b"\x7f\x7f\x7f\x7f")(input)?;
             Ok((input, None))
         }
     }
@@ -211,10 +203,11 @@ pub fn take_entry_type(input: &[u8]) -> nom::IResult<&[u8], EntryType> {
     }
 }
 
-pub fn marker(input: &[u8]) -> nom::IResult<&[u8], Marker> {
+/// Returns a `Marker` parsed from the input slice.
+pub fn take_marker(input: &[u8]) -> nom::IResult<&[u8], Marker> {
     let (input, start_position_millis) = take_position(input)?;
     let (input, end_position_millis) = take_position(input)?;
-    let (input, _) = unknown(input)?;
+    let (input, _) = nom::bytes::complete::tag(b"\x00\x7F\x7F\x7F\x7F\x7F")(input)?;
     let (input, color) = util::serato32::take_color(input)?;
     let (input, entry_type) = take_entry_type(input)?;
     let (input, is_locked) = take_bool(input)?;
@@ -230,10 +223,10 @@ pub fn marker(input: &[u8]) -> nom::IResult<&[u8], Marker> {
     ))
 }
 
+/// Parses the data into a `Markers` struct, consuming the whole input slice.
 pub fn parse(input: &[u8]) -> Result<Markers, nom::Err<nom::error::Error<&[u8]>>> {
     let (input, version) = util::take_version(&input)?;
-    let (input, entries) = take_markers(input)?;
-    //let (_, track_color) = util::serato32::take_color(input)?;
+    let (input, entries) = nom::multi::length_count(nom::number::complete::be_u32, take_marker)(input)?;
     let (_, track_color) = nom::combinator::all_consuming(util::serato32::take_color)(input)?;
 
     Ok(Markers {
