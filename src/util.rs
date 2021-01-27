@@ -121,6 +121,17 @@ pub mod serato32 {
     }
 
     /// Returns a 3-byte tuple decoded from the first 4 input bytes.
+    ///
+    /// # Example
+    /// ```
+    /// use serato_tags::util::serato32::take;
+    /// use nom::Err;
+    /// use nom::error::{Error, ErrorKind};
+    ///
+    /// assert_eq!(take(&[0x00, 0x00, 0x01, 0x4C]), Ok((&[][..], (0x00, 0x00, 0xCC))));
+    /// assert_eq!(take(&[0x00, 0x00, 0x01, 0x4C, 0x7F]), Ok((&[0x07F][..], (0x00, 0x00, 0xCC))));
+    /// assert_eq!(take(&[0x00, 0x00, 0x01]), Err(Err::Error(Error::new(&[0x00, 0x00, 0x01][..], ErrorKind::Eof))));
+    /// ```
     pub fn take(input: &[u8]) -> IResult<&[u8], (u8, u8, u8)> {
         let (input, bytes) = nom::bytes::complete::take(4usize)(input)?;
         let (bytes, byte1) = u8(bytes)?;
@@ -132,6 +143,18 @@ pub mod serato32 {
     }
 
     /// Returns an `Color` decoded from the first 4 input bytes.
+    ///
+    /// # Example
+    /// ```
+    /// use serato_tags::util::Color;
+    /// use serato_tags::util::serato32::take_color;
+    /// use nom::Err;
+    /// use nom::error::{Error, ErrorKind};
+    ///
+    /// assert_eq!(take_color(&[0x00, 0x00, 0x01, 0x4C]), Ok((&[][..], Color { red: 0x00, green: 0x00, blue: 0xCC})));
+    /// assert_eq!(take_color(&[0x00, 0x00, 0x01, 0x4C, 0x7F]), Ok((&[0x07F][..], Color { red: 0x00, green: 0x00, blue: 0xCC})));
+    /// assert_eq!(take_color(&[0x00, 0x00, 0x01]), Err(Err::Error(Error::new(&[0x00, 0x00, 0x01][..], ErrorKind::Eof))));
+    /// ```
     pub fn take_color(input: &[u8]) -> nom::IResult<&[u8], Color> {
         let (input, (red, green, blue)) = take(input)?;
         Ok((input, Color { red, green, blue }))
@@ -140,6 +163,17 @@ pub mod serato32 {
     /// Returns an `u32` decoded from the first 4 input bytes.
     ///
     /// The first 8 bits are always 0.
+    ///
+    /// # Example
+    /// ```
+    /// use serato_tags::util::serato32::take_u32;
+    /// use nom::Err;
+    /// use nom::error::{Error, ErrorKind};
+    ///
+    /// assert_eq!(take_u32(&[0x00, 0x00, 0x01, 0x4C]), Ok((&[][..], 0x0000CC)));
+    /// assert_eq!(take_u32(&[0x00, 0x00, 0x01, 0x4C, 0x7F]), Ok((&[0x07F][..], 0x0000CC)));
+    /// assert_eq!(take_u32(&[0x00, 0x00, 0x01]), Err(Err::Error(Error::new(&[0x00, 0x00, 0x01][..], ErrorKind::Eof))));
+    /// ```
     pub fn take_u32(input: &[u8]) -> nom::IResult<&[u8], u32> {
         let (input, (a, b, c)) = take(input)?;
         let value = (a as u32) << 16 | (b as u32) << 8 | c as u32;
