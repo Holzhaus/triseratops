@@ -142,7 +142,7 @@ pub mod serato32 {
         Ok((input, value))
     }
 
-    /// Returns an `Color` decoded from the first 4 input bytes.
+    /// Returns a `Color` decoded from the first 4 input bytes.
     ///
     /// # Example
     /// ```
@@ -160,7 +160,7 @@ pub mod serato32 {
         Ok((input, Color { red, green, blue }))
     }
 
-    /// Returns an `u32` decoded from the first 4 input bytes.
+    /// Returns a `u32` decoded from the first 4 input bytes.
     ///
     /// The first 8 bits are always 0.
     ///
