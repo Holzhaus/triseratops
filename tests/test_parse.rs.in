@@ -1,0 +1,7 @@
+#[test]
+fn {name}() {{
+    println!("Parsing file: {filepath}");
+    let input = include_bytes!("{filepath}");
+    let res = serato_tags::{tag}::parse(&input[..]);
+    assert!(res.is_ok());
+}}
