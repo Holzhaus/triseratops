@@ -242,7 +242,15 @@ pub fn decode_base64_chunks(
             return Err(nom::Err::Incomplete(nom::Needed::Unknown));
         }
         let mut buf = [0; 54];
-        let num_bytes = base64::decode_config_slice(&chunk, base64::STANDARD, &mut buf).unwrap();
+        // TODO: Add proper error handling here
+        let mut res = base64::decode_config_slice(&chunk, base64::STANDARD, &mut buf);
+        if let Err(base64::DecodeError::InvalidLength) = res {
+            let mut v = Vec::new();
+            v.extend_from_slice(&chunk);
+            v.push(b'A');
+            res = base64::decode_config_slice(v.as_slice(), base64::STANDARD, &mut buf);
+        }
+        let num_bytes = res.unwrap();
         decoded_data.extend_from_slice(&buf[..num_bytes]);
     }
 
