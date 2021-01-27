@@ -100,6 +100,21 @@ named!(no_position, tag!(b"\x7f\x7f\x7f\x7f"));
 named!(unknown, tag!(b"\x00\x7f\x7f\x7f\x7f\x7f"));
 named!(take_markers<Vec<Marker>>, length_count!(be_u32, marker));
 
+/// Returns a bool parsed from the next input byte.
+///
+/// This function returns `false` if the byte is `0x00`, else `true`.
+///
+/// # Example
+/// ```
+/// use serato_tags::markers::take_bool;
+/// use nom::Err;
+/// use nom::error::{Error, ErrorKind};
+///
+/// assert_eq!(take_bool(&[0x00]), Ok((&[][..], false)));
+/// assert_eq!(take_bool(&[0x01]), Ok((&[][..], true)));
+/// assert_eq!(take_bool(&[0xAB, 0x00, 0x01]), Err(nom::Err::Incomplete(nom::Needed::Unknown)));
+/// assert_eq!(take_bool(&[]), Err(Err::Error(Error::new(&[][..], ErrorKind::Eof))));
+/// ```
 pub fn take_bool(input: &[u8]) -> nom::IResult<&[u8], bool> {
     let (input, position_prefix) = nom::number::complete::u8(input)?;
     match position_prefix {
@@ -109,17 +124,55 @@ pub fn take_bool(input: &[u8]) -> nom::IResult<&[u8], bool> {
     }
 }
 
-pub fn has_position(input: &[u8]) -> nom::IResult<&[u8], bool> {
+/// Returns a bool parsed from the next input byte that indicates if the following marker position
+/// is set.
+///
+/// Do not use `take_bool` for this, because the value mapping is different:
+///
+/// | Byte   | `bool`  | Description
+/// | ------ | ------- | ----------------------------------------------------------------
+/// | `0x00` | `true`  | The following 4 bytes contain the position in `serato32` format.
+/// | `0x7F` | `false` | The position is not set and following 4 bytes be `0x7f7f7f7f`.
+/// | Other  | `_`     | Invalid data, throws an error.
+///
+///
+/// # Example
+/// ```
+/// use serato_tags::markers::take_has_position;
+/// use nom::Err;
+/// use nom::error::{Error, ErrorKind};
+///
+/// assert_eq!(take_has_position(&[0x00]), Ok((&[][..], true)));
+/// assert_eq!(take_has_position(&[0x7F]), Ok((&[][..], false)));
+/// assert_eq!(take_has_position(&[0x00, 0x05]), Ok((&[0x05][..], true)));
+/// assert_eq!(take_has_position(&[0xAB, 0x00, 0x01]), Err(nom::Err::Incomplete(nom::Needed::Unknown)));
+/// assert_eq!(take_has_position(&[]), Err(Err::Error(Error::new(&[][..], ErrorKind::Eof))));
+/// ```
+pub fn take_has_position(input: &[u8]) -> nom::IResult<&[u8], bool> {
     let (input, position_prefix) = nom::number::complete::u8(input)?;
     match position_prefix {
         0x00 => Ok((input, true)),
-        0x7f => Ok((input, false)),
+        0x7F => Ok((input, false)),
         _ => Err(nom::Err::Incomplete(nom::Needed::Unknown)),
     }
 }
 
-pub fn position(input: &[u8]) -> nom::IResult<&[u8], Option<u32>> {
-    let (input, has_position) = has_position(input)?;
+/// Returns an `Option<u32>` which contains the position parsed from the next 5 input bytes.
+///
+/// Uses `take_has_position` internally to determine if the position is set, then either returns
+/// the position as `Some` or ensures the that "no position" contant is used and returns `None`.
+///
+/// # Example
+/// ```
+/// use serato_tags::markers::take_position;
+/// use nom::Err;
+/// use nom::error::{Error, ErrorKind};
+///
+/// assert_eq!(take_position(&[0x00, 0x00, 0x00, 0x00, 0x00]), Ok((&[][..], Some(0))));
+/// assert_eq!(take_position(&[0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x00]), Ok((&[0x00][..], None)));
+/// ```
+pub fn take_position(input: &[u8]) -> nom::IResult<&[u8], Option<u32>> {
+    let (input, has_position) = take_has_position(input)?;
 
     if input.len() < 4 {
         return Err(nom::Err::Incomplete(nom::Needed::Unknown));
@@ -136,7 +189,19 @@ pub fn position(input: &[u8]) -> nom::IResult<&[u8], Option<u32>> {
     }
 }
 
-pub fn entry_type(input: &[u8]) -> nom::IResult<&[u8], EntryType> {
+/// Returns the `EntryType` for the cue marker parsed from the next input byte.
+///
+/// # Example
+/// ```
+/// use serato_tags::markers::{EntryType, take_entry_type};
+/// use nom::Err;
+/// use nom::error::{Error, ErrorKind};
+///
+/// assert_eq!(take_entry_type(&[0x00]), Ok((&[][..], EntryType::INVALID)));
+/// assert_eq!(take_entry_type(&[0x03, 0x01]), Ok((&[0x01][..], EntryType::LOOP)));
+/// assert_eq!(take_entry_type(&[0xAB]), Err(nom::Err::Incomplete(nom::Needed::Unknown)));
+/// ```
+pub fn take_entry_type(input: &[u8]) -> nom::IResult<&[u8], EntryType> {
     let (input, position_prefix) = nom::number::complete::u8(input)?;
     match position_prefix {
         0x00 => Ok((input, EntryType::INVALID)),
@@ -147,11 +212,11 @@ pub fn entry_type(input: &[u8]) -> nom::IResult<&[u8], EntryType> {
 }
 
 pub fn marker(input: &[u8]) -> nom::IResult<&[u8], Marker> {
-    let (input, start_position_millis) = position(input)?;
-    let (input, end_position_millis) = position(input)?;
+    let (input, start_position_millis) = take_position(input)?;
+    let (input, end_position_millis) = take_position(input)?;
     let (input, _) = unknown(input)?;
     let (input, color) = util::serato32::take_color(input)?;
-    let (input, entry_type) = entry_type(input)?;
+    let (input, entry_type) = take_entry_type(input)?;
     let (input, is_locked) = take_bool(input)?;
     Ok((
         input,
