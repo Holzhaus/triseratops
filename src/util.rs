@@ -14,21 +14,46 @@ pub struct Color {
 }
 
 /// Represents 2-Byte version value.
-#[derive(Debug)]
+#[derive(Debug, Eq, PartialEq)]
 pub struct Version {
     pub major: u8,
     pub minor: u8,
 }
 
 /// Returns a `Color` struct parsed from the first 3 input bytes.
+///
+/// # Example
+/// ```
+/// use serato_tags::util::Color;
+/// use serato_tags::util::take_color;
+/// use nom::Err;
+/// use nom::error::{Error, ErrorKind};
+///
+/// assert_eq!(take_color(&[0xFF, 0x00, 0x10]), Ok((&[][..], Color { red: 0xFF, green: 0x00, blue: 0x10})));
+/// assert_eq!(take_color(&[0x11, 0x22, 0x33, 0x44]), Ok((&[0x44][..], Color { red: 0x11, green: 0x22, blue: 0x33})));
+/// assert_eq!(take_color(&[0xAB, 0xCD]), Err(Err::Error(Error::new(&[0xAB, 0xCD][..], ErrorKind::Eof))));
+/// ```
 pub fn take_color(input: &[u8]) -> IResult<&[u8], Color> {
-    let (input, red) = nom::number::complete::u8(input)?;
-    let (input, green) = nom::number::complete::u8(input)?;
-    let (input, blue) = nom::number::complete::u8(input)?;
+    let (input, bytes) = nom::bytes::complete::take(3usize)(input)?;
+    let (bytes, red) = nom::number::complete::u8(bytes)?;
+    let (bytes, green) = nom::number::complete::u8(bytes)?;
+    let (_, blue) = nom::combinator::all_consuming(nom::number::complete::u8)(bytes)?;
     Ok((input, Color { red, green, blue }))
 }
 
 /// Returns a `Version` struct parsed from the first 2 input bytes.
+///
+/// # Example
+/// ```
+/// use serato_tags::util::Version;
+/// use serato_tags::util::take_version;
+/// use nom::Err;
+/// use nom::error::{Error, ErrorKind};
+///
+/// assert_eq!(take_version(&[0x02, 0x05]), Ok((&[][..], Version { major: 2, minor: 5 })));
+/// assert_eq!(take_version(&[0x01, 0x02, 0x03]), Ok((&[0x03][..], Version { major: 1, minor: 2 })));
+/// assert_eq!(take_version(&[0x0A]), Err(Err::Error(Error::new(&[0x0A][..], ErrorKind::Eof))));
+/// ```
 pub fn take_version(input: &[u8]) -> IResult<&[u8], Version> {
     let (input, version) = take(2usize)(input)?;
     Ok((
@@ -43,6 +68,17 @@ pub fn take_version(input: &[u8]) -> IResult<&[u8], Version> {
 const NULL: &[u8] = &[0x00];
 
 /// Returns the input slice until the first occurrence of a null byte.
+///
+/// # Example
+/// ```
+/// use serato_tags::util::take_until_nullbyte;
+/// use nom::Err;
+/// use nom::error::{Error, ErrorKind};
+///
+/// assert_eq!(take_until_nullbyte(&[0x41, 0x42, 0x00]), Ok((&[0x00][..], &[0x41, 0x42][..])));
+/// assert_eq!(take_until_nullbyte(&[0x01, 0x02, 0x00, 0xFF]), Ok((&[0x00, 0xFF][..], &[0x01, 0x02][..])));
+/// assert_eq!(take_until_nullbyte(&[0xAB, 0xCD]), Err(Err::Error(Error::new(&[0xAB, 0xCD][..], ErrorKind::TakeUntil))));
+/// ```
 pub fn take_until_nullbyte(input: &[u8]) -> IResult<&[u8], &[u8]> {
     take_until(NULL)(input)
 }
