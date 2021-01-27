@@ -47,22 +47,37 @@ pub fn take_until_nullbyte(input: &[u8]) -> IResult<&[u8], &[u8]> {
     take_until(NULL)(input)
 }
 
-/// These functions convert between a custom 4-byte format (that we'll call
-/// "serato32" for brevity) and 3-byte plaintext (both quint32).
-/// Serato's custom format inserts a single null bit after every 7 payload
-/// bits, starting from the rightmost bit.
+/// These functions convert between a custom 4-byte format (that we'll call `serato32` for brevity)
+/// and 3-byte plaintext (both `u32`). Serato's custom format inserts a single null bit after every 7
+/// payload bits, starting from the rightmost bit.
 ///
-/// More information can be found in the [format documentation](https://github.com/Holzhaus/serato-tags/blob/master/docs/serato_markers_.md#custom-serato32-binary-format).
+/// This format is used to encode the 3-byte RGB color values (track color, cue colors) and the cue
+/// positions and the `Serato Markers_` tag.
 ///
-/// # Example
+/// # Binary Format Details
+///
+/// ```text
+/// serato32     |     Byte1     |     Byte2     |     Byte3     |     Byte4     |
+///              | Nibb1 | Nibb2 | Nibb3 | Nibb4 | Nibb5 | Nibb6 | Nibb7 | Nibb8 |
+/// Bits         |A A A A B B B B C C C C D D D D E E E E F F F F G G G G H H H H|
+/// Ignored Bits |^ ^ ^ ^ ^       ^               ^               ^              |
+/// Plaintext    |||||||||||     Byte1       |      Byte2      |      Byte3      |
+///              |||||||||||  Nibb1  | Nibb2 |  Nibb3  | Nibb4 |  Nibb5  | Nibb6 |
+/// ```
+///
+/// More information can be found in the [format
+/// documentation](https://github.com/Holzhaus/serato-tags/blob/master/docs/serato_markers_.md#custom-serato32-binary-format).
+///
+/// ## Example
 ///
 /// |                  | Hex           | Binary
 /// | ---------------- | ------------- | ----------------------------------
 /// | 3-byte plaintext | `   00 00 cc` | `     000 0000000 0000001 1001100`
-/// | serato32 value   | `00 00 01 4c` | `00000000000000000000000101001100`
+/// | `serato32` value | `00 00 01 4c` | `00000000000000000000000101001100`
 /// |                  |
 /// | 3-byte plaintext | `   cc 88 00` | `     110 0110010 0010000 0000000`
-/// | serato32 value   | `06 32 10 00` | `00000110001100100001000000000000`
+/// | `serato32` value | `06 32 10 00` | `00000110001100100001000000000000`
+
 pub mod serato32 {
     use super::Color;
     use nom::number::complete::u8;
