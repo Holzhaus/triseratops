@@ -183,6 +183,42 @@
 <span id="180">180</span>
 <span id="181">181</span>
 <span id="182">182</span>
+<span id="183">183</span>
+<span id="184">184</span>
+<span id="185">185</span>
+<span id="186">186</span>
+<span id="187">187</span>
+<span id="188">188</span>
+<span id="189">189</span>
+<span id="190">190</span>
+<span id="191">191</span>
+<span id="192">192</span>
+<span id="193">193</span>
+<span id="194">194</span>
+<span id="195">195</span>
+<span id="196">196</span>
+<span id="197">197</span>
+<span id="198">198</span>
+<span id="199">199</span>
+<span id="200">200</span>
+<span id="201">201</span>
+<span id="202">202</span>
+<span id="203">203</span>
+<span id="204">204</span>
+<span id="205">205</span>
+<span id="206">206</span>
+<span id="207">207</span>
+<span id="208">208</span>
+<span id="209">209</span>
+<span id="210">210</span>
+<span id="211">211</span>
+<span id="212">212</span>
+<span id="213">213</span>
+<span id="214">214</span>
+<span id="215">215</span>
+<span id="216">216</span>
+<span id="217">217</span>
+<span id="218">218</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Various helper utilities for simplify parsing.</span>
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">nom</span>;
@@ -200,21 +236,46 @@
 }
 
 <span class="doccomment">/// Represents 2-Byte version value.</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Version</span> {
     <span class="kw">pub</span> <span class="ident">major</span>: <span class="ident">u8</span>,
     <span class="kw">pub</span> <span class="ident">minor</span>: <span class="ident">u8</span>,
 }
 
 <span class="doccomment">/// Returns a `Color` struct parsed from the first 3 input bytes.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// # Example</span>
+<span class="doccomment">/// ```</span>
+<span class="doccomment">/// use serato_tags::util::Color;</span>
+<span class="doccomment">/// use serato_tags::util::take_color;</span>
+<span class="doccomment">/// use nom::Err;</span>
+<span class="doccomment">/// use nom::error::{Error, ErrorKind};</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// assert_eq!(take_color(&amp;[0xFF, 0x00, 0x10]), Ok((&amp;[][..], Color { red: 0xFF, green: 0x00, blue: 0x10})));</span>
+<span class="doccomment">/// assert_eq!(take_color(&amp;[0x11, 0x22, 0x33, 0x44]), Ok((&amp;[0x44][..], Color { red: 0x11, green: 0x22, blue: 0x33})));</span>
+<span class="doccomment">/// assert_eq!(take_color(&amp;[0xAB, 0xCD]), Err(Err::Error(Error::new(&amp;[0xAB, 0xCD][..], ErrorKind::Eof))));</span>
+<span class="doccomment">/// ```</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">take_color</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">IResult</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">Color</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">red</span>) <span class="op">=</span> <span class="ident">nom</span>::<span class="ident">number</span>::<span class="ident">complete</span>::<span class="ident">u8</span>(<span class="ident">input</span>)<span class="question-mark">?</span>;
-    <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">green</span>) <span class="op">=</span> <span class="ident">nom</span>::<span class="ident">number</span>::<span class="ident">complete</span>::<span class="ident">u8</span>(<span class="ident">input</span>)<span class="question-mark">?</span>;
-    <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">blue</span>) <span class="op">=</span> <span class="ident">nom</span>::<span class="ident">number</span>::<span class="ident">complete</span>::<span class="ident">u8</span>(<span class="ident">input</span>)<span class="question-mark">?</span>;
+    <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">bytes</span>) <span class="op">=</span> <span class="ident">nom</span>::<span class="ident">bytes</span>::<span class="ident">complete</span>::<span class="ident">take</span>(<span class="number">3usize</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
+    <span class="kw">let</span> (<span class="ident">bytes</span>, <span class="ident">red</span>) <span class="op">=</span> <span class="ident">nom</span>::<span class="ident">number</span>::<span class="ident">complete</span>::<span class="ident">u8</span>(<span class="ident">bytes</span>)<span class="question-mark">?</span>;
+    <span class="kw">let</span> (<span class="ident">bytes</span>, <span class="ident">green</span>) <span class="op">=</span> <span class="ident">nom</span>::<span class="ident">number</span>::<span class="ident">complete</span>::<span class="ident">u8</span>(<span class="ident">bytes</span>)<span class="question-mark">?</span>;
+    <span class="kw">let</span> (<span class="kw">_</span>, <span class="ident">blue</span>) <span class="op">=</span> <span class="ident">nom</span>::<span class="ident">combinator</span>::<span class="ident">all_consuming</span>(<span class="ident">nom</span>::<span class="ident">number</span>::<span class="ident">complete</span>::<span class="ident">u8</span>)(<span class="ident">bytes</span>)<span class="question-mark">?</span>;
     <span class="prelude-val">Ok</span>((<span class="ident">input</span>, <span class="ident">Color</span> { <span class="ident">red</span>, <span class="ident">green</span>, <span class="ident">blue</span> }))
 }
 
 <span class="doccomment">/// Returns a `Version` struct parsed from the first 2 input bytes.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// # Example</span>
+<span class="doccomment">/// ```</span>
+<span class="doccomment">/// use serato_tags::util::Version;</span>
+<span class="doccomment">/// use serato_tags::util::take_version;</span>
+<span class="doccomment">/// use nom::Err;</span>
+<span class="doccomment">/// use nom::error::{Error, ErrorKind};</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// assert_eq!(take_version(&amp;[0x02, 0x05]), Ok((&amp;[][..], Version { major: 2, minor: 5 })));</span>
+<span class="doccomment">/// assert_eq!(take_version(&amp;[0x01, 0x02, 0x03]), Ok((&amp;[0x03][..], Version { major: 1, minor: 2 })));</span>
+<span class="doccomment">/// assert_eq!(take_version(&amp;[0x0A]), Err(Err::Error(Error::new(&amp;[0x0A][..], ErrorKind::Eof))));</span>
+<span class="doccomment">/// ```</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">take_version</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">IResult</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">Version</span><span class="op">&gt;</span> {
     <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">version</span>) <span class="op">=</span> <span class="ident">take</span>(<span class="number">2usize</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
     <span class="prelude-val">Ok</span>((
@@ -229,6 +290,17 @@
 <span class="kw">const</span> <span class="ident">NULL</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>] <span class="op">=</span> <span class="kw-2">&amp;</span>[<span class="number">0x00</span>];
 
 <span class="doccomment">/// Returns the input slice until the first occurrence of a null byte.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// # Example</span>
+<span class="doccomment">/// ```</span>
+<span class="doccomment">/// use serato_tags::util::take_until_nullbyte;</span>
+<span class="doccomment">/// use nom::Err;</span>
+<span class="doccomment">/// use nom::error::{Error, ErrorKind};</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// assert_eq!(take_until_nullbyte(&amp;[0x41, 0x42, 0x00]), Ok((&amp;[0x00][..], &amp;[0x41, 0x42][..])));</span>
+<span class="doccomment">/// assert_eq!(take_until_nullbyte(&amp;[0x01, 0x02, 0x00, 0xFF]), Ok((&amp;[0x00, 0xFF][..], &amp;[0x01, 0x02][..])));</span>
+<span class="doccomment">/// assert_eq!(take_until_nullbyte(&amp;[0xAB, 0xCD]), Err(Err::Error(Error::new(&amp;[0xAB, 0xCD][..], ErrorKind::TakeUntil))));</span>
+<span class="doccomment">/// ```</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">take_until_nullbyte</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">IResult</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]<span class="op">&gt;</span> {
     <span class="ident">take_until</span>(<span class="ident">NULL</span>)(<span class="ident">input</span>)
 }
@@ -328,7 +400,7 @@
         <span class="prelude-val">Ok</span>((<span class="ident">input</span>, <span class="ident">value</span>))
     }
 
-    <span class="doccomment">/// Returns an `Color` decoded from the first 4 input bytes.</span>
+    <span class="doccomment">/// Returns a `Color` decoded from the first 4 input bytes.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Example</span>
     <span class="doccomment">/// ```</span>
@@ -346,7 +418,7 @@
         <span class="prelude-val">Ok</span>((<span class="ident">input</span>, <span class="ident">Color</span> { <span class="ident">red</span>, <span class="ident">green</span>, <span class="ident">blue</span> }))
     }
 
-    <span class="doccomment">/// Returns an `u32` decoded from the first 4 input bytes.</span>
+    <span class="doccomment">/// Returns a `u32` decoded from the first 4 input bytes.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// The first 8 bits are always 0.</span>
     <span class="doccomment">///</span>
