@@ -6,3 +6,4 @@ pub mod markers;
 pub mod markers2;
 pub mod overview;
 pub mod util;
+pub mod error;

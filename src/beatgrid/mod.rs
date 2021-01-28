@@ -1,6 +1,7 @@
 //! The `Serato BeatGrid` tag stores the beatgrid markers.
 
 use crate::util;
+use crate::error::Error;
 
 /// Represents the terminal beatgrid marker in the `Serato BeatGrid` tag.
 ///
@@ -78,16 +79,26 @@ fn take_terminal_marker(input: &[u8]) -> nom::IResult<&[u8], TerminalMarker> {
     Ok((input, TerminalMarker { position, bpm }))
 }
 
-pub fn parse(input: &[u8]) -> Result<Beatgrid, nom::Err<nom::error::Error<&[u8]>>> {
+fn take_beatgrid(input: &[u8]) -> nom::IResult<&[u8], Beatgrid> {
     let (input, version) = util::take_version(&input)?;
     let (input, non_terminal_markers) = nom::multi::length_count(take_non_terminal_marker_count, take_non_terminal_marker)(input)?;
     let (input, terminal_marker) = take_terminal_marker(input)?;
-    let (_, footer) = nom::combinator::all_consuming(nom::number::complete::u8)(input)?;
+    let (input, footer) = nom::number::complete::u8(input)?;
 
-    Ok(Beatgrid {
+    let beatgrid = Beatgrid {
         version,
         non_terminal_markers,
         terminal_marker,
         footer,
-    })
+    };
+    Ok((input, beatgrid))
+}
+
+pub fn parse(input: &[u8]) -> Result<Beatgrid, Error> {
+    match nom::combinator::all_consuming(take_beatgrid)(input) {
+        Ok((_, beatgrid)) => Ok(beatgrid),
+        Err(_) => {
+            Err(Error::ParseError)
+        }
+    }
 }

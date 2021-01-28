@@ -5,6 +5,7 @@
 //! prefer information from `Serato Markers_` if it's present.
 
 use crate::util;
+use crate::error::Error;
 
 /// Represents a single marker in the `Serato Markers_` tag.
 #[derive(Debug)]
@@ -224,14 +225,24 @@ pub fn take_marker(input: &[u8]) -> nom::IResult<&[u8], Marker> {
 }
 
 /// Parses the data into a `Markers` struct, consuming the whole input slice.
-pub fn parse(input: &[u8]) -> Result<Markers, nom::Err<nom::error::Error<&[u8]>>> {
+pub fn take_markers(input: &[u8]) -> nom::IResult<&[u8], Markers> {
     let (input, version) = util::take_version(&input)?;
     let (input, entries) = nom::multi::length_count(nom::number::complete::be_u32, take_marker)(input)?;
-    let (_, track_color) = nom::combinator::all_consuming(util::serato32::take_color)(input)?;
+    let (input, track_color) = nom::combinator::all_consuming(util::serato32::take_color)(input)?;
 
-    Ok(Markers {
+    let markers = Markers {
         version,
         entries,
         track_color,
-    })
+    };
+    Ok((input, markers))
+}
+
+pub fn parse(input: &[u8]) -> Result<Markers, Error> {
+    match nom::combinator::all_consuming(take_markers)(input) {
+        Ok((_, autotags)) => Ok(autotags),
+        Err(_) => {
+            Err(Error::ParseError)
+        }
+    }
 }

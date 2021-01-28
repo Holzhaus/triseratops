@@ -3,6 +3,7 @@
 //! The overview data consists of multiple chunks of 16 bytes.
 
 use crate::util;
+use crate::error::Error;
 
 /// Represents the `Serato Overview` tag.
 #[derive(Debug)]
@@ -38,9 +39,19 @@ pub fn take_chunks(input: &[u8]) -> nom::IResult<&[u8], Vec<Vec<u8>>> {
     nom::multi::many1(take_chunk)(input)
 }
 
-pub fn parse(input: &[u8]) -> Result<Overview, nom::Err<nom::error::Error<&[u8]>>> {
+pub fn take_overview(input: &[u8]) -> nom::IResult<&[u8], Overview> {
     let (input, version) = util::take_version(&input)?;
-    let (_, data) = nom::combinator::all_consuming(take_chunks)(input)?;
+    let (input, data) = take_chunks(input)?;
 
-    Ok(Overview { version, data })
+    let overview = Overview { version, data };
+    Ok((input, overview))
+}
+
+pub fn parse(input: &[u8]) -> Result<Overview, Error> {
+    match nom::combinator::all_consuming(take_overview)(input) {
+        Ok((_, overview)) => Ok(overview),
+        Err(_) => {
+            Err(Error::ParseError)
+        }
+    }
 }

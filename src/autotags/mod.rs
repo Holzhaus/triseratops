@@ -1,6 +1,7 @@
 //! The `Serato Autotags` tag stores BPM and Gain values.
 
 use crate::util;
+use crate::error::Error;
 
 /// Represents the  `Serato AutoTags` tag.
 #[derive(Debug)]
@@ -34,16 +35,28 @@ pub fn take_double_str(input: &[u8]) -> nom::IResult<&[u8], f64> {
     Ok((input, num))
 }
 
-pub fn parse(input: &[u8]) -> Result<Autotags, nom::Err<nom::error::Error<&[u8]>>> {
+
+pub fn take_autotags(input: &[u8]) -> nom::IResult<&[u8], Autotags> {
     let (input, version) = util::take_version(input).unwrap();
     let (input, bpm) = take_double_str(input)?;
     let (input, auto_gain) = take_double_str(input)?;
-    let (_, gain_db) = nom::combinator::all_consuming(take_double_str)(input)?;
+    let (input, gain_db) = take_double_str(input)?;
 
-    Ok(Autotags {
+    let autotags =Autotags {
         version,
         bpm,
         auto_gain,
         gain_db,
-    })
+    };
+
+    Ok((input, autotags))
+}
+
+pub fn parse(input: &[u8]) -> Result<Autotags, Error> {
+    match nom::combinator::all_consuming(take_autotags)(input) {
+        Ok((_, autotags)) => Ok(autotags),
+        Err(_) => {
+            Err(Error::ParseError)
+        }
+    }
 }

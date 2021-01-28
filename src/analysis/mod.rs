@@ -3,6 +3,7 @@
 //! This is probably the Serato Version number that performed the analysis.
 
 use crate::util;
+use crate::error::Error;
 
 /// Represents the  `Serato Analysis` tag.
 #[derive(Debug)]
@@ -11,9 +12,19 @@ pub struct Analysis {
     pub version: util::Version,
 }
 
-pub fn parse(input: &[u8]) -> Result<Analysis, nom::Err<nom::error::Error<&[u8]>>> {
-    match nom::combinator::all_consuming(util::take_version)(input) {
-        Ok((_, version)) => Ok(Analysis { version }),
-        Err(e) => Err(e),
+pub fn take_analysis(input: &[u8]) -> nom::IResult<&[u8], Analysis> {
+    let (input, version) = util::take_version(input)?;
+    let analysis = Analysis { version };
+
+    Ok((input, analysis))
+}
+
+pub fn parse(input: &[u8]) -> Result<Analysis, Error> {
+    match nom::combinator::all_consuming(take_analysis)(input) {
+        Ok((_, analysis)) => Ok(analysis),
+        Err(e) => {
+            println!("{:?}", e);
+            Err(Error::ParseError)
+        }
     }
 }

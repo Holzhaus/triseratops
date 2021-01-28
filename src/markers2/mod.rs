@@ -7,6 +7,7 @@
 //! The minimum length of this tag seems to be 470 bytes, and shorter contents are padded with null bytes.
 
 use crate::util;
+use crate::error::Error;
 use nom::alt;
 use nom::multi::many0;
 use nom::named;
@@ -426,20 +427,35 @@ pub fn parse_markers2_content(input: &[u8]) -> nom::IResult<&[u8], Markers2Conte
     Ok((input, Markers2Content { version, markers }))
 }
 
-pub fn parse(input: &[u8]) -> Result<Markers2, nom::Err<nom::error::Error<&[u8]>>> {
+fn take_nullbytes(input: &[u8]) -> nom::IResult<&[u8], &[u8]> {
+    nom::bytes::complete::take_while(|x| x == 0)(input)
+}
+
+pub fn take_markers2(input: &[u8]) -> nom::IResult<&[u8], Markers2> {
     let size = input.len();
     let (input, version) = util::take_version(&input)?;
-    let (_, base64_chunks) = take_base64_chunks(&input)?;
+    let (input, base64_chunks) = take_base64_chunks(&input)?;
+    let (input, _) = take_nullbytes(&input)?;
     let base64_decoded = decode_base64_chunks(base64_chunks)?;
     let markers2_result = parse_markers2_content(&base64_decoded);
     if markers2_result.is_err() {
         return Err(nom::Err::Incomplete(nom::Needed::Unknown));
     }
     let (_, content) = markers2_result.unwrap();
-
-    Ok(Markers2 {
+    let markers2 = Markers2 {
         version,
         size,
         content,
-    })
+    };
+    Ok((input, markers2))
+}
+
+pub fn parse(input: &[u8]) -> Result<Markers2, Error> {
+    match nom::combinator::all_consuming(take_markers2)(input) {
+        Ok((_, markers2)) => Ok(markers2),
+        Err(e) => {
+            println!("{:?}", e);
+            Err(Error::ParseError)
+        }
+    }
 }
