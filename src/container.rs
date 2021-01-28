@@ -7,6 +7,7 @@ use crate::markers;
 use crate::markers2;
 use crate::overview;
 use crate::util;
+use crate::error::Error;
 
 /// Provides a streamlined interface for retrieving Serato tag data.
 ///
@@ -35,51 +36,39 @@ impl Container {
     }
 
     /// Parse the `Serato Analysis` tag data.
-    pub fn parse_analysis(&mut self, input: &[u8]) -> bool {
-        let res = analysis::parse(input);
-        let value = res.is_err();
-        self.analysis = res.ok();
-        value
+    pub fn parse_analysis(&mut self, input: &[u8]) -> Result<(), Error> {
+        self.analysis = Some(analysis::parse(input)?);
+        Ok(())
     }
 
     /// Parse the `Serato AutoTags` tag data.
-    pub fn parse_autotags(&mut self, input: &[u8]) -> bool {
-        let res = autotags::parse(input);
-        let value = res.is_err();
-        self.autotags = res.ok();
-        value
+    pub fn parse_autotags(&mut self, input: &[u8]) -> Result<(), Error> {
+        self.autotags = Some(autotags::parse(input)?);
+        Ok(())
     }
 
     /// Parse the `Serato BeatGrid` tag data.
-    pub fn parse_beatgrid(&mut self, input: &[u8]) -> bool {
-        let res = beatgrid::parse(input);
-        let value = res.is_err();
-        self.beatgrid = res.ok();
-        value
+    pub fn parse_beatgrid(&mut self, input: &[u8]) -> Result<(), Error> {
+        self.beatgrid = Some(beatgrid::parse(input)?);
+        Ok(())
     }
 
     /// Parse the `Serato Markers_` tag data.
-    pub fn parse_markers(&mut self, input: &[u8]) -> bool {
-        let res = markers::parse(input);
-        let value = res.is_err();
-        self.markers = res.ok();
-        value
+    pub fn parse_markers(&mut self, input: &[u8]) -> Result<(), Error> {
+        self.markers = Some(markers::parse(input)?);
+        Ok(())
     }
 
     /// Parse the `Serato Markers2` tag data.
-    pub fn parse_markers2(&mut self, input: &[u8]) -> bool {
-        let res = markers2::parse(input);
-        let value = res.is_err();
-        self.markers2 = res.ok();
-        value
+    pub fn parse_markers2(&mut self, input: &[u8]) -> Result<(), Error> {
+        self.markers2 = Some(markers2::parse(input)?);
+        Ok(())
     }
 
     /// Parse the `Serato Overview` tag data.
-    pub fn parse_overview(&mut self, input: &[u8]) -> bool {
-        let res = overview::parse(input);
-        let value = res.is_err();
-        self.overview = res.ok();
-        value
+    pub fn parse_overview(&mut self, input: &[u8]) -> Result<(), Error> {
+        self.overview = Some(overview::parse(input)?);
+        Ok(())
     }
 
     /// Returns the auto_gain value from the `Serato Autotags` tag.

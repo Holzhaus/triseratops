@@ -17,7 +17,7 @@ fn read_str(reader: &mut dyn BufRead) -> Result<String, Error> {
     Ok(s.unwrap().to_string())
 }
 
-fn main() {
+fn main() -> Result<(), serato_tags::error::Error> {
     let args: Vec<String> = env::args().collect();
     let filename = &args[1];
 
@@ -51,32 +51,32 @@ fn main() {
         println!("  Data: {} bytes", data.len());
         match &content_desc[..] {
             "Serato Analysis" => {
-                container.parse_analysis(&data);
+                container.parse_analysis(&data)?;
                 let output = format!("{:#?}", serato_tags::analysis::parse(&data).unwrap());
                 println!("{}", textwrap::indent(&output, "    "));
             }
             "Serato Autotags" => {
-                container.parse_autotags(&data);
+                container.parse_autotags(&data)?;
                 let output = format!("{:#?}", serato_tags::autotags::parse(&data).unwrap());
                 println!("{}", textwrap::indent(&output, "    "));
             }
             "Serato BeatGrid" => {
-                container.parse_beatgrid(&data);
+                container.parse_beatgrid(&data)?;
                 let output = format!("{:#?}", serato_tags::beatgrid::parse(&data).unwrap());
                 println!("{}", textwrap::indent(&output, "    "));
             }
             "Serato Markers_" => {
-                container.parse_markers(&data);
+                container.parse_markers(&data)?;
                 let output = format!("{:#?}", serato_tags::markers::parse(&data).unwrap());
                 println!("{}", textwrap::indent(&output, "    "));
             }
             "Serato Markers2" => {
-                container.parse_markers2(&data);
+                container.parse_markers2(&data)?;
                 let output = format!("{:#?}", serato_tags::markers2::parse(&data).unwrap());
                 println!("{}", textwrap::indent(&output, "    "));
             }
             "Serato Overview" => {
-                container.parse_overview(&data);
+                container.parse_overview(&data)?;
                 let output = format!("{:?}", serato_tags::overview::parse(&data).unwrap());
                 println!("{}", textwrap::indent(&output, "    "));
             }
@@ -105,4 +105,6 @@ fn main() {
     println!("  BPM Locked");
     let output = format!("{:?}", container.bpm_locked());
     println!("{}", textwrap::indent(&output, "    "));
+
+    Ok(())
 }
