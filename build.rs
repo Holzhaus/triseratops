@@ -39,10 +39,15 @@ fn main() {
 fn write_test(test_file: &mut File, filepath: &Path, tag_name: &str) {
     let stem = filepath.file_stem().unwrap().to_str().unwrap();
     let stem_split: Vec<&str> = stem.rsplitn(2, '.').collect();
-    println!("{:?}", stem);
-    let filename: &str = stem_split[0];
-    let tag_type: &str = stem_split[1];
-    let test_name = format!("serato_{}_{}_{}", tag_name, tag_type, filename,);
+    let tag_type: &str = stem_split[0];
+    let filename: &str = stem_split[1];
+
+    // FIXME: Only test ID3 tag parsing for now
+    if tag_type != "id3" {
+        return;
+    }
+
+    let test_name = format!("serato_{}_{}_{}", tag_name, filename, tag_type);
 
     write!(
         test_file,
