@@ -42,11 +42,6 @@ fn write_test(test_file: &mut File, filepath: &Path, tag_name: &str) {
     let tag_type: &str = stem_split[0];
     let filename: &str = stem_split[1];
 
-    // FIXME: Only test ID3 tag parsing for now
-    if tag_type != "id3" {
-        return;
-    }
-
     let test_name = format!("serato_{}_{}_{}", tag_name, filename, tag_type);
 
     let parser = match tag_name {
