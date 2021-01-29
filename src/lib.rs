@@ -9,3 +9,5 @@ pub mod util;
 pub mod id3;
 pub mod flac;
 pub mod error;
+pub mod relvolad;
+pub mod vidassoc;
