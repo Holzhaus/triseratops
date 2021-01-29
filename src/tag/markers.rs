@@ -10,6 +10,7 @@ use super::format::mp4;
 use crate::error::Error;
 use crate::util;
 use crate::util::Res;
+use nom::error::ParseError;
 
 /// Represents a single marker in the `Serato Markers_` tag.
 #[derive(Debug)]
@@ -132,7 +133,10 @@ pub fn take_bool(input: &[u8]) -> Res<&[u8], bool> {
     match position_prefix {
         0x00 => Ok((input, false)),
         0x01 => Ok((input, true)),
-        _ => Err(nom::Err::Incomplete(nom::Needed::Unknown)),
+        _ => Err(nom::Err::Error(nom::error::VerboseError::from_error_kind(
+            input,
+            nom::error::ErrorKind::Tag,
+        ))),
     }
 }
 
@@ -165,7 +169,10 @@ pub fn take_has_position(input: &[u8]) -> Res<&[u8], bool> {
     match position_prefix {
         0x00 => Ok((input, true)),
         0x7F => Ok((input, false)),
-        _ => Err(nom::Err::Incomplete(nom::Needed::Unknown)),
+        _ => Err(nom::Err::Error(nom::error::VerboseError::from_error_kind(
+            input,
+            nom::error::ErrorKind::Tag,
+        ))),
     }
 }
 
@@ -184,11 +191,13 @@ pub fn take_has_position(input: &[u8]) -> Res<&[u8], bool> {
 /// assert_eq!(take_position(&[0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x00]), Ok((&[0x00][..], None)));
 /// ```
 pub fn take_position(input: &[u8]) -> Res<&[u8], Option<u32>> {
-    let (input, has_position) = take_has_position(input)?;
-
-    if input.len() < 4 {
-        return Err(nom::Err::Incomplete(nom::Needed::Unknown));
+    if input.len() < 5 {
+        return Err(nom::Err::Error(nom::error::VerboseError::from_error_kind(
+            input,
+            nom::error::ErrorKind::Digit,
+        )));
     }
+    let (input, has_position) = nom::error::context("take has_position", take_has_position)(input)?;
     match has_position {
         true => {
             let (input, data) = util::serato32::take_u32(input)?;
@@ -206,31 +215,37 @@ pub fn take_position(input: &[u8]) -> Res<&[u8], Option<u32>> {
 /// # Example
 /// ```
 /// use serato_tags::tag::markers::{EntryType, take_entry_type};
-/// use nom::Err;
-/// use nom::error::{Error, ErrorKind};
 ///
 /// assert_eq!(take_entry_type(&[0x00]), Ok((&[][..], EntryType::INVALID)));
 /// assert_eq!(take_entry_type(&[0x03, 0x01]), Ok((&[0x01][..], EntryType::LOOP)));
-/// assert_eq!(take_entry_type(&[0xAB]), Err(nom::Err::Incomplete(nom::Needed::Unknown)));
+/// assert!(take_entry_type(&[0xAB]).is_err());
 /// ```
 pub fn take_entry_type(input: &[u8]) -> Res<&[u8], EntryType> {
-    let (input, position_prefix) = nom::number::complete::u8(input)?;
+    let (next_input, position_prefix) = nom::number::complete::u8(input)?;
     match position_prefix {
-        0x00 => Ok((input, EntryType::INVALID)),
-        0x01 => Ok((input, EntryType::CUE)),
-        0x03 => Ok((input, EntryType::LOOP)),
-        _ => Err(nom::Err::Incomplete(nom::Needed::Unknown)),
+        0x00 => Ok((next_input, EntryType::INVALID)),
+        0x01 => Ok((next_input, EntryType::CUE)),
+        0x03 => Ok((next_input, EntryType::LOOP)),
+        _ => Err(nom::Err::Error(nom::error::VerboseError::from_error_kind(
+            input,
+            nom::error::ErrorKind::Tag,
+        ))),
     }
 }
 
 /// Returns a `Marker` parsed from the input slice.
 pub fn take_marker(input: &[u8]) -> Res<&[u8], Marker> {
-    let (input, start_position_millis) = take_position(input)?;
-    let (input, end_position_millis) = take_position(input)?;
-    let (input, _) = nom::bytes::complete::tag(b"\x00\x7F\x7F\x7F\x7F\x7F")(input)?;
-    let (input, color) = util::serato32::take_color(input)?;
-    let (input, entry_type) = take_entry_type(input)?;
-    let (input, is_locked) = take_bool(input)?;
+    let (input, start_position_millis) =
+        nom::error::context("marker start position", take_position)(input)?;
+    let (input, end_position_millis) =
+        nom::error::context("marker end position", take_position)(input)?;
+    let (input, _) = nom::error::context(
+        "marker unknown bytes",
+        nom::bytes::complete::tag(b"\x00\x7F\x7F\x7F\x7F\x7F"),
+    )(input)?;
+    let (input, color) = nom::error::context("marker color", util::serato32::take_color)(input)?;
+    let (input, entry_type) = nom::error::context("marker type", take_entry_type)(input)?;
+    let (input, is_locked) = nom::error::context("marker locked state", take_bool)(input)?;
     Ok((
         input,
         Marker {
