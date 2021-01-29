@@ -2,7 +2,6 @@
 extern crate base64;
 extern crate nom;
 
-use super::super::markers2;
 use crate::error::Error;
 use crate::util;
 
@@ -16,7 +15,7 @@ pub trait FLACTag: util::Tag {
 
 pub fn parse_envelope(input: &[u8]) -> Result<(String, Vec<u8>), Error> {
     let (input, _) = nom::bytes::complete::tag(b"application/octet-stream\x00\x00")(input)?;
-    let (input, name) = markers2::take_utf8(input)?;
+    let (input, name) = util::take_utf8(input)?;
     Ok((name, input.to_vec()))
 }
 

@@ -90,6 +90,21 @@ pub fn take_until_nullbyte(input: &[u8]) -> Res<&[u8], &[u8]> {
     take_until(NULL)(input)
 }
 
+pub fn parse_utf8(input: &[u8]) -> Res<&[u8], String> {
+    let res = std::str::from_utf8(&input);
+    match res {
+        Ok(s) => Ok((b"", s.to_owned())),
+        Err(_) => Err(nom::Err::Incomplete(nom::Needed::Unknown)),
+    }
+}
+
+pub fn take_utf8(input: &[u8]) -> Res<&[u8], String> {
+    let (input, data) = take_until_nullbyte(&input)?;
+    let (_, value) = parse_utf8(&data)?;
+    let (input, _) = nom::bytes::complete::take(1usize)(input)?;
+    Ok((input, value))
+}
+
 /// These functions convert between a custom 4-byte format (that we'll call `serato32` for brevity)
 /// and 3-byte plaintext (both `u32`). Serato's custom format inserts a single null bit after every 7
 /// payload bits, starting from the rightmost bit.

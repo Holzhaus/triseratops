@@ -278,24 +278,9 @@ pub fn decode_base64_chunks(
     Ok(decoded_data)
 }
 
-pub fn parse_utf8(input: &[u8]) -> Res<&[u8], String> {
-    let res = std::str::from_utf8(&input);
-    match res {
-        Ok(s) => Ok((b"", s.to_owned())),
-        Err(_) => Err(nom::Err::Incomplete(nom::Needed::Unknown)),
-    }
-}
-
-pub fn take_utf8(input: &[u8]) -> Res<&[u8], String> {
-    let (input, data) = util::take_until_nullbyte(&input)?;
-    let (_, value) = parse_utf8(&data)?;
-    let (input, _) = nom::bytes::complete::take(1usize)(input)?;
-    Ok((input, value))
-}
-
 pub fn take_marker_name(input: &[u8]) -> Res<&[u8], String> {
     let (input, _) = nom::combinator::not(nom::bytes::complete::tag(b"\0"))(input)?;
-    let (input, name) = take_utf8(input)?;
+    let (input, name) = util::take_utf8(input)?;
     if name.is_empty() {
         return Err(nom::Err::Incomplete(nom::Needed::Unknown));
     }
@@ -350,7 +335,7 @@ pub fn take_cue_marker(input: &[u8]) -> Res<&[u8], Marker> {
     let (input, _) = nom::bytes::complete::tag(b"\x00")(input)?;
     let (input, color) = util::take_color(input)?;
     let (input, _) = nom::bytes::complete::tag(b"\x00\x00")(input)?;
-    let (input, label) = take_utf8(input)?;
+    let (input, label) = util::take_utf8(input)?;
     let marker = CueMarker {
         index,
         position_millis,
@@ -370,7 +355,7 @@ pub fn take_loop_marker(input: &[u8]) -> Res<&[u8], Marker> {
     let (input, color) = util::take_color(input)?;
     let (input, _) = nom::bytes::complete::tag(b"\x00")(input)?;
     let (input, is_locked) = take_bool(input)?;
-    let (input, label) = take_utf8(input)?;
+    let (input, label) = util::take_utf8(input)?;
     let marker = LoopMarker {
         index,
         start_position_millis,
@@ -386,7 +371,7 @@ pub fn take_flip_marker(input: &[u8]) -> Res<&[u8], Marker> {
     let (input, _) = nom::bytes::complete::tag(b"\x00")(input)?;
     let (input, index) = nom::number::complete::u8(input)?;
     let (input, is_enabled) = take_bool(input)?;
-    let (input, label) = take_utf8(input)?;
+    let (input, label) = util::take_utf8(input)?;
     let (input, is_loop) = take_bool(input)?;
     let (input, actions) =
         nom::multi::length_count(nom::number::complete::be_u32, take_flip_marker_action)(input)?;
