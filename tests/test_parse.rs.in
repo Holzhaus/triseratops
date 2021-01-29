@@ -1,4 +1,5 @@
 #[test]
+#[allow(non_snake_case)]
 fn {name}() {{
     println!("Parsing file: {filepath}");
     let input = include_bytes!("{filepath}");
