@@ -5,5 +5,8 @@ pub mod container;
 pub mod markers;
 pub mod markers2;
 pub mod overview;
+pub mod relvolad;
 pub mod util;
+pub mod vidassoc;
+pub mod flac;
 pub mod error;

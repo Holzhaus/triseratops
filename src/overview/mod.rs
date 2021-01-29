@@ -3,6 +3,7 @@
 //! The overview data consists of multiple chunks of 16 bytes.
 
 use crate::util;
+use crate::util::Res;
 use crate::error::Error;
 
 /// Represents the `Serato Overview` tag.
@@ -29,17 +30,17 @@ pub struct Overview {
 ///     0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f].to_vec())));
 /// assert_eq!(take_chunk(&[0xAB, 0x01]), Err(nom::Err::Error(Error::new(&[0xAB, 0x01][..], ErrorKind::Eof))));
 /// ```
-pub fn take_chunk(input: &[u8]) -> nom::IResult<&[u8], Vec<u8>> {
+pub fn take_chunk(input: &[u8]) -> Res<&[u8], Vec<u8>> {
     let (input, chunkdata) = nom::bytes::complete::take(16usize)(input)?;
     Ok((input, chunkdata.to_vec()))
 }
 
 /// Returns a vector of 16-byte vectors of data parsed from the input slice.
-pub fn take_chunks(input: &[u8]) -> nom::IResult<&[u8], Vec<Vec<u8>>> {
+pub fn take_chunks(input: &[u8]) -> Res<&[u8], Vec<Vec<u8>>> {
     nom::multi::many1(take_chunk)(input)
 }
 
-pub fn take_overview(input: &[u8]) -> nom::IResult<&[u8], Overview> {
+pub fn take_overview(input: &[u8]) -> Res<&[u8], Overview> {
     let (input, version) = util::take_version(&input)?;
     let (input, data) = take_chunks(input)?;
 
@@ -48,10 +49,6 @@ pub fn take_overview(input: &[u8]) -> nom::IResult<&[u8], Overview> {
 }
 
 pub fn parse(input: &[u8]) -> Result<Overview, Error> {
-    match nom::combinator::all_consuming(take_overview)(input) {
-        Ok((_, overview)) => Ok(overview),
-        Err(_) => {
-            Err(Error::ParseError)
-        }
-    }
+    let (_, overview) = nom::combinator::all_consuming(take_overview)(input)?;
+    Ok(overview)
 }

@@ -3,7 +3,6 @@ extern crate nom;
 
 use nom::bytes::complete::take;
 use nom::bytes::complete::take_until;
-use nom::IResult;
 
 /// Represents a 3-Byte RGB color value.
 #[derive(Debug, PartialEq, Copy, Clone)]
@@ -20,6 +19,8 @@ pub struct Version {
     pub minor: u8,
 }
 
+pub type Res<T, U> = nom::IResult<T, U, nom::error::VerboseError<T>>;
+
 /// Returns a `Color` struct parsed from the first 3 input bytes.
 ///
 /// # Example
@@ -33,7 +34,7 @@ pub struct Version {
 /// assert_eq!(take_color(&[0x11, 0x22, 0x33, 0x44]), Ok((&[0x44][..], Color { red: 0x11, green: 0x22, blue: 0x33})));
 /// assert_eq!(take_color(&[0xAB, 0xCD]), Err(Err::Error(Error::new(&[0xAB, 0xCD][..], ErrorKind::Eof))));
 /// ```
-pub fn take_color(input: &[u8]) -> IResult<&[u8], Color> {
+pub fn take_color(input: &[u8]) -> Res<&[u8], Color> {
     let (input, bytes) = nom::bytes::complete::take(3usize)(input)?;
     let (bytes, red) = nom::number::complete::u8(bytes)?;
     let (bytes, green) = nom::number::complete::u8(bytes)?;
@@ -54,7 +55,7 @@ pub fn take_color(input: &[u8]) -> IResult<&[u8], Color> {
 /// assert_eq!(take_version(&[0x01, 0x02, 0x03]), Ok((&[0x03][..], Version { major: 1, minor: 2 })));
 /// assert_eq!(take_version(&[0x0A]), Err(Err::Error(Error::new(&[0x0A][..], ErrorKind::Eof))));
 /// ```
-pub fn take_version(input: &[u8]) -> IResult<&[u8], Version> {
+pub fn take_version(input: &[u8]) -> Res<&[u8], Version> {
     let (input, version) = take(2usize)(input)?;
     Ok((
         input,
@@ -79,7 +80,7 @@ const NULL: &[u8] = &[0x00];
 /// assert_eq!(take_until_nullbyte(&[0x01, 0x02, 0x00, 0xFF]), Ok((&[0x00, 0xFF][..], &[0x01, 0x02][..])));
 /// assert_eq!(take_until_nullbyte(&[0xAB, 0xCD]), Err(Err::Error(Error::new(&[0xAB, 0xCD][..], ErrorKind::TakeUntil))));
 /// ```
-pub fn take_until_nullbyte(input: &[u8]) -> IResult<&[u8], &[u8]> {
+pub fn take_until_nullbyte(input: &[u8]) -> Res<&[u8], &[u8]> {
     take_until(NULL)(input)
 }
 
@@ -115,9 +116,8 @@ pub fn take_until_nullbyte(input: &[u8]) -> IResult<&[u8], &[u8]> {
 /// | `serato32` value | `06 32 10 00` | `00000110001100100001000000000000`
 
 pub mod serato32 {
-    use super::Color;
+    use super::{Color, Res};
     use nom::number::complete::u8;
-    use nom::IResult;
 
     /// Decodes value from Serato's 32-bit custom format to 24-bit plaintext.
     ///
@@ -168,7 +168,7 @@ pub mod serato32 {
     /// assert_eq!(take(&[0x00, 0x00, 0x01, 0x4C, 0x7F]), Ok((&[0x07F][..], (0x00, 0x00, 0xCC))));
     /// assert_eq!(take(&[0x00, 0x00, 0x01]), Err(Err::Error(Error::new(&[0x00, 0x00, 0x01][..], ErrorKind::Eof))));
     /// ```
-    pub fn take(input: &[u8]) -> IResult<&[u8], (u8, u8, u8)> {
+    pub fn take(input: &[u8]) -> Res<&[u8], (u8, u8, u8)> {
         let (input, bytes) = nom::bytes::complete::take(4usize)(input)?;
         let (bytes, byte1) = u8(bytes)?;
         let (bytes, byte2) = u8(bytes)?;
@@ -191,7 +191,7 @@ pub mod serato32 {
     /// assert_eq!(take_color(&[0x00, 0x00, 0x01, 0x4C, 0x7F]), Ok((&[0x07F][..], Color { red: 0x00, green: 0x00, blue: 0xCC})));
     /// assert_eq!(take_color(&[0x00, 0x00, 0x01]), Err(Err::Error(Error::new(&[0x00, 0x00, 0x01][..], ErrorKind::Eof))));
     /// ```
-    pub fn take_color(input: &[u8]) -> nom::IResult<&[u8], Color> {
+    pub fn take_color(input: &[u8]) -> Res<&[u8], Color> {
         let (input, (red, green, blue)) = take(input)?;
         Ok((input, Color { red, green, blue }))
     }
@@ -210,7 +210,7 @@ pub mod serato32 {
     /// assert_eq!(take_u32(&[0x00, 0x00, 0x01, 0x4C, 0x7F]), Ok((&[0x07F][..], 0x0000CC)));
     /// assert_eq!(take_u32(&[0x00, 0x00, 0x01]), Err(Err::Error(Error::new(&[0x00, 0x00, 0x01][..], ErrorKind::Eof))));
     /// ```
-    pub fn take_u32(input: &[u8]) -> nom::IResult<&[u8], u32> {
+    pub fn take_u32(input: &[u8]) -> Res<&[u8], u32> {
         let (input, (a, b, c)) = take(input)?;
         let value = (a as u32) << 16 | (b as u32) << 8 | c as u32;
         Ok((input, value))

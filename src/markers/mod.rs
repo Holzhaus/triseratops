@@ -5,6 +5,7 @@
 //! prefer information from `Serato Markers_` if it's present.
 
 use crate::util;
+use crate::util::Res;
 use crate::error::Error;
 
 /// Represents a single marker in the `Serato Markers_` tag.
@@ -108,7 +109,7 @@ pub enum EntryType {
 /// assert_eq!(take_bool(&[0xAB, 0x00, 0x01]), Err(nom::Err::Incomplete(nom::Needed::Unknown)));
 /// assert_eq!(take_bool(&[]), Err(Err::Error(Error::new(&[][..], ErrorKind::Eof))));
 /// ```
-pub fn take_bool(input: &[u8]) -> nom::IResult<&[u8], bool> {
+pub fn take_bool(input: &[u8]) -> Res<&[u8], bool> {
     let (input, position_prefix) = nom::number::complete::u8(input)?;
     match position_prefix {
         0x00 => Ok((input, false)),
@@ -141,7 +142,7 @@ pub fn take_bool(input: &[u8]) -> nom::IResult<&[u8], bool> {
 /// assert_eq!(take_has_position(&[0xAB, 0x00, 0x01]), Err(nom::Err::Incomplete(nom::Needed::Unknown)));
 /// assert_eq!(take_has_position(&[]), Err(Err::Error(Error::new(&[][..], ErrorKind::Eof))));
 /// ```
-pub fn take_has_position(input: &[u8]) -> nom::IResult<&[u8], bool> {
+pub fn take_has_position(input: &[u8]) -> Res<&[u8], bool> {
     let (input, position_prefix) = nom::number::complete::u8(input)?;
     match position_prefix {
         0x00 => Ok((input, true)),
@@ -164,7 +165,7 @@ pub fn take_has_position(input: &[u8]) -> nom::IResult<&[u8], bool> {
 /// assert_eq!(take_position(&[0x00, 0x00, 0x00, 0x00, 0x00]), Ok((&[][..], Some(0))));
 /// assert_eq!(take_position(&[0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x00]), Ok((&[0x00][..], None)));
 /// ```
-pub fn take_position(input: &[u8]) -> nom::IResult<&[u8], Option<u32>> {
+pub fn take_position(input: &[u8]) -> Res<&[u8], Option<u32>> {
     let (input, has_position) = take_has_position(input)?;
 
     if input.len() < 4 {
@@ -194,7 +195,7 @@ pub fn take_position(input: &[u8]) -> nom::IResult<&[u8], Option<u32>> {
 /// assert_eq!(take_entry_type(&[0x03, 0x01]), Ok((&[0x01][..], EntryType::LOOP)));
 /// assert_eq!(take_entry_type(&[0xAB]), Err(nom::Err::Incomplete(nom::Needed::Unknown)));
 /// ```
-pub fn take_entry_type(input: &[u8]) -> nom::IResult<&[u8], EntryType> {
+pub fn take_entry_type(input: &[u8]) -> Res<&[u8], EntryType> {
     let (input, position_prefix) = nom::number::complete::u8(input)?;
     match position_prefix {
         0x00 => Ok((input, EntryType::INVALID)),
@@ -205,7 +206,7 @@ pub fn take_entry_type(input: &[u8]) -> nom::IResult<&[u8], EntryType> {
 }
 
 /// Returns a `Marker` parsed from the input slice.
-pub fn take_marker(input: &[u8]) -> nom::IResult<&[u8], Marker> {
+pub fn take_marker(input: &[u8]) -> Res<&[u8], Marker> {
     let (input, start_position_millis) = take_position(input)?;
     let (input, end_position_millis) = take_position(input)?;
     let (input, _) = nom::bytes::complete::tag(b"\x00\x7F\x7F\x7F\x7F\x7F")(input)?;
@@ -225,7 +226,7 @@ pub fn take_marker(input: &[u8]) -> nom::IResult<&[u8], Marker> {
 }
 
 /// Parses the data into a `Markers` struct, consuming the whole input slice.
-pub fn take_markers(input: &[u8]) -> nom::IResult<&[u8], Markers> {
+pub fn take_markers(input: &[u8]) -> Res<&[u8], Markers> {
     let (input, version) = util::take_version(&input)?;
     let (input, entries) = nom::multi::length_count(nom::number::complete::be_u32, take_marker)(input)?;
     let (input, track_color) = nom::combinator::all_consuming(util::serato32::take_color)(input)?;
@@ -239,10 +240,6 @@ pub fn take_markers(input: &[u8]) -> nom::IResult<&[u8], Markers> {
 }
 
 pub fn parse(input: &[u8]) -> Result<Markers, Error> {
-    match nom::combinator::all_consuming(take_markers)(input) {
-        Ok((_, autotags)) => Ok(autotags),
-        Err(_) => {
-            Err(Error::ParseError)
-        }
-    }
+    let (_, markers) = nom::combinator::all_consuming(take_markers)(input)?;
+    Ok(markers)
 }

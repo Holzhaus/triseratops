@@ -1,6 +1,7 @@
 //! The `Serato Autotags` tag stores BPM and Gain values.
 
 use crate::util;
+use crate::util::Res;
 use crate::error::Error;
 
 /// Represents the  `Serato AutoTags` tag.
@@ -28,7 +29,7 @@ pub struct Autotags {
 /// assert_eq!(take_double_str(&[0x2D, 0x33, 0x2E, 0x32, 0x35, 0x37, 0x00, 0xAB]), Ok((&[0xAB][..], -3.257)));
 /// assert_eq!(take_double_str(&[0xAB, 0x01]), Err(nom::Err::Error(Error::new(&[0xAB, 0x01][..], ErrorKind::TakeUntil))));
 /// ```
-pub fn take_double_str(input: &[u8]) -> nom::IResult<&[u8], f64> {
+pub fn take_double_str(input: &[u8]) -> Res<&[u8], f64> {
     let (input, text) = util::take_until_nullbyte(input)?;
     let (_, num) = nom::combinator::all_consuming(nom::number::complete::double)(text)?;
     let (input, _) = nom::number::complete::u8(input)?;
@@ -36,7 +37,7 @@ pub fn take_double_str(input: &[u8]) -> nom::IResult<&[u8], f64> {
 }
 
 
-pub fn take_autotags(input: &[u8]) -> nom::IResult<&[u8], Autotags> {
+pub fn take_autotags(input: &[u8]) -> Res<&[u8], Autotags> {
     let (input, version) = util::take_version(input).unwrap();
     let (input, bpm) = take_double_str(input)?;
     let (input, auto_gain) = take_double_str(input)?;
@@ -53,10 +54,6 @@ pub fn take_autotags(input: &[u8]) -> nom::IResult<&[u8], Autotags> {
 }
 
 pub fn parse(input: &[u8]) -> Result<Autotags, Error> {
-    match nom::combinator::all_consuming(take_autotags)(input) {
-        Ok((_, autotags)) => Ok(autotags),
-        Err(_) => {
-            Err(Error::ParseError)
-        }
-    }
+    let (_, autotags) = nom::combinator::all_consuming(take_autotags)(input)?;
+    Ok(autotags)
 }
