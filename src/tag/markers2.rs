@@ -206,7 +206,9 @@ impl util::Tag for Markers2 {
 }
 
 impl id3::ID3Tag for Markers2 {}
-impl flac::FLACTag for Markers2 {}
+impl flac::FLACTag for Markers2 {
+    const FLAC_COMMENT: &'static str = "SERATO_MARKERS_V2";
+}
 
 /// Represents the base64-encoded content of the `Serato Markers2` tag.
 #[derive(Debug)]

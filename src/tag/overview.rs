@@ -27,7 +27,9 @@ impl util::Tag for Overview {
 }
 
 impl id3::ID3Tag for Overview {}
-impl flac::FLACTag for Overview {}
+impl flac::FLACTag for Overview {
+    const FLAC_COMMENT: &'static str = "SERATO_OVERVIEW";
+}
 
 /// Returns a 16-byte vector of data parsed from the input slice.
 ///

@@ -23,7 +23,9 @@ impl util::Tag for RelVolAd {
     }
 }
 
-impl flac::FLACTag for RelVolAd {}
+impl flac::FLACTag for RelVolAd {
+    const FLAC_COMMENT: &'static str = "SERATO_RELVOL";
+}
 
 pub fn take_relvolad(input: &[u8]) -> Res<&[u8], RelVolAd> {
     let (input, version) = util::take_version(input)?;

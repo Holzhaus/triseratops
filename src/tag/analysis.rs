@@ -25,7 +25,9 @@ impl util::Tag for Analysis {
 }
 
 impl id3::ID3Tag for Analysis {}
-impl flac::FLACTag for Analysis {}
+impl flac::FLACTag for Analysis {
+    const FLAC_COMMENT: &'static str = "SERATO_ANALYSIS";
+}
 
 pub fn take_analysis(input: &[u8]) -> Res<&[u8], Analysis> {
     let (input, version) = nom::error::context("take version", util::take_version)(input)?;

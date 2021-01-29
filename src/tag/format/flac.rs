@@ -6,6 +6,9 @@ use crate::error::Error;
 use crate::util;
 
 pub trait FLACTag: util::Tag {
+    /// Name of the `VORBIS_COMMENT` that this data is stored in.
+    const FLAC_COMMENT: &'static str;
+
     fn parse_flac(input: &[u8]) -> Result<Self, Error> {
         let (_, encoded) = nom::combinator::all_consuming(take_base64_with_newline)(input)?;
         let content = envelope_decode_with_name(encoded, Self::NAME)?;

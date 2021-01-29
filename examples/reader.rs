@@ -51,37 +51,37 @@ fn main() -> Result<(), serato_tags::error::Error> {
 
         println!("  Data: {} bytes", data.len());
         match &content_desc[..] {
-            "Serato Analysis" => {
+            serato_tags::tag::Analysis::ID3_TAG => {
                 let tag = serato_tags::tag::Analysis::parse_id3(&data)?;
                 let output = format!("{:#?}", tag);
                 println!("{}", textwrap::indent(&output, "    "));
                 container.analysis = Some(tag);
             }
-            "Serato Autotags" => {
+            serato_tags::tag::Autotags::ID3_TAG => {
                 let tag = serato_tags::tag::Autotags::parse_id3(&data)?;
                 let output = format!("{:#?}", tag);
                 println!("{}", textwrap::indent(&output, "    "));
                 container.autotags = Some(tag);
             }
-            "Serato BeatGrid" => {
+            serato_tags::tag::Beatgrid::ID3_TAG => {
                 let tag = serato_tags::tag::Beatgrid::parse_id3(&data)?;
                 let output = format!("{:#?}", tag);
                 println!("{}", textwrap::indent(&output, "    "));
                 container.beatgrid = Some(tag);
             }
-            "Serato Markers_" => {
+            serato_tags::tag::Markers::ID3_TAG => {
                 let tag = serato_tags::tag::Markers::parse_id3(&data)?;
                 let output = format!("{:#?}", tag);
                 println!("{}", textwrap::indent(&output, "    "));
                 container.markers = Some(tag);
             }
-            "Serato Markers2" => {
+            serato_tags::tag::Markers2::ID3_TAG => {
                 let tag = serato_tags::tag::Markers2::parse_id3(&data)?;
                 let output = format!("{:#?}", tag);
                 println!("{}", textwrap::indent(&output, "    "));
                 container.markers2 = Some(tag);
             }
-            "Serato Overview" => {
+            serato_tags::tag::Overview::ID3_TAG => {
                 let tag = serato_tags::tag::Overview::parse_id3(&data)?;
                 let output = format!("{:#?}", tag);
                 println!("{}", textwrap::indent(&output, "    "));

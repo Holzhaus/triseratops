@@ -25,7 +25,9 @@ impl util::Tag for VidAssoc {
     }
 }
 
-impl flac::FLACTag for VidAssoc {}
+impl flac::FLACTag for VidAssoc {
+    const FLAC_COMMENT: &'static str = "SERATO_VIDASSOC";
+}
 
 pub fn take_vidassoc(input: &[u8]) -> Res<&[u8], VidAssoc> {
     let (input, version) = util::take_version(input)?;

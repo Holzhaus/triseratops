@@ -29,7 +29,9 @@ impl util::Tag for Autotags {
 }
 
 impl id3::ID3Tag for Autotags {}
-impl flac::FLACTag for Autotags {}
+impl flac::FLACTag for Autotags {
+    const FLAC_COMMENT: &'static str = "SERATO_AUTOGAIN";
+}
 
 /// Returns an `f64` parsed from zero-terminated ASCII chars the input slice.
 ///
