@@ -4,9 +4,9 @@
 //! This is redundant with some of the information from the `Serato Markers2` tag. Serato will
 //! prefer information from `Serato Markers_` if it's present.
 
+use super::format::flac;
+use super::format::id3;
 use crate::error::Error;
-use crate::flac;
-use crate::id3;
 use crate::util;
 use crate::util::Res;
 
@@ -114,7 +114,7 @@ pub enum EntryType {
 ///
 /// # Example
 /// ```
-/// use serato_tags::markers::take_bool;
+/// use serato_tags::tag::markers::take_bool;
 /// use nom::Err;
 /// use nom::error::{Error, ErrorKind};
 ///
@@ -146,7 +146,7 @@ pub fn take_bool(input: &[u8]) -> Res<&[u8], bool> {
 ///
 /// # Example
 /// ```
-/// use serato_tags::markers::take_has_position;
+/// use serato_tags::tag::markers::take_has_position;
 /// use nom::Err;
 /// use nom::error::{Error, ErrorKind};
 ///
@@ -172,7 +172,7 @@ pub fn take_has_position(input: &[u8]) -> Res<&[u8], bool> {
 ///
 /// # Example
 /// ```
-/// use serato_tags::markers::take_position;
+/// use serato_tags::tag::markers::take_position;
 /// use nom::Err;
 /// use nom::error::{Error, ErrorKind};
 ///
@@ -201,7 +201,7 @@ pub fn take_position(input: &[u8]) -> Res<&[u8], Option<u32>> {
 ///
 /// # Example
 /// ```
-/// use serato_tags::markers::{EntryType, take_entry_type};
+/// use serato_tags::tag::markers::{EntryType, take_entry_type};
 /// use nom::Err;
 /// use nom::error::{Error, ErrorKind};
 ///

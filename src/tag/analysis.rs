@@ -2,9 +2,9 @@
 //!
 //! This is probably the Serato Version number that performed the analysis.
 
+use super::format::flac;
+use super::format::id3;
 use crate::error::Error;
-use crate::flac;
-use crate::id3;
 use crate::util;
 use crate::util::Res;
 

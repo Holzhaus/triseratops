@@ -1,8 +1,8 @@
 //! The `Serato BeatGrid` tag stores the beatgrid markers.
 
+use super::format::flac;
+use super::format::id3;
 use crate::error::Error;
-use crate::flac;
-use crate::id3;
 use crate::util;
 use crate::util::Res;
 
@@ -60,7 +60,7 @@ impl flac::FLACTag for Beatgrid {}
 ///
 /// # Example
 /// ```
-/// use serato_tags::beatgrid::take_non_terminal_marker_count;
+/// use serato_tags::tag::beatgrid::take_non_terminal_marker_count;
 /// use nom::Err;
 /// use nom::error::{Error, ErrorKind};
 ///

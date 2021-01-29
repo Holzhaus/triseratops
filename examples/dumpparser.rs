@@ -1,4 +1,4 @@
-use serato_tags::id3::ID3Tag;
+use serato_tags::tag::format::id3::ID3Tag;
 use std::env;
 use std::fs::File;
 use std::io::Read;
@@ -21,37 +21,37 @@ fn main() {
         "--analysis" => {
             println!(
                 "{:#?}",
-                serato_tags::analysis::Analysis::parse_id3(&data).unwrap()
+                serato_tags::tag::Analysis::parse_id3(&data).unwrap()
             );
         }
         "--autotags" => {
             println!(
                 "{:#?}",
-                serato_tags::autotags::Autotags::parse_id3(&data).unwrap()
+                serato_tags::tag::Autotags::parse_id3(&data).unwrap()
             );
         }
         "--beatgrid" => {
             println!(
                 "{:#?}",
-                serato_tags::beatgrid::Beatgrid::parse_id3(&data).unwrap()
+                serato_tags::tag::Beatgrid::parse_id3(&data).unwrap()
             );
         }
         "--markers" => {
             println!(
                 "{:#?}",
-                serato_tags::markers::Markers::parse_id3(&data).unwrap()
+                serato_tags::tag::Markers::parse_id3(&data).unwrap()
             );
         }
         "--markers2" => {
             println!(
                 "{:#?}",
-                serato_tags::markers2::Markers2::parse_id3(&data).unwrap()
+                serato_tags::tag::Markers2::parse_id3(&data).unwrap()
             );
         }
         "--overview" => {
             println!(
                 "{:#?}",
-                serato_tags::overview::Overview::parse_id3(&data).unwrap()
+                serato_tags::tag::Overview::parse_id3(&data).unwrap()
             );
         }
         _ => {

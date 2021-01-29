@@ -2,9 +2,9 @@
 //!
 //! The overview data consists of multiple chunks of 16 bytes.
 
+use super::format::flac;
+use super::format::id3;
 use crate::error::Error;
-use crate::flac;
-use crate::id3;
 use crate::util;
 use crate::util::Res;
 
@@ -33,7 +33,7 @@ impl flac::FLACTag for Overview {}
 ///
 /// # Example
 /// ```
-/// use serato_tags::overview::take_chunk;
+/// use serato_tags::tag::overview::take_chunk;
 /// use nom::Err;
 /// use nom::error::{Error, ErrorKind};
 ///

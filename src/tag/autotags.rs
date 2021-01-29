@@ -1,8 +1,8 @@
 //! The `Serato Autotags` tag stores BPM and Gain values.
 
+use super::format::flac;
+use super::format::id3;
 use crate::error::Error;
-use crate::flac;
-use crate::id3;
 use crate::util;
 use crate::util::Res;
 
@@ -35,7 +35,7 @@ impl flac::FLACTag for Autotags {}
 ///
 /// # Example
 /// ```
-/// use serato_tags::autotags::take_double_str;
+/// use serato_tags::tag::autotags::take_double_str;
 /// use nom::Err;
 /// use nom::error::{Error, ErrorKind};
 ///

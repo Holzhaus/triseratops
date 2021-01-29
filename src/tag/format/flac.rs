@@ -2,8 +2,8 @@
 extern crate base64;
 extern crate nom;
 
+use super::super::markers2;
 use crate::error::Error;
-use crate::markers2;
 use crate::util;
 
 pub trait FLACTag: util::Tag {

@@ -1,13 +1,4 @@
-pub mod analysis;
-pub mod autotags;
-pub mod beatgrid;
 pub mod container;
 pub mod error;
-pub mod flac;
-pub mod id3;
-pub mod markers;
-pub mod markers2;
-pub mod overview;
-pub mod relvolad;
+pub mod tag;
 pub mod util;
-pub mod vidassoc;

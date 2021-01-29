@@ -1,5 +1,5 @@
 use id3::Tag;
-use serato_tags::id3::ID3Tag;
+use serato_tags::tag::format::id3::ID3Tag;
 use std::env;
 use std::io::BufRead;
 use std::io::BufReader;
@@ -52,37 +52,37 @@ fn main() -> Result<(), serato_tags::error::Error> {
         println!("  Data: {} bytes", data.len());
         match &content_desc[..] {
             "Serato Analysis" => {
-                let tag = serato_tags::analysis::Analysis::parse_id3(&data)?;
+                let tag = serato_tags::tag::Analysis::parse_id3(&data)?;
                 let output = format!("{:#?}", tag);
                 println!("{}", textwrap::indent(&output, "    "));
                 container.analysis = Some(tag);
             }
             "Serato Autotags" => {
-                let tag = serato_tags::autotags::Autotags::parse_id3(&data)?;
+                let tag = serato_tags::tag::Autotags::parse_id3(&data)?;
                 let output = format!("{:#?}", tag);
                 println!("{}", textwrap::indent(&output, "    "));
                 container.autotags = Some(tag);
             }
             "Serato BeatGrid" => {
-                let tag = serato_tags::beatgrid::Beatgrid::parse_id3(&data)?;
+                let tag = serato_tags::tag::Beatgrid::parse_id3(&data)?;
                 let output = format!("{:#?}", tag);
                 println!("{}", textwrap::indent(&output, "    "));
                 container.beatgrid = Some(tag);
             }
             "Serato Markers_" => {
-                let tag = serato_tags::markers::Markers::parse_id3(&data)?;
+                let tag = serato_tags::tag::Markers::parse_id3(&data)?;
                 let output = format!("{:#?}", tag);
                 println!("{}", textwrap::indent(&output, "    "));
                 container.markers = Some(tag);
             }
             "Serato Markers2" => {
-                let tag = serato_tags::markers2::Markers2::parse_id3(&data)?;
+                let tag = serato_tags::tag::Markers2::parse_id3(&data)?;
                 let output = format!("{:#?}", tag);
                 println!("{}", textwrap::indent(&output, "    "));
                 container.markers2 = Some(tag);
             }
             "Serato Overview" => {
-                let tag = serato_tags::overview::Overview::parse_id3(&data)?;
+                let tag = serato_tags::tag::Overview::parse_id3(&data)?;
                 let output = format!("{:#?}", tag);
                 println!("{}", textwrap::indent(&output, "    "));
                 container.overview = Some(tag);
