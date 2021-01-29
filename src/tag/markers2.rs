@@ -6,6 +6,7 @@
 //!
 //! The minimum length of this tag seems to be 470 bytes, and shorter contents are padded with null bytes.
 
+use super::format::enveloped;
 use super::format::flac;
 use super::format::id3;
 use crate::error::Error;
@@ -206,6 +207,7 @@ impl util::Tag for Markers2 {
 }
 
 impl id3::ID3Tag for Markers2 {}
+impl enveloped::EnvelopedTag for Markers2 {}
 impl flac::FLACTag for Markers2 {
     const FLAC_COMMENT: &'static str = "SERATO_MARKERS_V2";
 }

@@ -1,5 +1,6 @@
 //! The `Serato BeatGrid` tag stores the beatgrid markers.
 
+use super::format::enveloped;
 use super::format::flac;
 use super::format::id3;
 use crate::error::Error;
@@ -52,6 +53,7 @@ impl util::Tag for Beatgrid {
 }
 
 impl id3::ID3Tag for Beatgrid {}
+impl enveloped::EnvelopedTag for Beatgrid {}
 impl flac::FLACTag for Beatgrid {
     const FLAC_COMMENT: &'static str = "SERATO_BEATGRID";
 }

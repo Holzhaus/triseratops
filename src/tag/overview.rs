@@ -2,6 +2,7 @@
 //!
 //! The overview data consists of multiple chunks of 16 bytes.
 
+use super::format::enveloped;
 use super::format::flac;
 use super::format::id3;
 use crate::error::Error;
@@ -27,6 +28,7 @@ impl util::Tag for Overview {
 }
 
 impl id3::ID3Tag for Overview {}
+impl enveloped::EnvelopedTag for Overview {}
 impl flac::FLACTag for Overview {
     const FLAC_COMMENT: &'static str = "SERATO_OVERVIEW";
 }

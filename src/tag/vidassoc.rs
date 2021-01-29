@@ -2,6 +2,7 @@
 //!
 //! This is probably the Serato Version number that performed the analysis.
 
+use super::format::enveloped;
 use super::format::flac;
 use crate::error::Error;
 use crate::util;
@@ -23,6 +24,7 @@ impl util::Tag for VidAssoc {
     }
 }
 
+impl enveloped::EnvelopedTag for VidAssoc {}
 impl flac::FLACTag for VidAssoc {
     const FLAC_COMMENT: &'static str = "SERATO_VIDASSOC";
 }

@@ -2,6 +2,7 @@
 //!
 //! This is probably the Serato Version number that performed the analysis.
 
+use super::format::enveloped;
 use super::format::flac;
 use super::format::id3;
 use crate::error::Error;
@@ -25,6 +26,7 @@ impl util::Tag for Analysis {
 }
 
 impl id3::ID3Tag for Analysis {}
+impl enveloped::EnvelopedTag for Analysis {}
 impl flac::FLACTag for Analysis {
     const FLAC_COMMENT: &'static str = "SERATO_ANALYSIS";
 }
