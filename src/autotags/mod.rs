@@ -1,5 +1,6 @@
 //! The `Serato Autotags` tag stores BPM and Gain values.
 
+use crate::flac;
 use crate::id3;
 use crate::util;
 use crate::util::Res;
@@ -29,6 +30,7 @@ impl util::Tag for Autotags {
 }
 
 impl id3::ID3Tag for Autotags {}
+impl flac::FLACTag for Autotags {}
 
 
 /// Returns an `f64` parsed from zero-terminated ASCII chars the input slice.

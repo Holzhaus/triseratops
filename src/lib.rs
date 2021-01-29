@@ -7,4 +7,5 @@ pub mod markers2;
 pub mod overview;
 pub mod util;
 pub mod id3;
+pub mod flac;
 pub mod error;

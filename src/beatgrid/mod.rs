@@ -1,5 +1,6 @@
 //! The `Serato BeatGrid` tag stores the beatgrid markers.
 
+use crate::flac;
 use crate::id3;
 use crate::util;
 use crate::util::Res;
@@ -52,6 +53,7 @@ impl util::Tag for Beatgrid {
 }
 
 impl id3::ID3Tag for Beatgrid {}
+impl flac::FLACTag for Beatgrid {}
 
 
 /// Returns a `u32` parsed from the input slice, decremented by 1.

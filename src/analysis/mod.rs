@@ -2,6 +2,7 @@
 //!
 //! This is probably the Serato Version number that performed the analysis.
 
+use crate::flac;
 use crate::id3;
 use crate::util;
 use crate::util::Res;
@@ -25,9 +26,10 @@ impl util::Tag for Analysis {
 }
 
 impl id3::ID3Tag for Analysis {}
+impl flac::FLACTag for Analysis {}
 
 pub fn take_analysis(input: &[u8]) -> Res<&[u8], Analysis> {
-    let (input, version) = util::take_version(input)?;
+    let (input, version) = nom::error::context("take version", util::take_version)(input)?;
     let analysis = Analysis { version };
 
     Ok((input, analysis))

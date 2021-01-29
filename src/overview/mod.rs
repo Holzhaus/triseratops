@@ -3,6 +3,7 @@
 //! The overview data consists of multiple chunks of 16 bytes.
 
 use crate::id3;
+use crate::flac;
 use crate::util;
 use crate::util::Res;
 use crate::error::Error;
@@ -27,6 +28,7 @@ impl util::Tag for Overview {
 }
 
 impl id3::ID3Tag for Overview {}
+impl flac::FLACTag for Overview {}
 
 
 /// Returns a 16-byte vector of data parsed from the input slice.

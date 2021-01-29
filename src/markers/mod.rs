@@ -5,6 +5,7 @@
 //! prefer information from `Serato Markers_` if it's present.
 
 use crate::id3;
+use crate::flac;
 use crate::util;
 use crate::util::Res;
 use crate::error::Error;
@@ -90,6 +91,7 @@ impl util::Tag for Markers {
 }
 
 impl id3::ID3Tag for Markers {}
+impl flac::FLACTag for Markers {}
 
 /// The Type of a Marker.
 ///

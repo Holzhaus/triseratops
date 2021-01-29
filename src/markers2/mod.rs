@@ -6,6 +6,7 @@
 //!
 //! The minimum length of this tag seems to be 470 bytes, and shorter contents are padded with null bytes.
 
+use crate::flac;
 use crate::id3;
 use crate::util;
 use crate::util::Res;
@@ -206,6 +207,7 @@ impl util::Tag for Markers2 {
 }
 
 impl id3::ID3Tag for Markers2 {}
+impl flac::FLACTag for Markers2 {}
 
 
 /// Represents the base64-encoded content of the `Serato Markers2` tag.
