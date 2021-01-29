@@ -4,11 +4,11 @@
 //! This is redundant with some of the information from the `Serato Markers2` tag. Serato will
 //! prefer information from `Serato Markers_` if it's present.
 
-use crate::id3;
+use crate::error::Error;
 use crate::flac;
+use crate::id3;
 use crate::util;
 use crate::util::Res;
-use crate::error::Error;
 
 /// Represents a single marker in the `Serato Markers_` tag.
 #[derive(Debug)]
@@ -81,13 +81,12 @@ impl Markers {
 }
 
 impl util::Tag for Markers {
-    const NAME : &'static str = "Serato Markers_";
+    const NAME: &'static str = "Serato Markers_";
 
     fn parse(input: &[u8]) -> Result<Self, Error> {
         let (_, autotags) = nom::combinator::all_consuming(take_markers)(input)?;
         Ok(autotags)
     }
-
 }
 
 impl id3::ID3Tag for Markers {}
@@ -169,7 +168,7 @@ pub fn take_has_position(input: &[u8]) -> Res<&[u8], bool> {
 /// Returns an `Option<u32>` which contains the position parsed from the next 5 input bytes.
 ///
 /// Uses `take_has_position` internally to determine if the position is set, then either returns
-/// the position as `Some` or ensures the that "no position" contant is used and returns `None`.
+/// the position as `Some` or ensures the that "no position" constant is used and returns `None`.
 ///
 /// # Example
 /// ```
@@ -243,7 +242,8 @@ pub fn take_marker(input: &[u8]) -> Res<&[u8], Marker> {
 /// Parses the data into a `Markers` struct, consuming the whole input slice.
 pub fn take_markers(input: &[u8]) -> Res<&[u8], Markers> {
     let (input, version) = util::take_version(&input)?;
-    let (input, entries) = nom::multi::length_count(nom::number::complete::be_u32, take_marker)(input)?;
+    let (input, entries) =
+        nom::multi::length_count(nom::number::complete::be_u32, take_marker)(input)?;
     let (input, track_color) = nom::combinator::all_consuming(util::serato32::take_color)(input)?;
 
     let markers = Markers {

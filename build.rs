@@ -53,7 +53,9 @@ fn write_test(test_file: &mut File, filepath: &Path, tag_name: &str) {
         "overview" => "overview::Overview",
         "vidassoc" => "vidassoc::VidAssoc",
         "relvolad" => "relvolad::RelVolAd",
-        _ => { panic!("Unknown tag name!") },
+        _ => {
+            panic!("Unknown tag name!")
+        }
     };
 
     write!(

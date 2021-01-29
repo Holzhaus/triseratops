@@ -2,11 +2,11 @@
 //!
 //! The overview data consists of multiple chunks of 16 bytes.
 
-use crate::id3;
+use crate::error::Error;
 use crate::flac;
+use crate::id3;
 use crate::util;
 use crate::util::Res;
-use crate::error::Error;
 
 /// Represents the `Serato Overview` tag.
 #[derive(Debug)]
@@ -18,18 +18,16 @@ pub struct Overview {
 }
 
 impl util::Tag for Overview {
-    const NAME : &'static str = "Serato Overview";
+    const NAME: &'static str = "Serato Overview";
 
     fn parse(input: &[u8]) -> Result<Self, Error> {
         let (_, overview) = nom::combinator::all_consuming(take_overview)(input)?;
         Ok(overview)
     }
-
 }
 
 impl id3::ID3Tag for Overview {}
 impl flac::FLACTag for Overview {}
-
 
 /// Returns a 16-byte vector of data parsed from the input slice.
 ///

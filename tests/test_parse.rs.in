@@ -5,6 +5,6 @@ fn {name}() {{
     let res = serato_tags::{parser}::parse_{tag_type}(&input[..]);
     if let Err(err) = res {{
         eprintln!("Error: {{:?}}", err);
-        assert!(false);
+        unreachable!();
     }}
 }}

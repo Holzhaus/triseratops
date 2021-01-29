@@ -1,10 +1,10 @@
 //! The `Serato BeatGrid` tag stores the beatgrid markers.
 
+use crate::error::Error;
 use crate::flac;
 use crate::id3;
 use crate::util;
 use crate::util::Res;
-use crate::error::Error;
 
 /// Represents the terminal beatgrid marker in the `Serato BeatGrid` tag.
 ///
@@ -43,18 +43,16 @@ pub struct Beatgrid {
 }
 
 impl util::Tag for Beatgrid {
-    const NAME : &'static str = "Serato BeatGrid";
+    const NAME: &'static str = "Serato BeatGrid";
 
     fn parse(input: &[u8]) -> Result<Self, Error> {
         let (_, autotags) = nom::combinator::all_consuming(take_beatgrid)(input)?;
         Ok(autotags)
     }
-
 }
 
 impl id3::ID3Tag for Beatgrid {}
 impl flac::FLACTag for Beatgrid {}
-
 
 /// Returns a `u32` parsed from the input slice, decremented by 1.
 ///
@@ -72,7 +70,8 @@ impl flac::FLACTag for Beatgrid {}
 /// assert!(take_non_terminal_marker_count(&[0xC0, 0xFF, 0xEE]).is_err());
 /// ```
 pub fn take_non_terminal_marker_count(input: &[u8]) -> Res<&[u8], u32> {
-    let (input, count) = nom::combinator::verify(nom::number::complete::be_u32, |x: &u32| x > &0u32)(input)?;
+    let (input, count) =
+        nom::combinator::verify(nom::number::complete::be_u32, |x: &u32| x > &0u32)(input)?;
     Ok((input, count - 1))
 }
 
@@ -98,7 +97,8 @@ fn take_terminal_marker(input: &[u8]) -> Res<&[u8], TerminalMarker> {
 
 fn take_beatgrid(input: &[u8]) -> Res<&[u8], Beatgrid> {
     let (input, version) = util::take_version(&input)?;
-    let (input, non_terminal_markers) = nom::multi::length_count(take_non_terminal_marker_count, take_non_terminal_marker)(input)?;
+    let (input, non_terminal_markers) =
+        nom::multi::length_count(take_non_terminal_marker_count, take_non_terminal_marker)(input)?;
     let (input, terminal_marker) = take_terminal_marker(input)?;
     let (input, footer) = nom::number::complete::u8(input)?;
 

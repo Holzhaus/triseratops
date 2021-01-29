@@ -1,11 +1,10 @@
 //! FLAC helpers
-extern crate nom;
 extern crate base64;
+extern crate nom;
 
-use crate::util;
-use crate::markers2;
 use crate::error::Error;
-
+use crate::markers2;
+use crate::util;
 
 pub trait FLACTag: util::Tag {
     fn parse_flac(input: &[u8]) -> Result<Self, Error> {
@@ -33,17 +32,17 @@ pub fn take_base64_with_newline(input: &[u8]) -> util::Res<&[u8], &[u8]> {
     nom::bytes::complete::take_while(|b| is_base64(b) || is_newline(b))(input)
 }
 
-const BASE64_FORGIVING : base64::Config = base64::STANDARD.decode_allow_trailing_bits(true);
+const BASE64_FORGIVING: base64::Config = base64::STANDARD.decode_allow_trailing_bits(true);
 
 pub fn base64_decode(input: &[u8]) -> Result<Vec<u8>, Error> {
-    let mut encoded : Vec<u8> = input.iter().filter(|&b| !is_newline(*b)).map(|&b| b).collect();
+    let mut encoded: Vec<u8> = input.iter().filter(|&b| !is_newline(*b)).copied().collect();
     if encoded.len() % 4 != 2 {
         encoded.pop();
     }
     let decoded = base64::decode_config(encoded, BASE64_FORGIVING);
     match decoded {
         Ok(data) => Ok(data),
-        Err(e) => Err(Error::Base64DecodeError{ source: e }),
+        Err(e) => Err(Error::Base64DecodeError { source: e }),
     }
 }
 
@@ -54,8 +53,11 @@ pub fn envelope_decode(input: &[u8]) -> Result<(String, Vec<u8>), Error> {
 
 pub fn envelope_decode_with_name(input: &[u8], expected_name: &str) -> Result<Vec<u8>, Error> {
     let (name, content) = envelope_decode(input)?;
-    if expected_name != &name {
-        return Err(Error::EnvelopeNameMismatch{ actual: name, expected: expected_name.to_owned() } );
+    if expected_name != name {
+        return Err(Error::EnvelopeNameMismatch {
+            actual: name,
+            expected: expected_name.to_owned(),
+        });
     }
     Ok(content)
 }

@@ -6,11 +6,11 @@
 //!
 //! The minimum length of this tag seems to be 470 bytes, and shorter contents are padded with null bytes.
 
+use crate::error::Error;
 use crate::flac;
 use crate::id3;
 use crate::util;
 use crate::util::Res;
-use crate::error::Error;
 use nom::error::ParseError;
 
 /// A marker in the `Serato Markers2` tag.
@@ -197,18 +197,16 @@ impl Markers2 {
 }
 
 impl util::Tag for Markers2 {
-    const NAME : &'static str = "Serato Markers2";
+    const NAME: &'static str = "Serato Markers2";
 
     fn parse(input: &[u8]) -> Result<Self, Error> {
         let (_, autotags) = nom::combinator::all_consuming(take_markers2)(input)?;
         Ok(autotags)
     }
-
 }
 
 impl id3::ID3Tag for Markers2 {}
 impl flac::FLACTag for Markers2 {}
-
 
 /// Represents the base64-encoded content of the `Serato Markers2` tag.
 #[derive(Debug)]
@@ -226,11 +224,17 @@ pub fn peek_nullbyte(input: &[u8]) -> Res<&[u8], &[u8]> {
 }
 
 pub fn peek_newline_or_nullbyte(input: &[u8]) -> Res<&[u8], &[u8]> {
-    nom::combinator::peek(nom::branch::alt((nom::bytes::complete::tag(b"\n"), nom::bytes::complete::tag(b"\0"))))(input)
+    nom::combinator::peek(nom::branch::alt((
+        nom::bytes::complete::tag(b"\n"),
+        nom::bytes::complete::tag(b"\0"),
+    )))(input)
 }
 
 pub fn take_base64_chunk(input: &[u8]) -> Res<&[u8], &[u8]> {
-    let (input, encoded_data) = nom::error::context("Get base64 encoded chunk", nom::bytes::complete::take_while1(is_base64))(input)?;
+    let (input, encoded_data) = nom::error::context(
+        "Get base64 encoded chunk",
+        nom::bytes::complete::take_while1(is_base64),
+    )(input)?;
     let (input, byte) = peek_newline_or_nullbyte(input)?;
     if byte == [b'\0'] {
         return Ok((input, encoded_data));
@@ -240,15 +244,23 @@ pub fn take_base64_chunk(input: &[u8]) -> Res<&[u8], &[u8]> {
 }
 
 pub fn take_base64_chunks(input: &[u8]) -> Res<&[u8], Vec<&[u8]>> {
-    let (input, (base64data, _)) = nom::error::context("Get all base64 encoded chunks", nom::multi::many_till(take_base64_chunk, peek_nullbyte))(input)?;
+    let (input, (base64data, _)) = nom::error::context(
+        "Get all base64 encoded chunks",
+        nom::multi::many_till(take_base64_chunk, peek_nullbyte),
+    )(input)?;
     Ok((input, base64data))
 }
 
-pub fn decode_base64_chunks(encoded_chunks: Vec<&[u8]>) -> Result<Vec<u8>, nom::Err<nom::error::VerboseError<&[u8]>>> {
+pub fn decode_base64_chunks(
+    encoded_chunks: Vec<&[u8]>,
+) -> Result<Vec<u8>, nom::Err<nom::error::VerboseError<&[u8]>>> {
     let mut decoded_data = Vec::new();
     for chunk in &encoded_chunks {
         if chunk.len() > 72 {
-            return Err(nom::Err::Error(nom::error::VerboseError::from_error_kind(*chunk, nom::error::ErrorKind::LengthValue)));
+            return Err(nom::Err::Error(nom::error::VerboseError::from_error_kind(
+                *chunk,
+                nom::error::ErrorKind::LengthValue,
+            )));
         }
         let mut buf = [0; 54];
         // TODO: Add proper error handling here
@@ -436,7 +448,10 @@ pub fn parse_markers2_content(input: &[u8]) -> Res<&[u8], Markers2Content> {
 }
 
 fn take_nullbytes(input: &[u8]) -> Res<&[u8], &[u8]> {
-    nom::error::context("Take nullbytes", nom::bytes::complete::take_while(|x| x == 0))(input)
+    nom::error::context(
+        "Take nullbytes",
+        nom::bytes::complete::take_while(|x| x == 0),
+    )(input)
 }
 
 pub fn take_markers2(input: &[u8]) -> Res<&[u8], Markers2> {

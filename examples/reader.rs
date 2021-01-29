@@ -1,4 +1,5 @@
 use id3::Tag;
+use serato_tags::id3::ID3Tag;
 use std::env;
 use std::io::BufRead;
 use std::io::BufReader;
@@ -7,7 +8,6 @@ use std::io::ErrorKind;
 use std::io::Read;
 use std::str;
 use std::string::String;
-use serato_tags::id3::ID3Tag;
 
 fn read_str(reader: &mut dyn BufRead) -> Result<String, Error> {
     let mut value = vec![];
