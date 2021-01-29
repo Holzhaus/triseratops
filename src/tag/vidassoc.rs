@@ -36,7 +36,9 @@ impl mp4::MP4Tag for VidAssoc {
 pub fn take_vidassoc(input: &[u8]) -> Res<&[u8], VidAssoc> {
     let (input, version) = util::take_version(input)?;
     let (input, _) =
-        nom::error::context("unknown bytes", nom::bytes::complete::tag(b"\x01\x00\x00"))(input)?;
+        nom::error::context("unknown bytes", nom::bytes::complete::tag(b"\x01\x00"))(input)?;
+    // TODO: what do these bytes mean?
+    let (input, _) = nom::bytes::complete::take_while(|_| true)(input)?;
 
     let vidassoc = VidAssoc { version };
     Ok((input, vidassoc))
