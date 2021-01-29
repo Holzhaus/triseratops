@@ -68,8 +68,8 @@ impl flac::FLACTag for Beatgrid {}
 ///
 /// assert_eq!(take_non_terminal_marker_count(&[0x00, 0x00, 0x00, 0x01]), Ok((&[][..], 0x00)));
 /// assert_eq!(take_non_terminal_marker_count(&[0x89, 0xAB, 0xCD, 0xEF, 0x12]), Ok((&[0x12][..], 0x89ABCDEE)));
-/// assert_eq!(take_non_terminal_marker_count(&[0x00, 0x00, 0x00, 0x00]), Err(nom::Err::Error(Error::new(&[0x00, 0x00, 0x00, 0x00][..], ErrorKind::Verify))));
-/// assert_eq!(take_non_terminal_marker_count(&[0xC0, 0xFF, 0xEE]), Err(nom::Err::Error(Error::new(&[0xC0, 0xFF, 0xEE][..], ErrorKind::Eof))));
+/// assert!(take_non_terminal_marker_count(&[0x00, 0x00, 0x00, 0x00]).is_err());
+/// assert!(take_non_terminal_marker_count(&[0xC0, 0xFF, 0xEE]).is_err());
 /// ```
 pub fn take_non_terminal_marker_count(input: &[u8]) -> Res<&[u8], u32> {
     let (input, count) = nom::combinator::verify(nom::number::complete::be_u32, |x: &u32| x > &0u32)(input)?;

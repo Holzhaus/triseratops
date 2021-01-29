@@ -121,8 +121,8 @@ pub enum EntryType {
 ///
 /// assert_eq!(take_bool(&[0x00]), Ok((&[][..], false)));
 /// assert_eq!(take_bool(&[0x01]), Ok((&[][..], true)));
-/// assert_eq!(take_bool(&[0xAB, 0x00, 0x01]), Err(nom::Err::Incomplete(nom::Needed::Unknown)));
-/// assert_eq!(take_bool(&[]), Err(Err::Error(Error::new(&[][..], ErrorKind::Eof))));
+/// assert!(take_bool(&[0xAB, 0x00, 0x01]).is_err());
+/// assert!(take_bool(&[]).is_err());
 /// ```
 pub fn take_bool(input: &[u8]) -> Res<&[u8], bool> {
     let (input, position_prefix) = nom::number::complete::u8(input)?;
@@ -154,8 +154,8 @@ pub fn take_bool(input: &[u8]) -> Res<&[u8], bool> {
 /// assert_eq!(take_has_position(&[0x00]), Ok((&[][..], true)));
 /// assert_eq!(take_has_position(&[0x7F]), Ok((&[][..], false)));
 /// assert_eq!(take_has_position(&[0x00, 0x05]), Ok((&[0x05][..], true)));
-/// assert_eq!(take_has_position(&[0xAB, 0x00, 0x01]), Err(nom::Err::Incomplete(nom::Needed::Unknown)));
-/// assert_eq!(take_has_position(&[]), Err(Err::Error(Error::new(&[][..], ErrorKind::Eof))));
+/// assert!(take_has_position(&[0xAB, 0x00, 0x01]).is_err());
+/// assert!(take_has_position(&[]).is_err());
 /// ```
 pub fn take_has_position(input: &[u8]) -> Res<&[u8], bool> {
     let (input, position_prefix) = nom::number::complete::u8(input)?;

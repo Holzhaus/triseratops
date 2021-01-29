@@ -43,7 +43,7 @@ impl flac::FLACTag for Autotags {}
 ///
 /// assert_eq!(take_double_str(&[0x31, 0x31, 0x35, 0x2E, 0x30, 0x30, 0x00]), Ok((&[][..], 115.0)));
 /// assert_eq!(take_double_str(&[0x2D, 0x33, 0x2E, 0x32, 0x35, 0x37, 0x00, 0xAB]), Ok((&[0xAB][..], -3.257)));
-/// assert_eq!(take_double_str(&[0xAB, 0x01]), Err(nom::Err::Error(Error::new(&[0xAB, 0x01][..], ErrorKind::TakeUntil))));
+/// assert!(take_double_str(&[0xAB, 0x01]).is_err());
 /// ```
 pub fn take_double_str(input: &[u8]) -> Res<&[u8], f64> {
     let (input, text) = util::take_until_nullbyte(input)?;
