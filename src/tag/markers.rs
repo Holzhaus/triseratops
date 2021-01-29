@@ -4,7 +4,6 @@
 //! This is redundant with some of the information from the `Serato Markers2` tag. Serato will
 //! prefer information from `Serato Markers_` if it's present.
 
-use super::format::flac;
 use super::format::id3;
 use crate::error::Error;
 use crate::util;
@@ -90,7 +89,6 @@ impl util::Tag for Markers {
 }
 
 impl id3::ID3Tag for Markers {}
-impl flac::FLACTag for Markers {}
 
 /// The Type of a Marker.
 ///
