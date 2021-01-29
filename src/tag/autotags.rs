@@ -3,6 +3,7 @@
 use super::format::enveloped;
 use super::format::flac;
 use super::format::id3;
+use super::format::mp4;
 use crate::error::Error;
 use crate::util;
 use crate::util::Res;
@@ -33,6 +34,9 @@ impl id3::ID3Tag for Autotags {}
 impl enveloped::EnvelopedTag for Autotags {}
 impl flac::FLACTag for Autotags {
     const FLAC_COMMENT: &'static str = "SERATO_AUTOGAIN";
+}
+impl mp4::MP4Tag for Autotags {
+    const MP4_ATOM: &'static str = "----:com.serato.dj:autgain";
 }
 
 /// Returns an `f64` parsed from zero-terminated ASCII chars the input slice.

@@ -5,6 +5,7 @@
 use super::format::enveloped;
 use super::format::flac;
 use super::format::id3;
+use super::format::mp4;
 use crate::error::Error;
 use crate::util;
 use crate::util::Res;
@@ -31,6 +32,9 @@ impl id3::ID3Tag for Overview {}
 impl enveloped::EnvelopedTag for Overview {}
 impl flac::FLACTag for Overview {
     const FLAC_COMMENT: &'static str = "SERATO_OVERVIEW";
+}
+impl mp4::MP4Tag for Overview {
+    const MP4_ATOM: &'static str = "----:com.serato.dj:overview";
 }
 
 /// Returns a 16-byte vector of data parsed from the input slice.

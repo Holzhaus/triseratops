@@ -4,6 +4,7 @@
 
 use super::format::enveloped;
 use super::format::flac;
+use super::format::mp4;
 use crate::error::Error;
 use crate::util;
 use crate::util::Res;
@@ -27,6 +28,9 @@ impl util::Tag for VidAssoc {
 impl enveloped::EnvelopedTag for VidAssoc {}
 impl flac::FLACTag for VidAssoc {
     const FLAC_COMMENT: &'static str = "SERATO_VIDASSOC";
+}
+impl mp4::MP4Tag for VidAssoc {
+    const MP4_ATOM: &'static str = "----:com.serato.dj:videoassociation";
 }
 
 pub fn take_vidassoc(input: &[u8]) -> Res<&[u8], VidAssoc> {

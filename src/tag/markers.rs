@@ -4,7 +4,9 @@
 //! This is redundant with some of the information from the `Serato Markers2` tag. Serato will
 //! prefer information from `Serato Markers_` if it's present.
 
+use super::format::enveloped;
 use super::format::id3;
+use super::format::mp4;
 use crate::error::Error;
 use crate::util;
 use crate::util::Res;
@@ -89,6 +91,10 @@ impl util::Tag for Markers {
 }
 
 impl id3::ID3Tag for Markers {}
+impl enveloped::EnvelopedTag for Markers {}
+impl mp4::MP4Tag for Markers {
+    const MP4_ATOM: &'static str = "----:com.serato.dj:markers";
+}
 
 /// The Type of a Marker.
 ///

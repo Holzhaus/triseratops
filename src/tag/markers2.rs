@@ -9,6 +9,7 @@
 use super::format::enveloped;
 use super::format::flac;
 use super::format::id3;
+use super::format::mp4;
 use crate::error::Error;
 use crate::util;
 use crate::util::Res;
@@ -210,6 +211,9 @@ impl id3::ID3Tag for Markers2 {}
 impl enveloped::EnvelopedTag for Markers2 {}
 impl flac::FLACTag for Markers2 {
     const FLAC_COMMENT: &'static str = "SERATO_MARKERS_V2";
+}
+impl mp4::MP4Tag for Markers2 {
+    const MP4_ATOM: &'static str = "----:com.serato.dj:markersv2";
 }
 
 /// Represents the base64-encoded content of the `Serato Markers2` tag.
