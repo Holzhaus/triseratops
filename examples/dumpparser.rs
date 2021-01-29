@@ -2,6 +2,7 @@ use std::env;
 use std::fs::File;
 use std::io::Read;
 use std::string::String;
+use serato_tags::id3::ID3Tag;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -18,22 +19,22 @@ fn main() {
 
     match &flag[..] {
         "--analysis" => {
-            println!("{:#?}", serato_tags::analysis::parse(&data).unwrap());
+            println!("{:#?}", serato_tags::analysis::Analysis::parse_id3(&data).unwrap());
         }
         "--autotags" => {
-            println!("{:#?}", serato_tags::autotags::parse(&data).unwrap());
+            println!("{:#?}", serato_tags::autotags::Autotags::parse_id3(&data).unwrap());
         }
         "--beatgrid" => {
-            println!("{:#?}", serato_tags::beatgrid::parse(&data).unwrap());
+            println!("{:#?}", serato_tags::beatgrid::Beatgrid::parse_id3(&data).unwrap());
         }
         "--markers" => {
-            println!("{:#?}", serato_tags::markers::parse(&data).unwrap());
+            println!("{:#?}", serato_tags::markers::Markers::parse_id3(&data).unwrap());
         }
         "--markers2" => {
-            println!("{:#?}", serato_tags::markers2::parse(&data).unwrap());
+            println!("{:#?}", serato_tags::markers2::Markers2::parse_id3(&data).unwrap());
         }
         "--overview" => {
-            println!("{:#?}", serato_tags::overview::parse(&data).unwrap());
+            println!("{:#?}", serato_tags::overview::Overview::parse_id3(&data).unwrap());
         }
         _ => {
             panic!("Unknown argument!");

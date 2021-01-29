@@ -7,19 +7,18 @@ use crate::markers;
 use crate::markers2;
 use crate::overview;
 use crate::util;
-use crate::error::Error;
 
 /// Provides a streamlined interface for retrieving Serato tag data.
 ///
 /// Some of the data in Serato's tags is redundant and may contradict each other. This class
 /// implements the same merge strategies for inconsistent data that Serato uses, too.
 pub struct Container {
-    analysis: Option<analysis::Analysis>,
-    autotags: Option<autotags::Autotags>,
-    beatgrid: Option<beatgrid::Beatgrid>,
-    markers: Option<markers::Markers>,
-    markers2: Option<markers2::Markers2>,
-    overview: Option<overview::Overview>,
+    pub analysis: Option<analysis::Analysis>,
+    pub autotags: Option<autotags::Autotags>,
+    pub beatgrid: Option<beatgrid::Beatgrid>,
+    pub markers: Option<markers::Markers>,
+    pub markers2: Option<markers2::Markers2>,
+    pub overview: Option<overview::Overview>,
 }
 
 impl Container {
@@ -33,42 +32,6 @@ impl Container {
             markers2: None,
             overview: None,
         }
-    }
-
-    /// Parse the `Serato Analysis` tag data.
-    pub fn parse_analysis(&mut self, input: &[u8]) -> Result<(), Error> {
-        self.analysis = Some(analysis::parse(input)?);
-        Ok(())
-    }
-
-    /// Parse the `Serato AutoTags` tag data.
-    pub fn parse_autotags(&mut self, input: &[u8]) -> Result<(), Error> {
-        self.autotags = Some(autotags::parse(input)?);
-        Ok(())
-    }
-
-    /// Parse the `Serato BeatGrid` tag data.
-    pub fn parse_beatgrid(&mut self, input: &[u8]) -> Result<(), Error> {
-        self.beatgrid = Some(beatgrid::parse(input)?);
-        Ok(())
-    }
-
-    /// Parse the `Serato Markers_` tag data.
-    pub fn parse_markers(&mut self, input: &[u8]) -> Result<(), Error> {
-        self.markers = Some(markers::parse(input)?);
-        Ok(())
-    }
-
-    /// Parse the `Serato Markers2` tag data.
-    pub fn parse_markers2(&mut self, input: &[u8]) -> Result<(), Error> {
-        self.markers2 = Some(markers2::parse(input)?);
-        Ok(())
-    }
-
-    /// Parse the `Serato Overview` tag data.
-    pub fn parse_overview(&mut self, input: &[u8]) -> Result<(), Error> {
-        self.overview = Some(overview::parse(input)?);
-        Ok(())
     }
 
     /// Returns the auto_gain value from the `Serato Autotags` tag.

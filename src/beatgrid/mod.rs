@@ -1,5 +1,6 @@
 //! The `Serato BeatGrid` tag stores the beatgrid markers.
 
+use crate::id3;
 use crate::util;
 use crate::util::Res;
 use crate::error::Error;
@@ -39,6 +40,19 @@ pub struct Beatgrid {
     /// A single footer byte that is apparently random (?).
     pub footer: u8,
 }
+
+impl util::Tag for Beatgrid {
+    const NAME : &'static str = "Serato BeatGrid";
+
+    fn parse(input: &[u8]) -> Result<Self, Error> {
+        let (_, autotags) = nom::combinator::all_consuming(take_beatgrid)(input)?;
+        Ok(autotags)
+    }
+
+}
+
+impl id3::ID3Tag for Beatgrid {}
+
 
 /// Returns a `u32` parsed from the input slice, decremented by 1.
 ///

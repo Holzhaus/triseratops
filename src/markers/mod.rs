@@ -4,6 +4,7 @@
 //! This is redundant with some of the information from the `Serato Markers2` tag. Serato will
 //! prefer information from `Serato Markers_` if it's present.
 
+use crate::id3;
 use crate::util;
 use crate::util::Res;
 use crate::error::Error;
@@ -77,6 +78,18 @@ impl Markers {
         self.track_color
     }
 }
+
+impl util::Tag for Markers {
+    const NAME : &'static str = "Serato Markers_";
+
+    fn parse(input: &[u8]) -> Result<Self, Error> {
+        let (_, autotags) = nom::combinator::all_consuming(take_markers)(input)?;
+        Ok(autotags)
+    }
+
+}
+
+impl id3::ID3Tag for Markers {}
 
 /// The Type of a Marker.
 ///

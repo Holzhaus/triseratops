@@ -6,6 +6,7 @@
 //!
 //! The minimum length of this tag seems to be 470 bytes, and shorter contents are padded with null bytes.
 
+use crate::id3;
 use crate::util;
 use crate::util::Res;
 use crate::error::Error;
@@ -193,6 +194,19 @@ impl Markers2 {
         None
     }
 }
+
+impl util::Tag for Markers2 {
+    const NAME : &'static str = "Serato Markers2";
+
+    fn parse(input: &[u8]) -> Result<Self, Error> {
+        let (_, autotags) = nom::combinator::all_consuming(take_markers2)(input)?;
+        Ok(autotags)
+    }
+
+}
+
+impl id3::ID3Tag for Markers2 {}
+
 
 /// Represents the base64-encoded content of the `Serato Markers2` tag.
 #[derive(Debug)]

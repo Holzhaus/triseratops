@@ -2,7 +2,7 @@
 fn {name}() {{
     println!("Parsing file: {filepath}");
     let input = include_bytes!("{filepath}");
-    let res = serato_tags::{tag}::parse(&input[..]);
+    let res = serato_tags::{parser}::parse_{tag_type}(&input[..]);
     if let Err(err) = res {{
         eprintln!("Error: {{:?}}", err);
         assert!(false);

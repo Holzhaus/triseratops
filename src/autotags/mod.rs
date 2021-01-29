@@ -1,5 +1,6 @@
 //! The `Serato Autotags` tag stores BPM and Gain values.
 
+use crate::id3;
 use crate::util;
 use crate::util::Res;
 use crate::error::Error;
@@ -16,6 +17,19 @@ pub struct Autotags {
     /// The track's gain value (manual?).
     pub gain_db: f64,
 }
+
+impl util::Tag for Autotags {
+    const NAME : &'static str = "Serato Autotags";
+
+    fn parse(input: &[u8]) -> Result<Self, Error> {
+        let (_, autotags) = nom::combinator::all_consuming(take_autotags)(input)?;
+        Ok(autotags)
+    }
+
+}
+
+impl id3::ID3Tag for Autotags {}
+
 
 /// Returns an `f64` parsed from zero-terminated ASCII chars the input slice.
 ///
@@ -51,9 +65,4 @@ pub fn take_autotags(input: &[u8]) -> Res<&[u8], Autotags> {
     };
 
     Ok((input, autotags))
-}
-
-pub fn parse(input: &[u8]) -> Result<Autotags, Error> {
-    let (_, autotags) = nom::combinator::all_consuming(take_autotags)(input)?;
-    Ok(autotags)
 }

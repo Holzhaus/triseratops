@@ -1,6 +1,7 @@
 //! Various helper utilities for simplify parsing.
 extern crate nom;
 
+use crate::error::Error;
 use nom::bytes::complete::take;
 use nom::bytes::complete::take_until;
 
@@ -17,6 +18,11 @@ pub struct Color {
 pub struct Version {
     pub major: u8,
     pub minor: u8,
+}
+
+pub trait Tag: Sized {
+    const NAME: &'static str;
+    fn parse(input: &[u8]) -> Result<Self, Error>;
 }
 
 pub type Res<T, U> = nom::IResult<T, U, nom::error::VerboseError<T>>;
