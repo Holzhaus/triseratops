@@ -10,6 +10,7 @@ use super::format::mp4;
 use crate::error::Error;
 use crate::util;
 use crate::util::Res;
+use crate::util::Tag;
 use nom::error::ParseError;
 
 /// Represents a single marker in the `Serato Markers_` tag.
@@ -95,6 +96,15 @@ impl id3::ID3Tag for Markers {}
 impl enveloped::EnvelopedTag for Markers {}
 impl mp4::MP4Tag for Markers {
     const MP4_ATOM: &'static str = "----:com.serato.dj:markers";
+
+    fn parse_mp4(input: &[u8]) -> Result<Self, Error> {
+        let (_, encoded) = nom::combinator::all_consuming(
+            super::format::enveloped::take_base64_with_newline,
+        )(input)?;
+        let content = super::format::enveloped::envelope_decode_with_name(encoded, Self::NAME)?;
+        let (_, markers) = nom::combinator::all_consuming(take_markers_mp4)(content.as_slice())?;
+        Ok(markers)
+    }
 }
 
 /// The Type of a Marker.
@@ -263,6 +273,51 @@ pub fn take_markers(input: &[u8]) -> Res<&[u8], Markers> {
     let (input, version) = util::take_version(&input)?;
     let (input, entries) =
         nom::multi::length_count(nom::number::complete::be_u32, take_marker)(input)?;
+    let (input, track_color) = nom::combinator::all_consuming(util::serato32::take_color)(input)?;
+
+    let markers = Markers {
+        version,
+        entries,
+        track_color,
+    };
+    Ok((input, markers))
+}
+
+/// Returns a `Marker` parsed from the input slice (MP4 version).
+pub fn take_marker_mp4(input: &[u8]) -> Res<&[u8], Marker> {
+    let (input, start_position_millis_raw) =
+        nom::error::context("marker start position", nom::number::complete::be_u32)(input)?;
+    let (input, end_position_millis_raw) =
+        nom::error::context("marker end position", nom::number::complete::be_u32)(input)?;
+    let (input, _) =
+        nom::error::context("marker unknown bytes", nom::bytes::complete::take(6usize))(input)?;
+    let (input, color) = nom::error::context("marker color", util::take_color)(input)?;
+    let (input, entry_type) = nom::error::context("marker type", take_entry_type)(input)?;
+    let (input, is_locked) = nom::error::context("marker locked state", take_bool)(input)?;
+
+    let start_position_millis = Some(start_position_millis_raw);
+    let end_position_millis = if entry_type == EntryType::LOOP {
+        Some(end_position_millis_raw)
+    } else {
+        None
+    };
+    Ok((
+        input,
+        Marker {
+            start_position_millis,
+            end_position_millis,
+            color,
+            entry_type,
+            is_locked,
+        },
+    ))
+}
+
+/// Parses the data into a `Markers` struct, consuming the whole input slice (MP4 version).
+pub fn take_markers_mp4(input: &[u8]) -> Res<&[u8], Markers> {
+    let (input, version) = util::take_version(&input)?;
+    let (input, entries) =
+        nom::multi::length_count(nom::number::complete::be_u32, take_marker_mp4)(input)?;
     let (input, track_color) = nom::combinator::all_consuming(util::serato32::take_color)(input)?;
 
     let markers = Markers {
