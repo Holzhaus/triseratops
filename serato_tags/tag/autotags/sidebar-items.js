@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["take_autotags",""],["take_double_str","Returns an `f64` parsed from zero-terminated ASCII chars the input slice."]],"struct":[["Autotags","Represents the  `Serato AutoTags` tag."]]});

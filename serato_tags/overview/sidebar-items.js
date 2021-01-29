@@ -1,1 +1,0 @@
-initSidebarItems({"fn":[["parse",""],["take_chunk","Returns a 16-byte vector of data parsed from the input slice."],["take_chunks","Returns a vector of 16-byte vectors of data parsed from the input slice."]],"struct":[["Overview","Represents the `Serato Overview` tag."]]});

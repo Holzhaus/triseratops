@@ -1,6 +1,6 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `src/util.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>util.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../favicon.svg">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/util.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>util.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings"></script><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../favicon.svg">
 <link rel="alternate icon" type="image/png" href="../../favicon-16x16.png">
-<link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../serato_tags/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><span class="help-button">?</span>
+<link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../serato_tags/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><span class="help-button">?</span>
                 <a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
@@ -219,13 +219,34 @@
 <span id="216">216</span>
 <span id="217">217</span>
 <span id="218">218</span>
+<span id="219">219</span>
+<span id="220">220</span>
+<span id="221">221</span>
+<span id="222">222</span>
+<span id="223">223</span>
+<span id="224">224</span>
+<span id="225">225</span>
+<span id="226">226</span>
+<span id="227">227</span>
+<span id="228">228</span>
+<span id="229">229</span>
+<span id="230">230</span>
+<span id="231">231</span>
+<span id="232">232</span>
+<span id="233">233</span>
+<span id="234">234</span>
+<span id="235">235</span>
+<span id="236">236</span>
+<span id="237">237</span>
+<span id="238">238</span>
+<span id="239">239</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Various helper utilities for simplify parsing.</span>
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">nom</span>;
 
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">error</span>::<span class="ident">Error</span>;
 <span class="kw">use</span> <span class="ident">nom</span>::<span class="ident">bytes</span>::<span class="ident">complete</span>::<span class="ident">take</span>;
 <span class="kw">use</span> <span class="ident">nom</span>::<span class="ident">bytes</span>::<span class="ident">complete</span>::<span class="ident">take_until</span>;
-<span class="kw">use</span> <span class="ident">nom</span>::<span class="ident">IResult</span>;
 
 <span class="doccomment">/// Represents a 3-Byte RGB color value.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Copy</span>, <span class="ident">Clone</span>)]</span>
@@ -242,6 +263,13 @@
     <span class="kw">pub</span> <span class="ident">minor</span>: <span class="ident">u8</span>,
 }
 
+<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Tag</span>: <span class="ident">Sized</span> {
+    <span class="kw">const</span> <span class="ident">NAME</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span>;
+    <span class="kw">fn</span> <span class="ident">parse</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Error</span><span class="op">&gt;</span>;
+}
+
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">Res</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">nom</span>::<span class="ident">IResult</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">U</span>, <span class="ident">nom</span>::<span class="ident">error</span>::<span class="ident">VerboseError</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>;
+
 <span class="doccomment">/// Returns a `Color` struct parsed from the first 3 input bytes.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// # Example</span>
@@ -253,9 +281,9 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// assert_eq!(take_color(&amp;[0xFF, 0x00, 0x10]), Ok((&amp;[][..], Color { red: 0xFF, green: 0x00, blue: 0x10})));</span>
 <span class="doccomment">/// assert_eq!(take_color(&amp;[0x11, 0x22, 0x33, 0x44]), Ok((&amp;[0x44][..], Color { red: 0x11, green: 0x22, blue: 0x33})));</span>
-<span class="doccomment">/// assert_eq!(take_color(&amp;[0xAB, 0xCD]), Err(Err::Error(Error::new(&amp;[0xAB, 0xCD][..], ErrorKind::Eof))));</span>
+<span class="doccomment">/// assert!(take_color(&amp;[0xAB, 0xCD]).is_err());</span>
 <span class="doccomment">/// ```</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">take_color</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">IResult</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">Color</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">take_color</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Res</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">Color</span><span class="op">&gt;</span> {
     <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">bytes</span>) <span class="op">=</span> <span class="ident">nom</span>::<span class="ident">bytes</span>::<span class="ident">complete</span>::<span class="ident">take</span>(<span class="number">3usize</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
     <span class="kw">let</span> (<span class="ident">bytes</span>, <span class="ident">red</span>) <span class="op">=</span> <span class="ident">nom</span>::<span class="ident">number</span>::<span class="ident">complete</span>::<span class="ident">u8</span>(<span class="ident">bytes</span>)<span class="question-mark">?</span>;
     <span class="kw">let</span> (<span class="ident">bytes</span>, <span class="ident">green</span>) <span class="op">=</span> <span class="ident">nom</span>::<span class="ident">number</span>::<span class="ident">complete</span>::<span class="ident">u8</span>(<span class="ident">bytes</span>)<span class="question-mark">?</span>;
@@ -274,9 +302,9 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// assert_eq!(take_version(&amp;[0x02, 0x05]), Ok((&amp;[][..], Version { major: 2, minor: 5 })));</span>
 <span class="doccomment">/// assert_eq!(take_version(&amp;[0x01, 0x02, 0x03]), Ok((&amp;[0x03][..], Version { major: 1, minor: 2 })));</span>
-<span class="doccomment">/// assert_eq!(take_version(&amp;[0x0A]), Err(Err::Error(Error::new(&amp;[0x0A][..], ErrorKind::Eof))));</span>
+<span class="doccomment">/// assert!(take_version(&amp;[0x0A]).is_err());</span>
 <span class="doccomment">/// ```</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">take_version</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">IResult</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">Version</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">take_version</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Res</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">Version</span><span class="op">&gt;</span> {
     <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">version</span>) <span class="op">=</span> <span class="ident">take</span>(<span class="number">2usize</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
     <span class="prelude-val">Ok</span>((
         <span class="ident">input</span>,
@@ -299,10 +327,25 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// assert_eq!(take_until_nullbyte(&amp;[0x41, 0x42, 0x00]), Ok((&amp;[0x00][..], &amp;[0x41, 0x42][..])));</span>
 <span class="doccomment">/// assert_eq!(take_until_nullbyte(&amp;[0x01, 0x02, 0x00, 0xFF]), Ok((&amp;[0x00, 0xFF][..], &amp;[0x01, 0x02][..])));</span>
-<span class="doccomment">/// assert_eq!(take_until_nullbyte(&amp;[0xAB, 0xCD]), Err(Err::Error(Error::new(&amp;[0xAB, 0xCD][..], ErrorKind::TakeUntil))));</span>
+<span class="doccomment">/// assert!(take_until_nullbyte(&amp;[0xAB, 0xCD]).is_err());</span>
 <span class="doccomment">/// ```</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">take_until_nullbyte</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">IResult</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]<span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">take_until_nullbyte</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Res</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]<span class="op">&gt;</span> {
     <span class="ident">take_until</span>(<span class="ident">NULL</span>)(<span class="ident">input</span>)
+}
+
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_utf8</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Res</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">String</span><span class="op">&gt;</span> {
+    <span class="kw">let</span> <span class="ident">res</span> <span class="op">=</span> <span class="ident">std</span>::<span class="ident">str</span>::<span class="ident">from_utf8</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>);
+    <span class="kw">match</span> <span class="ident">res</span> {
+        <span class="prelude-val">Ok</span>(<span class="ident">s</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>((<span class="string">b&quot;&quot;</span>, <span class="ident">s</span>.<span class="ident">to_owned</span>())),
+        <span class="prelude-val">Err</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">nom</span>::<span class="prelude-val">Err</span>::<span class="ident">Incomplete</span>(<span class="ident">nom</span>::<span class="ident">Needed</span>::<span class="ident">Unknown</span>)),
+    }
+}
+
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">take_utf8</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Res</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">String</span><span class="op">&gt;</span> {
+    <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">data</span>) <span class="op">=</span> <span class="ident">take_until_nullbyte</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>)<span class="question-mark">?</span>;
+    <span class="kw">let</span> (<span class="kw">_</span>, <span class="ident">value</span>) <span class="op">=</span> <span class="ident">parse_utf8</span>(<span class="kw-2">&amp;</span><span class="ident">data</span>)<span class="question-mark">?</span>;
+    <span class="kw">let</span> (<span class="ident">input</span>, <span class="kw">_</span>) <span class="op">=</span> <span class="ident">nom</span>::<span class="ident">bytes</span>::<span class="ident">complete</span>::<span class="ident">take</span>(<span class="number">1usize</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
+    <span class="prelude-val">Ok</span>((<span class="ident">input</span>, <span class="ident">value</span>))
 }
 
 <span class="doccomment">/// These functions convert between a custom 4-byte format (that we&#39;ll call `serato32` for brevity)</span>
@@ -337,9 +380,8 @@
 <span class="doccomment">/// | `serato32` value | `06 32 10 00` | `00000110001100100001000000000000`</span>
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">serato32</span> {
-    <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">Color</span>;
+    <span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">Color</span>, <span class="ident">Res</span>};
     <span class="kw">use</span> <span class="ident">nom</span>::<span class="ident">number</span>::<span class="ident">complete</span>::<span class="ident">u8</span>;
-    <span class="kw">use</span> <span class="ident">nom</span>::<span class="ident">IResult</span>;
 
     <span class="doccomment">/// Decodes value from Serato&#39;s 32-bit custom format to 24-bit plaintext.</span>
     <span class="doccomment">///</span>
@@ -388,9 +430,9 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// assert_eq!(take(&amp;[0x00, 0x00, 0x01, 0x4C]), Ok((&amp;[][..], (0x00, 0x00, 0xCC))));</span>
     <span class="doccomment">/// assert_eq!(take(&amp;[0x00, 0x00, 0x01, 0x4C, 0x7F]), Ok((&amp;[0x07F][..], (0x00, 0x00, 0xCC))));</span>
-    <span class="doccomment">/// assert_eq!(take(&amp;[0x00, 0x00, 0x01]), Err(Err::Error(Error::new(&amp;[0x00, 0x00, 0x01][..], ErrorKind::Eof))));</span>
+    <span class="doccomment">/// assert!(take(&amp;[0x00, 0x00, 0x01]).is_err());</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">take</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">IResult</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], (<span class="ident">u8</span>, <span class="ident">u8</span>, <span class="ident">u8</span>)<span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">take</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Res</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], (<span class="ident">u8</span>, <span class="ident">u8</span>, <span class="ident">u8</span>)<span class="op">&gt;</span> {
         <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">bytes</span>) <span class="op">=</span> <span class="ident">nom</span>::<span class="ident">bytes</span>::<span class="ident">complete</span>::<span class="ident">take</span>(<span class="number">4usize</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> (<span class="ident">bytes</span>, <span class="ident">byte1</span>) <span class="op">=</span> <span class="ident">u8</span>(<span class="ident">bytes</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> (<span class="ident">bytes</span>, <span class="ident">byte2</span>) <span class="op">=</span> <span class="ident">u8</span>(<span class="ident">bytes</span>)<span class="question-mark">?</span>;
@@ -411,9 +453,9 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// assert_eq!(take_color(&amp;[0x00, 0x00, 0x01, 0x4C]), Ok((&amp;[][..], Color { red: 0x00, green: 0x00, blue: 0xCC})));</span>
     <span class="doccomment">/// assert_eq!(take_color(&amp;[0x00, 0x00, 0x01, 0x4C, 0x7F]), Ok((&amp;[0x07F][..], Color { red: 0x00, green: 0x00, blue: 0xCC})));</span>
-    <span class="doccomment">/// assert_eq!(take_color(&amp;[0x00, 0x00, 0x01]), Err(Err::Error(Error::new(&amp;[0x00, 0x00, 0x01][..], ErrorKind::Eof))));</span>
+    <span class="doccomment">/// assert!(take_color(&amp;[0x00, 0x00, 0x01]).is_err());</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">take_color</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">nom</span>::<span class="ident">IResult</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">Color</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">take_color</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Res</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">Color</span><span class="op">&gt;</span> {
         <span class="kw">let</span> (<span class="ident">input</span>, (<span class="ident">red</span>, <span class="ident">green</span>, <span class="ident">blue</span>)) <span class="op">=</span> <span class="ident">take</span>(<span class="ident">input</span>)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>((<span class="ident">input</span>, <span class="ident">Color</span> { <span class="ident">red</span>, <span class="ident">green</span>, <span class="ident">blue</span> }))
     }
@@ -430,9 +472,9 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// assert_eq!(take_u32(&amp;[0x00, 0x00, 0x01, 0x4C]), Ok((&amp;[][..], 0x0000CC)));</span>
     <span class="doccomment">/// assert_eq!(take_u32(&amp;[0x00, 0x00, 0x01, 0x4C, 0x7F]), Ok((&amp;[0x07F][..], 0x0000CC)));</span>
-    <span class="doccomment">/// assert_eq!(take_u32(&amp;[0x00, 0x00, 0x01]), Err(Err::Error(Error::new(&amp;[0x00, 0x00, 0x01][..], ErrorKind::Eof))));</span>
+    <span class="doccomment">/// assert!(take_u32(&amp;[0x00, 0x00, 0x01]).is_err());</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">take_u32</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">nom</span>::<span class="ident">IResult</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">u32</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">take_u32</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Res</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">u32</span><span class="op">&gt;</span> {
         <span class="kw">let</span> (<span class="ident">input</span>, (<span class="ident">a</span>, <span class="ident">b</span>, <span class="ident">c</span>)) <span class="op">=</span> <span class="ident">take</span>(<span class="ident">input</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> (<span class="ident">a</span> <span class="kw">as</span> <span class="ident">u32</span>) <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">16</span> <span class="op">|</span> (<span class="ident">b</span> <span class="kw">as</span> <span class="ident">u32</span>) <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">8</span> <span class="op">|</span> <span class="ident">c</span> <span class="kw">as</span> <span class="ident">u32</span>;
         <span class="prelude-val">Ok</span>((<span class="ident">input</span>, <span class="ident">value</span>))

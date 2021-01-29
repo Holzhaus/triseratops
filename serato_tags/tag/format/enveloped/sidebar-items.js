@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["base64_decode",""],["envelope_decode",""],["envelope_decode_with_name",""],["is_base64",""],["is_newline",""],["parse_envelope",""],["take_base64_with_newline",""]],"trait":[["EnvelopedTag",""]]});
