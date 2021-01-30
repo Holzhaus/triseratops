@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["get_serato_database",""]]});
+initSidebarItems({"fn":[["get_library",""]],"struct":[["SeratoLibraryInfo",""]],"type":[["CrateInfo",""]]});
