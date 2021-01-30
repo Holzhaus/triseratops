@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["container","This module provides the `Container` class."],["error",""],["tag",""],["util","Various helper utilities for simplify parsing."]]});
+initSidebarItems({"mod":[["container","This module provides the `Container` class."],["error",""],["library",""],["tag",""],["util","Various helper utilities for simplify parsing."]]});
