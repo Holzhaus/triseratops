@@ -1,0 +1,10 @@
+#[test]
+fn {name}() {{
+    println!("Parsing file: {filepath}");
+    let input = include_bytes!("{filepath}");
+    let res = database::parse(&input[..]);
+    if let Err(err) = res {{
+        eprintln!("Error: {{:?}}", err);
+        unreachable!();
+    }}
+}}
