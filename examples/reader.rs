@@ -3,6 +3,7 @@ extern crate serato_tags;
 
 use id3::Tag;
 use serato_tags::tag::format::id3::ID3Tag;
+use serato_tags::tag::TagType;
 use std::env;
 use std::io::BufRead;
 use std::io::BufReader;
@@ -58,37 +59,32 @@ fn main() -> Result<(), serato_tags::error::Error> {
                 let tag = serato_tags::tag::Analysis::parse_id3(&data)?;
                 let output = format!("{:#?}", tag);
                 println!("{}", textwrap::indent(&output, "    "));
-                container.analysis = Some(tag);
             }
             serato_tags::tag::Autotags::ID3_TAG => {
                 let tag = serato_tags::tag::Autotags::parse_id3(&data)?;
                 let output = format!("{:#?}", tag);
                 println!("{}", textwrap::indent(&output, "    "));
-                container.autotags = Some(tag);
             }
             serato_tags::tag::Beatgrid::ID3_TAG => {
                 let tag = serato_tags::tag::Beatgrid::parse_id3(&data)?;
                 let output = format!("{:#?}", tag);
                 println!("{}", textwrap::indent(&output, "    "));
-                container.beatgrid = Some(tag);
             }
             serato_tags::tag::Markers::ID3_TAG => {
                 let tag = serato_tags::tag::Markers::parse_id3(&data)?;
                 let output = format!("{:#?}", tag);
                 println!("{}", textwrap::indent(&output, "    "));
-                container.markers = Some(tag);
+                container.parse_markers(&data, TagType::ID3)?;
             }
             serato_tags::tag::Markers2::ID3_TAG => {
                 let tag = serato_tags::tag::Markers2::parse_id3(&data)?;
                 let output = format!("{:#?}", tag);
                 println!("{}", textwrap::indent(&output, "    "));
-                container.markers2 = Some(tag);
             }
             serato_tags::tag::Overview::ID3_TAG => {
                 let tag = serato_tags::tag::Overview::parse_id3(&data)?;
                 let output = format!("{:#?}", tag);
                 println!("{}", textwrap::indent(&output, "    "));
-                container.overview = Some(tag);
             }
             _ => (),
         }

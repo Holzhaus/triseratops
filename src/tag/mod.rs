@@ -2,6 +2,7 @@ pub mod format;
 
 pub mod container;
 pub use container::TagContainer;
+pub use container::TagType;
 
 pub mod analysis;
 pub use self::analysis::Analysis;

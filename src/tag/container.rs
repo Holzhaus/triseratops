@@ -1,7 +1,9 @@
 //! This module provides the `TagContainer` class.
 use super::{
-    beatgrid, markers, markers2, Analysis, Autotags, Beatgrid, Markers, Markers2, Overview,
+    beatgrid, format::flac::FLACTag, format::id3::ID3Tag, format::mp4::MP4Tag, format::ogg::OggTag,
+    markers, markers2, Autotags, Beatgrid, Markers, Markers2, Overview,
 };
+use crate::error::Error;
 use crate::util;
 
 /// Provides a streamlined interface for retrieving Serato tag data.
@@ -9,25 +11,109 @@ use crate::util;
 /// Some of the data in Serato's tags is redundant and may contradict each other. This class
 /// implements the same merge strategies for inconsistent data that Serato uses, too.
 pub struct TagContainer {
-    pub analysis: Option<Analysis>,
-    pub autotags: Option<Autotags>,
-    pub beatgrid: Option<Beatgrid>,
-    pub markers: Option<Markers>,
-    pub markers2: Option<Markers2>,
-    pub overview: Option<Overview>,
+    autotags: Option<Autotags>,
+    beatgrid: Option<Beatgrid>,
+    markers: Option<Markers>,
+    markers2: Option<Markers2>,
+    overview: Option<Overview>,
+}
+
+pub enum TagType {
+    ID3,
+    FLAC,
+    MP4,
+    Ogg,
 }
 
 impl TagContainer {
     /// Create an empty Serato tag container.
     pub fn new() -> Self {
         Self {
-            analysis: None,
             autotags: None,
             beatgrid: None,
             markers: None,
             markers2: None,
             overview: None,
         }
+    }
+
+    pub fn parse_autotags(&mut self, input: &[u8], tag_type: TagType) -> Result<(), Error> {
+        match tag_type {
+            TagType::ID3 => {
+                self.autotags = Some(Autotags::parse_id3(input)?);
+            }
+            TagType::FLAC => {
+                self.autotags = Some(Autotags::parse_flac(input)?);
+            }
+            TagType::MP4 => {
+                self.autotags = Some(Autotags::parse_mp4(input)?);
+            }
+            _ => return Err(Error::UnsupportedTagType),
+        }
+        Ok(())
+    }
+
+    pub fn parse_beatgrid(&mut self, input: &[u8], tag_type: TagType) -> Result<(), Error> {
+        match tag_type {
+            TagType::ID3 => {
+                self.beatgrid = Some(Beatgrid::parse_id3(input)?);
+            }
+            TagType::FLAC => {
+                self.beatgrid = Some(Beatgrid::parse_flac(input)?);
+            }
+            TagType::MP4 => {
+                self.beatgrid = Some(Beatgrid::parse_mp4(input)?);
+            }
+            _ => return Err(Error::UnsupportedTagType),
+        }
+        Ok(())
+    }
+
+    pub fn parse_markers(&mut self, input: &[u8], tag_type: TagType) -> Result<(), Error> {
+        match tag_type {
+            TagType::ID3 => {
+                self.markers = Some(Markers::parse_id3(input)?);
+            }
+            TagType::MP4 => {
+                self.markers = Some(Markers::parse_mp4(input)?);
+            }
+            _ => return Err(Error::UnsupportedTagType),
+        }
+        Ok(())
+    }
+
+    pub fn parse_markers2(&mut self, input: &[u8], tag_type: TagType) -> Result<(), Error> {
+        match tag_type {
+            TagType::ID3 => {
+                self.markers2 = Some(Markers2::parse_id3(input)?);
+            }
+            TagType::FLAC => {
+                self.markers2 = Some(Markers2::parse_flac(input)?);
+            }
+            TagType::MP4 => {
+                self.markers2 = Some(Markers2::parse_mp4(input)?);
+            }
+            TagType::Ogg => {
+                self.markers2 = Some(Markers2::parse_ogg(input)?);
+            }
+        }
+        Ok(())
+    }
+
+    pub fn parse_overview(&mut self, input: &[u8], tag_type: TagType) -> Result<(), Error> {
+        match tag_type {
+            TagType::ID3 => {
+                self.overview = Some(Overview::parse_id3(input)?);
+            }
+            TagType::FLAC => {
+                self.overview = Some(Overview::parse_flac(input)?);
+            }
+            TagType::MP4 => {
+                self.overview = Some(Overview::parse_mp4(input)?);
+            }
+            _ => return Err(Error::UnsupportedTagType),
+        }
+        Ok(())
     }
 
     /// Returns the auto_gain value from the `Serato Autotags` tag.
