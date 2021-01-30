@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["container","This module provides the `Container` class."],["error",""],["library",""],["tag",""],["util","Various helper utilities for simplify parsing."]]});
+initSidebarItems({"mod":[["error","Error types"],["library","Parsers for the Serato library database and crates"],["tag","Parsers for Serato's file tags"],["util","Various helper utilities for simplify parsing."]]});

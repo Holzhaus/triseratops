@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["Container","Provides a streamlined interface for retrieving Serato tag data."]]});

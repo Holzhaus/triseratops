@@ -1,13 +1,103 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings"></script><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../favicon.svg">
 <link rel="alternate icon" type="image/png" href="../../favicon-16x16.png">
 <link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../serato_tags/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><span class="help-button">?</span>
-                <a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">1</span>
-<span id="2">2</span>
-<span id="3">3</span>
-<span id="4">4</span>
-<span id="5">5</span>
+                <a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1"> 1</span>
+<span id="2"> 2</span>
+<span id="3"> 3</span>
+<span id="4"> 4</span>
+<span id="5"> 5</span>
+<span id="6"> 6</span>
+<span id="7"> 7</span>
+<span id="8"> 8</span>
+<span id="9"> 9</span>
+<span id="10">10</span>
+<span id="11">11</span>
+<span id="12">12</span>
+<span id="13">13</span>
+<span id="14">14</span>
+<span id="15">15</span>
+<span id="16">16</span>
+<span id="17">17</span>
+<span id="18">18</span>
+<span id="19">19</span>
+<span id="20">20</span>
+<span id="21">21</span>
+<span id="22">22</span>
+<span id="23">23</span>
+<span id="24">24</span>
+<span id="25">25</span>
+<span id="26">26</span>
+<span id="27">27</span>
+<span id="28">28</span>
+<span id="29">29</span>
+<span id="30">30</span>
+<span id="31">31</span>
+<span id="32">32</span>
+<span id="33">33</span>
+<span id="34">34</span>
+<span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
+<span id="38">38</span>
+<span id="39">39</span>
+<span id="40">40</span>
+<span id="41">41</span>
+<span id="42">42</span>
+<span id="43">43</span>
+<span id="44">44</span>
+<span id="45">45</span>
+<span id="46">46</span>
+<span id="47">47</span>
+<span id="48">48</span>
+<span id="49">49</span>
+<span id="50">50</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">container</span>;
+<span class="doccomment">//! This library provides access to metadata and libraries written by the [Serato</span>
+<span class="doccomment">//! DJ](https://serato.com/dj) software.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! # Metadata</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! Serato&#39;s formats are pretty complex and store redundant data which might be contradictory if</span>
+<span class="doccomment">//! edited by hand. To make it straightforward to access the metadata, this library provides</span>
+<span class="doccomment">//! [`TagContainer` struct](`tag::TagContainer`), which provides access to all important attributes</span>
+<span class="doccomment">//! and implements the same conflict resolution strategies that the Serato DJ software uses.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! ```</span>
+<span class="doccomment">//! use serato_tags::tag::{TagContainer, TagType};</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! fn parse_and_print_cues(markers_data: &amp;[u8], markers2_data: &amp;[u8]) {</span>
+<span class="doccomment">//!     let mut tags = TagContainer::new();</span>
+<span class="doccomment">//!     tags.parse_markers(markers_data, TagType::ID3).expect(&quot;Failed to parse Markers data!&quot;);</span>
+<span class="doccomment">//!     tags.parse_markers2(markers2_data, TagType::ID3).expect(&quot;Failed to parse Markers2 data!&quot;);</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//!     for cue in tags.cues() {</span>
+<span class="doccomment">//!         println!(&quot;{:?}&quot;, cue);</span>
+<span class="doccomment">//!     }</span>
+<span class="doccomment">//! }</span>
+<span class="doccomment">//! ```</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! If you&#39;d rather parse the tag data representation yourself, you can do that by using the</span>
+<span class="doccomment">//! individual tag structs directly:</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! ```</span>
+<span class="doccomment">//! use serato_tags::tag::{Markers, format::id3::ID3Tag};</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! fn parse_and_print_markers(data: &amp;[u8]) {</span>
+<span class="doccomment">//!     let markers = Markers::parse_id3(data).expect(&quot;Failed to parse data!&quot;);</span>
+<span class="doccomment">//!     println!(&quot;{:?}&quot;, markers);</span>
+<span class="doccomment">//! }</span>
+<span class="doccomment">//! ```</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! **Note:** This library does *not* provide means to read the metadata from music files directly, so you need to</span>
+<span class="doccomment">//! use other libraries (e.g. [`id3`](https://lib.rs/crates/id3) to do that. You can check the</span>
+<span class="doccomment">//! `examples/` directory for some toy examples.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! ## Library</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! Parsing the Serato library (e.g. the `database V2` file in the `_Serato_` directory) is also</span>
+<span class="doccomment">//! possible, but since this feature is still under development, the API is *not* stable yet and</span>
+<span class="doccomment">//! might change in the future.</span>
+
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">error</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">library</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">tag</span>;

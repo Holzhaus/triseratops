@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["TagType",""]],"struct":[["TagContainer","Provides a streamlined interface for retrieving Serato tag data."]]});

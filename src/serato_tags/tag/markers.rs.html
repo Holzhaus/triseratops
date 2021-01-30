@@ -334,7 +334,6 @@
 <span id="331">331</span>
 <span id="332">332</span>
 <span id="333">333</span>
-<span id="334">334</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! The `Serato Markers_` tag stores information about the first 5 Cues, 9 Loops and the track</span>
 <span class="doccomment">//! color.</span>
@@ -347,8 +346,7 @@
 <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">format</span>::<span class="ident">mp4</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">error</span>::<span class="ident">Error</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">util</span>;
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">util</span>::<span class="ident">Res</span>;
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">util</span>::<span class="ident">Tag</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">util</span>::{<span class="ident">Res</span>, <span class="ident">Tag</span>};
 <span class="kw">use</span> <span class="ident">nom</span>::<span class="ident">error</span>::<span class="ident">ParseError</span>;
 
 <span class="doccomment">/// Represents a single marker in the `Serato Markers_` tag.</span>

@@ -26,8 +26,18 @@
 <span id="23">23</span>
 <span id="24">24</span>
 <span id="25">25</span>
+<span id="26">26</span>
+<span id="27">27</span>
+<span id="28">28</span>
+<span id="29">29</span>
+<span id="30">30</span>
 </pre><div class="example-wrap"><pre class="rust ">
+<span class="doccomment">//! Parsers for Serato&#39;s file tags</span>
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">format</span>;
+
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">container</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">container</span>::<span class="ident">TagContainer</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">container</span>::<span class="ident">TagType</span>;
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">analysis</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">analysis</span>::<span class="ident">Analysis</span>;
