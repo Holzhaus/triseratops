@@ -10,6 +10,7 @@ use super::format::enveloped;
 use super::format::flac;
 use super::format::id3;
 use super::format::mp4;
+use super::format::ogg;
 use crate::error::Error;
 use crate::util;
 use crate::util::Res;
@@ -153,7 +154,7 @@ pub struct UnknownFlipAction {
 /// Represents the `Serato Markers2` tag.
 #[derive(Debug)]
 pub struct Markers2 {
-    pub version: util::Version,
+    pub version: Option<util::Version>,
     pub size: usize,
     pub content: Markers2Content,
 }
@@ -214,6 +215,26 @@ impl flac::FLACTag for Markers2 {
 }
 impl mp4::MP4Tag for Markers2 {
     const MP4_ATOM: &'static str = "----:com.serato.dj:markersv2";
+}
+impl ogg::OggTag for Markers2 {
+    const OGG_COMMENT: &'static str = "serato_markers2";
+
+    fn parse_ogg(input: &[u8]) -> Result<Self, Error> {
+        let size = input.len();
+        let base64_decoded = enveloped::base64_decode(input)?;
+        let version = None;
+        match parse_markers2_content(&base64_decoded) {
+            Ok((_, content)) => {
+                let markers2 = Markers2 {
+                    version,
+                    size,
+                    content,
+                };
+                Ok(markers2)
+            }
+            Err(_) => Err(Error::ParseError),
+        }
+    }
 }
 
 /// Represents the base64-encoded content of the `Serato Markers2` tag.
@@ -450,6 +471,7 @@ fn take_nullbytes(input: &[u8]) -> Res<&[u8], &[u8]> {
 pub fn take_markers2(input: &[u8]) -> Res<&[u8], Markers2> {
     let size = input.len();
     let (input, version) = util::take_version(&input)?;
+    let version = Some(version);
     let (input, base64_chunks) = take_base64_chunks(&input)?;
     let (input, _) = take_nullbytes(&input)?;
     let base64_decoded = decode_base64_chunks(base64_chunks)?;

@@ -1,4 +1,4 @@
-use serato_tags::tag::format::{flac::FLACTag, id3::ID3Tag, mp4::MP4Tag};
+use serato_tags::tag::format::{flac::FLACTag, id3::ID3Tag, mp4::MP4Tag, ogg::OggTag};
 use std::env;
 use std::fs::File;
 use std::io::Read;
@@ -122,6 +122,18 @@ fn parse_file(data: &[u8]) -> bool {
     let res = serato_tags::tag::VidAssoc::parse_mp4(&data);
     if res.is_ok() {
         println!("Tag: VidAssoc (MP4)");
+        println!("{:#?}", res.unwrap());
+        return true;
+    }
+    let res = serato_tags::tag::Analysis::parse_ogg(&data);
+    if res.is_ok() {
+        println!("Tag: Analysis (Ogg)");
+        println!("{:#?}", res.unwrap());
+        return true;
+    }
+    let res = serato_tags::tag::Markers2::parse_ogg(&data);
+    if res.is_ok() {
+        println!("Tag: Markers2 (Ogg)");
         println!("{:#?}", res.unwrap());
         return true;
     }

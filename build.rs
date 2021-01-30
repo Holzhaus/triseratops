@@ -76,6 +76,7 @@ fn write_header(test_file: &mut File) {
 use serato_tags::tag::format::id3::ID3Tag;
 use serato_tags::tag::format::flac::FLACTag;
 use serato_tags::tag::format::mp4::MP4Tag;
+use serato_tags::tag::format::ogg::OggTag;
 "#
     )
     .unwrap();
