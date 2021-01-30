@@ -1,4 +1,4 @@
-use serato_tags::database;
+use serato_tags::library::database;
 use std::env;
 use std::fs::File;
 use std::io::Read;
