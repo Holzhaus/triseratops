@@ -1,3 +1,5 @@
+//! Error types
+
 extern crate base64;
 extern crate thiserror;
 

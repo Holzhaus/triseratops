@@ -1,4 +1,4 @@
-//! FLAC helpers
+//! FLAC tags
 extern crate base64;
 extern crate nom;
 

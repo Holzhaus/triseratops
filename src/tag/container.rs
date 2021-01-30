@@ -8,6 +8,9 @@ use crate::util;
 
 /// Provides a streamlined interface for retrieving Serato tag data.
 ///
+/// If you're not interested in the low-level format details, just use this instead of the
+/// low-level structs (e.g. [`Markers`](Markers), [`Markers2`](Markers2), etc.)
+///
 /// Some of the data in Serato's tags is redundant and may contradict each other. This class
 /// implements the same merge strategies for inconsistent data that Serato uses, too.
 pub struct TagContainer {

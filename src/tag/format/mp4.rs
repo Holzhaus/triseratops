@@ -1,4 +1,5 @@
-//! MP4 helpers
+//! MP4 tags
+
 extern crate base64;
 extern crate nom;
 

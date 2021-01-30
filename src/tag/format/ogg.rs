@@ -1,4 +1,5 @@
-//! Ogg helpers
+//! Ogg tags
+
 use crate::error::Error;
 use crate::util;
 

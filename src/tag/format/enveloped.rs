@@ -1,4 +1,4 @@
-//! Helper for FLAC and MP4
+//! Helper for FLAC and MP4 tags
 extern crate base64;
 extern crate nom;
 

@@ -1,3 +1,5 @@
+//! ID3 tags
+
 use crate::error::Error;
 use crate::util;
 

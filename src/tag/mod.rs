@@ -1,3 +1,4 @@
+//! Parsers for Serato's file tags
 pub mod format;
 
 pub mod container;
