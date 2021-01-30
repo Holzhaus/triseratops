@@ -1,3 +1,6 @@
+extern crate id3;
+extern crate serato_tags;
+
 use id3::Tag;
 use serato_tags::tag::format::id3::ID3Tag;
 use std::env;
@@ -22,7 +25,7 @@ fn main() -> Result<(), serato_tags::error::Error> {
     let args: Vec<String> = env::args().collect();
     let filename = &args[1];
 
-    let mut container = serato_tags::container::Container::new();
+    let mut container = serato_tags::tag::TagContainer::new();
 
     let tag = Tag::read_from_path(filename).unwrap();
     for frame in tag.frames() {

@@ -1,22 +1,23 @@
-//! This module provides the `Container` class.
-
-use crate::tag;
+//! This module provides the `TagContainer` class.
+use super::{
+    beatgrid, markers, markers2, Analysis, Autotags, Beatgrid, Markers, Markers2, Overview,
+};
 use crate::util;
 
 /// Provides a streamlined interface for retrieving Serato tag data.
 ///
 /// Some of the data in Serato's tags is redundant and may contradict each other. This class
 /// implements the same merge strategies for inconsistent data that Serato uses, too.
-pub struct Container {
-    pub analysis: Option<tag::Analysis>,
-    pub autotags: Option<tag::Autotags>,
-    pub beatgrid: Option<tag::Beatgrid>,
-    pub markers: Option<tag::Markers>,
-    pub markers2: Option<tag::Markers2>,
-    pub overview: Option<tag::Overview>,
+pub struct TagContainer {
+    pub analysis: Option<Analysis>,
+    pub autotags: Option<Autotags>,
+    pub beatgrid: Option<Beatgrid>,
+    pub markers: Option<Markers>,
+    pub markers2: Option<Markers2>,
+    pub overview: Option<Overview>,
 }
 
-impl Container {
+impl TagContainer {
     /// Create an empty Serato tag container.
     pub fn new() -> Self {
         Self {
@@ -50,10 +51,7 @@ impl Container {
     /// Returns the beatgrid from the `Serato BeatGrid` tag.
     pub fn beatgrid(
         &self,
-    ) -> Option<(
-        &Vec<tag::beatgrid::NonTerminalMarker>,
-        &tag::beatgrid::TerminalMarker,
-    )> {
+    ) -> Option<(&Vec<beatgrid::NonTerminalMarker>, &beatgrid::TerminalMarker)> {
         if let Some(tag) = &self.beatgrid {
             return Some((&tag.non_terminal_markers, &tag.terminal_marker));
         }
@@ -75,7 +73,7 @@ impl Container {
     /// This retrieves the `Serato Markers2` cues first, then overwrite the values with those from
     /// `Serato Markers_`. This is what Serato does too (i.e. if `Serato Markers_` and `Serato
     /// Markers2` contradict each other, Serato will use the values from `Serato Markers_`).
-    pub fn cues(&self) -> Vec<tag::markers2::CueMarker> {
+    pub fn cues(&self) -> Vec<markers2::CueMarker> {
         let mut map = std::collections::BTreeMap::new();
 
         // First, insert all cue from the `Serato Markers2` tag into the map.
@@ -91,11 +89,11 @@ impl Container {
                 match marker.entry_type {
                     // If a cue is set in `Serato Markers2` but is invalid in `Serato Markers_`,
                     // remove it.
-                    tag::markers::EntryType::INVALID => {
+                    markers::EntryType::INVALID => {
                         map.remove(&index);
                         continue;
                     }
-                    tag::markers::EntryType::CUE => {
+                    markers::EntryType::CUE => {
                         if marker.start_position_millis == None {
                             // This shouldn't be possible if the `Serato Markers_` data is valid.
                             // Ideally, this should be checked during the parsing state.
@@ -112,7 +110,7 @@ impl Container {
 
                             map.insert(
                                 index,
-                                tag::markers2::CueMarker {
+                                markers2::CueMarker {
                                     index,
                                     position_millis,
                                     color: marker.color,
@@ -139,7 +137,7 @@ impl Container {
     /// This retrieves the `Serato Markers2` loops first, then overwrite the values with those from
     /// `Serato Markers_`. This is what Serato does too (i.e. if `Serato Markers_` and `Serato
     /// Markers2` contradict each other, Serato will use the values from `Serato Markers_`).
-    pub fn loops(&self) -> Vec<tag::markers2::LoopMarker> {
+    pub fn loops(&self) -> Vec<markers2::LoopMarker> {
         let mut map = std::collections::BTreeMap::new();
 
         // First, insert all cue from the `Serato Markers2` tag into the map.
@@ -152,7 +150,7 @@ impl Container {
         // Now, iterate over the cue markers from the `Serato Markers_` tag.
         if let Some(m) = &self.markers {
             for (index, marker) in m.loops() {
-                if marker.entry_type != tag::markers::EntryType::LOOP {
+                if marker.entry_type != markers::EntryType::LOOP {
                     // This can only happen is `Markers::cues()` returns non-cue markers, which
                     // would be a bug.
                     // FIXME: Throw error here?
@@ -176,7 +174,7 @@ impl Container {
 
                     map.insert(
                         index,
-                        tag::markers2::LoopMarker {
+                        markers2::LoopMarker {
                             index,
                             start_position_millis,
                             end_position_millis,
@@ -223,7 +221,7 @@ impl Container {
     }
 }
 
-impl Default for Container {
+impl Default for TagContainer {
     fn default() -> Self {
         Self::new()
     }

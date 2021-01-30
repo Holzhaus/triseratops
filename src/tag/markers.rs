@@ -9,8 +9,7 @@ use super::format::id3;
 use super::format::mp4;
 use crate::error::Error;
 use crate::util;
-use crate::util::Res;
-use crate::util::Tag;
+use crate::util::{Res, Tag};
 use nom::error::ParseError;
 
 /// Represents a single marker in the `Serato Markers_` tag.

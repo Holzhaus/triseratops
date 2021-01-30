@@ -1,5 +1,8 @@
 pub mod format;
 
+pub mod container;
+pub use container::TagContainer;
+
 pub mod analysis;
 pub use self::analysis::Analysis;
 
