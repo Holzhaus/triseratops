@@ -54,6 +54,8 @@ pub fn get_library(path: &PathBuf) -> Option<SeratoLibraryInfo> {
         }
     }
 
+    crates.sort();
+
     Some(SeratoLibraryInfo {
         path: path.to_path_buf(),
         database_path,
