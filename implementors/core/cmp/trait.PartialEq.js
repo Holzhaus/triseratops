@@ -1,3 +1,3 @@
 (function() {var implementors = {};
-implementors["serato_tags"] = [{"text":"impl PartialEq&lt;SeratoLibraryInfo&gt; for SeratoLibraryInfo","synthetic":false,"types":[]},{"text":"impl PartialEq&lt;EntryType&gt; for EntryType","synthetic":false,"types":[]},{"text":"impl PartialEq&lt;Color&gt; for Color","synthetic":false,"types":[]},{"text":"impl PartialEq&lt;Version&gt; for Version","synthetic":false,"types":[]}];
+implementors["serato_tags"] = [{"text":"impl PartialEq&lt;SeratoLibraryInfo&gt; for SeratoLibraryInfo","synthetic":false,"types":[]},{"text":"impl PartialEq&lt;MarkerType&gt; for MarkerType","synthetic":false,"types":[]},{"text":"impl PartialEq&lt;Color&gt; for Color","synthetic":false,"types":[]},{"text":"impl PartialEq&lt;Version&gt; for Version","synthetic":false,"types":[]}];
 if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
