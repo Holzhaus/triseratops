@@ -17,10 +17,10 @@
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! ID3 tags</span>
 
+<span class="kw">use</span> <span class="kw">super</span>::<span class="ident">Tag</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">error</span>::<span class="ident">Error</span>;
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">util</span>;
 
-<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">ID3Tag</span>: <span class="ident">util</span>::<span class="ident">Tag</span> {
+<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">ID3Tag</span>: <span class="ident">Tag</span> {
     <span class="doccomment">/// Name of the ID3 tag that this data is stored in.</span>
     <span class="kw">const</span> <span class="ident">ID3_TAG</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> <span class="op">=</span> <span class="self">Self</span>::<span class="ident">NAME</span>;
 

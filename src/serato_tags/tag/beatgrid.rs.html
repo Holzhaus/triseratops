@@ -138,17 +138,13 @@
 <span id="135">135</span>
 <span id="136">136</span>
 <span id="137">137</span>
-<span id="138">138</span>
-<span id="139">139</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! The `Serato BeatGrid` tag stores the beatgrid markers.</span>
 
-<span class="kw">use</span> <span class="kw">super</span>::<span class="ident">format</span>::<span class="ident">enveloped</span>;
-<span class="kw">use</span> <span class="kw">super</span>::<span class="ident">format</span>::<span class="ident">flac</span>;
-<span class="kw">use</span> <span class="kw">super</span>::<span class="ident">format</span>::<span class="ident">id3</span>;
-<span class="kw">use</span> <span class="kw">super</span>::<span class="ident">format</span>::<span class="ident">mp4</span>;
+<span class="kw">use</span> <span class="kw">super</span>::<span class="ident">format</span>::{<span class="ident">enveloped</span>, <span class="ident">flac</span>, <span class="ident">id3</span>, <span class="ident">mp4</span>, <span class="ident">Tag</span>};
+<span class="kw">use</span> <span class="kw">super</span>::<span class="ident">generic</span>::<span class="ident">Version</span>;
+<span class="kw">use</span> <span class="kw">super</span>::<span class="ident">util</span>::<span class="ident">take_version</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">error</span>::<span class="ident">Error</span>;
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">util</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">util</span>::<span class="ident">Res</span>;
 
 <span class="doccomment">/// Represents the terminal beatgrid marker in the `Serato BeatGrid` tag.</span>
@@ -194,7 +190,7 @@
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Beatgrid</span> {
     <span class="doccomment">/// The analysis version.</span>
-    <span class="kw">pub</span> <span class="ident">version</span>: <span class="ident">util</span>::<span class="ident">Version</span>,
+    <span class="kw">pub</span> <span class="ident">version</span>: <span class="ident">Version</span>,
     <span class="doccomment">/// Zero or more non-terminal beatgrid markers.</span>
     <span class="kw">pub</span> <span class="ident">non_terminal_markers</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">NonTerminalMarker</span><span class="op">&gt;</span>,
     <span class="doccomment">/// The terminal beatgrid marker.</span>
@@ -203,7 +199,7 @@
     <span class="kw">pub</span> <span class="ident">footer</span>: <span class="ident">u8</span>,
 }
 
-<span class="kw">impl</span> <span class="ident">util</span>::<span class="ident">Tag</span> <span class="kw">for</span> <span class="ident">Beatgrid</span> {
+<span class="kw">impl</span> <span class="ident">Tag</span> <span class="kw">for</span> <span class="ident">Beatgrid</span> {
     <span class="kw">const</span> <span class="ident">NAME</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;Serato BeatGrid&quot;</span>;
 
     <span class="kw">fn</span> <span class="ident">parse</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
@@ -266,7 +262,7 @@
 
 <span class="doccomment">/// Take a [`Beatgrid` struct] parsed from the input slice.</span>
 <span class="kw">fn</span> <span class="ident">take_beatgrid</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Res</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">Beatgrid</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">version</span>) <span class="op">=</span> <span class="ident">util</span>::<span class="ident">take_version</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>)<span class="question-mark">?</span>;
+    <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">version</span>) <span class="op">=</span> <span class="ident">take_version</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>)<span class="question-mark">?</span>;
     <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">non_terminal_markers</span>) <span class="op">=</span>
         <span class="ident">nom</span>::<span class="ident">multi</span>::<span class="ident">length_count</span>(<span class="ident">take_non_terminal_marker_count</span>, <span class="ident">take_non_terminal_marker</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
     <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">terminal_marker</span>) <span class="op">=</span> <span class="ident">take_terminal_marker</span>(<span class="ident">input</span>)<span class="question-mark">?</span>;

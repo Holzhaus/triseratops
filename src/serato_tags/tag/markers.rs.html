@@ -356,12 +356,12 @@
 <span class="doccomment">//! This is redundant with some of the information from the `Serato Markers2` tag. Serato will</span>
 <span class="doccomment">//! prefer information from `Serato Markers_` if it&#39;s present.</span>
 
-<span class="kw">use</span> <span class="kw">super</span>::<span class="ident">format</span>::<span class="ident">enveloped</span>;
-<span class="kw">use</span> <span class="kw">super</span>::<span class="ident">format</span>::<span class="ident">id3</span>;
-<span class="kw">use</span> <span class="kw">super</span>::<span class="ident">format</span>::<span class="ident">mp4</span>;
+<span class="kw">use</span> <span class="kw">super</span>::<span class="ident">format</span>::{<span class="ident">enveloped</span>, <span class="ident">id3</span>, <span class="ident">mp4</span>, <span class="ident">Tag</span>};
+<span class="kw">use</span> <span class="kw">super</span>::<span class="ident">generic</span>::{<span class="ident">Color</span>, <span class="ident">Version</span>};
+<span class="kw">use</span> <span class="kw">super</span>::<span class="ident">serato32</span>;
+<span class="kw">use</span> <span class="kw">super</span>::<span class="ident">util</span>::{<span class="ident">take_color</span>, <span class="ident">take_version</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">error</span>::<span class="ident">Error</span>;
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">util</span>;
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">util</span>::{<span class="ident">Res</span>, <span class="ident">Tag</span>};
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">util</span>::<span class="ident">Res</span>;
 <span class="kw">use</span> <span class="ident">nom</span>::<span class="ident">error</span>::<span class="ident">ParseError</span>;
 
 <span class="doccomment">/// Represents a single marker in the `Serato Markers_` tag.</span>
@@ -376,7 +376,7 @@
     <span class="doccomment">/// The color of the cue.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// For loop, this field should always be `#27AAE1`.</span>
-    <span class="kw">pub</span> <span class="ident">color</span>: <span class="ident">util</span>::<span class="ident">Color</span>,
+    <span class="kw">pub</span> <span class="ident">color</span>: <span class="ident">Color</span>,
 
     <span class="doccomment">/// The type of this marker.</span>
     <span class="kw">pub</span> <span class="ident">marker_type</span>: <span class="ident">MarkerType</span>,
@@ -409,13 +409,13 @@
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Markers</span> {
     <span class="doccomment">/// The tag version.</span>
-    <span class="kw">pub</span> <span class="ident">version</span>: <span class="ident">util</span>::<span class="ident">Version</span>,
+    <span class="kw">pub</span> <span class="ident">version</span>: <span class="ident">Version</span>,
 
     <span class="doccomment">/// The marker entries.</span>
     <span class="kw">pub</span> <span class="ident">entries</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Marker</span><span class="op">&gt;</span>,
 
     <span class="doccomment">/// The color of the track in Serato&#39;s library view.</span>
-    <span class="kw">pub</span> <span class="ident">track_color</span>: <span class="ident">util</span>::<span class="ident">Color</span>,
+    <span class="kw">pub</span> <span class="ident">track_color</span>: <span class="ident">Color</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">Markers</span> {
@@ -447,12 +447,12 @@
         <span class="ident">loops</span>
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">track_color</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">util</span>::<span class="ident">Color</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">track_color</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Color</span> {
         <span class="self">self</span>.<span class="ident">track_color</span>
     }
 }
 
-<span class="kw">impl</span> <span class="ident">util</span>::<span class="ident">Tag</span> <span class="kw">for</span> <span class="ident">Markers</span> {
+<span class="kw">impl</span> <span class="ident">Tag</span> <span class="kw">for</span> <span class="ident">Markers</span> {
     <span class="kw">const</span> <span class="ident">NAME</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;Serato Markers_&quot;</span>;
 
     <span class="kw">fn</span> <span class="ident">parse</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
@@ -567,7 +567,7 @@
     }
     <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">has_position</span>) <span class="op">=</span> <span class="ident">nom</span>::<span class="ident">error</span>::<span class="ident">context</span>(<span class="string">&quot;take has_position&quot;</span>, <span class="ident">take_has_position</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
     <span class="kw">if</span> <span class="ident">has_position</span> {
-        <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">data</span>) <span class="op">=</span> <span class="ident">util</span>::<span class="ident">serato32</span>::<span class="ident">take_u32</span>(<span class="ident">input</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">data</span>) <span class="op">=</span> <span class="ident">serato32</span>::<span class="ident">take_u32</span>(<span class="ident">input</span>)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>((<span class="ident">input</span>, <span class="prelude-val">Some</span>(<span class="ident">data</span>)))
     } <span class="kw">else</span> {
         <span class="kw">let</span> (<span class="ident">input</span>, <span class="kw">_</span>) <span class="op">=</span> <span class="ident">nom</span>::<span class="ident">bytes</span>::<span class="ident">complete</span>::<span class="ident">tag</span>(<span class="string">b&quot;\x7f\x7f\x7f\x7f&quot;</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
@@ -624,7 +624,7 @@
         <span class="string">&quot;marker unknown bytes&quot;</span>,
         <span class="ident">nom</span>::<span class="ident">bytes</span>::<span class="ident">complete</span>::<span class="ident">tag</span>(<span class="string">b&quot;\x00\x7F\x7F\x7F\x7F\x7F&quot;</span>),
     )(<span class="ident">input</span>)<span class="question-mark">?</span>;
-    <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">color</span>) <span class="op">=</span> <span class="ident">nom</span>::<span class="ident">error</span>::<span class="ident">context</span>(<span class="string">&quot;marker color&quot;</span>, <span class="ident">util</span>::<span class="ident">serato32</span>::<span class="ident">take_color</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
+    <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">color</span>) <span class="op">=</span> <span class="ident">nom</span>::<span class="ident">error</span>::<span class="ident">context</span>(<span class="string">&quot;marker color&quot;</span>, <span class="ident">serato32</span>::<span class="ident">take_color</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
     <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">marker_type</span>) <span class="op">=</span> <span class="ident">nom</span>::<span class="ident">error</span>::<span class="ident">context</span>(<span class="string">&quot;marker type&quot;</span>, <span class="ident">take_marker_type</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
     <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">is_locked</span>) <span class="op">=</span> <span class="ident">nom</span>::<span class="ident">error</span>::<span class="ident">context</span>(<span class="string">&quot;marker locked state&quot;</span>, <span class="ident">take_bool</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
     <span class="prelude-val">Ok</span>((
@@ -641,10 +641,10 @@
 
 <span class="doccomment">/// Parses the data into a `Markers` struct, consuming the whole input slice.</span>
 <span class="kw">fn</span> <span class="ident">take_markers</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Res</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">Markers</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">version</span>) <span class="op">=</span> <span class="ident">util</span>::<span class="ident">take_version</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>)<span class="question-mark">?</span>;
+    <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">version</span>) <span class="op">=</span> <span class="ident">take_version</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>)<span class="question-mark">?</span>;
     <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">entries</span>) <span class="op">=</span>
         <span class="ident">nom</span>::<span class="ident">multi</span>::<span class="ident">length_count</span>(<span class="ident">nom</span>::<span class="ident">number</span>::<span class="ident">complete</span>::<span class="ident">be_u32</span>, <span class="ident">take_marker</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
-    <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">track_color</span>) <span class="op">=</span> <span class="ident">nom</span>::<span class="ident">combinator</span>::<span class="ident">all_consuming</span>(<span class="ident">util</span>::<span class="ident">serato32</span>::<span class="ident">take_color</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
+    <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">track_color</span>) <span class="op">=</span> <span class="ident">nom</span>::<span class="ident">combinator</span>::<span class="ident">all_consuming</span>(<span class="ident">serato32</span>::<span class="ident">take_color</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
 
     <span class="kw">let</span> <span class="ident">markers</span> <span class="op">=</span> <span class="ident">Markers</span> {
         <span class="ident">version</span>,
@@ -662,7 +662,7 @@
         <span class="ident">nom</span>::<span class="ident">error</span>::<span class="ident">context</span>(<span class="string">&quot;marker end position&quot;</span>, <span class="ident">nom</span>::<span class="ident">number</span>::<span class="ident">complete</span>::<span class="ident">be_u32</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
     <span class="kw">let</span> (<span class="ident">input</span>, <span class="kw">_</span>) <span class="op">=</span>
         <span class="ident">nom</span>::<span class="ident">error</span>::<span class="ident">context</span>(<span class="string">&quot;marker unknown bytes&quot;</span>, <span class="ident">nom</span>::<span class="ident">bytes</span>::<span class="ident">complete</span>::<span class="ident">take</span>(<span class="number">6usize</span>))(<span class="ident">input</span>)<span class="question-mark">?</span>;
-    <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">color</span>) <span class="op">=</span> <span class="ident">nom</span>::<span class="ident">error</span>::<span class="ident">context</span>(<span class="string">&quot;marker color&quot;</span>, <span class="ident">util</span>::<span class="ident">take_color</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
+    <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">color</span>) <span class="op">=</span> <span class="ident">nom</span>::<span class="ident">error</span>::<span class="ident">context</span>(<span class="string">&quot;marker color&quot;</span>, <span class="ident">take_color</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
     <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">marker_type</span>) <span class="op">=</span> <span class="ident">nom</span>::<span class="ident">error</span>::<span class="ident">context</span>(<span class="string">&quot;marker type&quot;</span>, <span class="ident">take_marker_type</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
     <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">is_locked</span>) <span class="op">=</span> <span class="ident">nom</span>::<span class="ident">error</span>::<span class="ident">context</span>(<span class="string">&quot;marker locked state&quot;</span>, <span class="ident">take_bool</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
 
@@ -686,10 +686,10 @@
 
 <span class="doccomment">/// Parses the data into a `Markers` struct, consuming the whole input slice (MP4 version).</span>
 <span class="kw">fn</span> <span class="ident">take_markers_mp4</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Res</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">Markers</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">version</span>) <span class="op">=</span> <span class="ident">util</span>::<span class="ident">take_version</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>)<span class="question-mark">?</span>;
+    <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">version</span>) <span class="op">=</span> <span class="ident">take_version</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>)<span class="question-mark">?</span>;
     <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">entries</span>) <span class="op">=</span>
         <span class="ident">nom</span>::<span class="ident">multi</span>::<span class="ident">length_count</span>(<span class="ident">nom</span>::<span class="ident">number</span>::<span class="ident">complete</span>::<span class="ident">be_u32</span>, <span class="ident">take_marker_mp4</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
-    <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">track_color</span>) <span class="op">=</span> <span class="ident">nom</span>::<span class="ident">combinator</span>::<span class="ident">all_consuming</span>(<span class="ident">util</span>::<span class="ident">serato32</span>::<span class="ident">take_color</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
+    <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">track_color</span>) <span class="op">=</span> <span class="ident">nom</span>::<span class="ident">combinator</span>::<span class="ident">all_consuming</span>(<span class="ident">serato32</span>::<span class="ident">take_color</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
 
     <span class="kw">let</span> <span class="ident">markers</span> <span class="op">=</span> <span class="ident">Markers</span> {
         <span class="ident">version</span>,

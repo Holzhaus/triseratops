@@ -31,9 +31,15 @@
 <span id="28">28</span>
 <span id="29">29</span>
 <span id="30">30</span>
+<span id="31">31</span>
+<span id="32">32</span>
+<span id="33">33</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Parsers for Serato&#39;s file tags</span>
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">format</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">generic</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">serato32</span>;
+<span class="kw">pub</span>(<span class="self">self</span>) <span class="kw">mod</span> <span class="ident">util</span>;
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">container</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">container</span>::<span class="ident">TagContainer</span>;
