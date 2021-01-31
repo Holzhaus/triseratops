@@ -33,9 +33,25 @@ pub fn parse_utf8(input: &[u8]) -> Res<&[u8], String> {
     }
 }
 
+#[test]
+fn test_parse_utf8() {
+    assert_eq!(
+        parse_utf8(&[0x41, 0x42]),
+        Ok((&b""[..], String::from("AB")))
+    );
+}
+
 pub fn take_utf8(input: &[u8]) -> Res<&[u8], String> {
     let (input, data) = take_until_nullbyte(&input)?;
     let (_, value) = parse_utf8(&data)?;
     let (input, _) = nom::bytes::complete::take(1usize)(input)?;
     Ok((input, value))
+}
+
+#[test]
+fn test_take_utf8() {
+    assert_eq!(
+        take_utf8(&[0x41, 0x42, 0x00]),
+        Ok((&b""[..], String::from("AB")))
+    );
 }
