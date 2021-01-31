@@ -51,16 +51,22 @@
 <span id="48">48</span>
 <span id="49">49</span>
 <span id="50">50</span>
+<span id="51">51</span>
+<span id="52">52</span>
+<span id="53">53</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! This library provides access to metadata and libraries written by the [Serato</span>
 <span class="doccomment">//! DJ](https://serato.com/dj) software.</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! # Metadata</span>
 <span class="doccomment">//!</span>
-<span class="doccomment">//! Serato&#39;s formats are pretty complex and store redundant data which might be contradictory if</span>
-<span class="doccomment">//! edited by hand. To make it straightforward to access the metadata, this library provides</span>
-<span class="doccomment">//! [`TagContainer` struct](`tag::TagContainer`), which provides access to all important attributes</span>
-<span class="doccomment">//! and implements the same conflict resolution strategies that the Serato DJ software uses.</span>
+<span class="doccomment">//! Serato&#39;s formats are pretty complex and store redundant data which might lead to situation</span>
+<span class="doccomment">//! where that data contradicts each other (e.g. if the data was edited by hand).</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! To make it straightforward to access the metadata, this library provides</span>
+<span class="doccomment">//! the [`TagContainer` struct](`tag::TagContainer`), which provides access to all important</span>
+<span class="doccomment">//! attributes and implements the same conflict resolution strategies that the Serato DJ software</span>
+<span class="doccomment">//! uses.</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! ```</span>
 <span class="doccomment">//! use serato_tags::tag::{TagContainer, TagType};</span>

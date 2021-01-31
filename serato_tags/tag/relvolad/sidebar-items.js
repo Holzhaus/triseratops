@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["parse",""],["take_relvolad",""]],"struct":[["RelVolAd","Represents the  `Serato RelVolAd` tag."]]});
+initSidebarItems({"struct":[["RelVolAd","Represents the  `Serato RelVolAd` tag."]]});

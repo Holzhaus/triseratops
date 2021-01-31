@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["take_vidassoc",""]],"struct":[["VidAssoc","Represents the  `Serato VidAssoc` tag."]]});
+initSidebarItems({"struct":[["VidAssoc","Represents the  `Serato VidAssoc` tag."]]});

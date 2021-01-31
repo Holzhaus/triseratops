@@ -318,8 +318,20 @@
 <span id="315">315</span>
 <span id="316">316</span>
 <span id="317">317</span>
+<span id="318">318</span>
+<span id="319">319</span>
+<span id="320">320</span>
+<span id="321">321</span>
+<span id="322">322</span>
+<span id="323">323</span>
+<span id="324">324</span>
+<span id="325">325</span>
+<span id="326">326</span>
+<span id="327">327</span>
+<span id="328">328</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="doccomment">//! This module provides the `TagContainer` class.</span>
+<span class="doccomment">//! Provides the [`TagContainer` struct](TagContainer), a simple interface to access data in</span>
+<span class="doccomment">//! Serato&#39;s tags.</span>
 <span class="kw">use</span> <span class="kw">super</span>::{
     <span class="ident">beatgrid</span>, <span class="ident">format</span>::<span class="ident">flac</span>::<span class="ident">FLACTag</span>, <span class="ident">format</span>::<span class="ident">id3</span>::<span class="ident">ID3Tag</span>, <span class="ident">format</span>::<span class="ident">mp4</span>::<span class="ident">MP4Tag</span>, <span class="ident">format</span>::<span class="ident">ogg</span>::<span class="ident">OggTag</span>,
     <span class="ident">markers</span>, <span class="ident">markers2</span>, <span class="ident">Autotags</span>, <span class="ident">Beatgrid</span>, <span class="ident">Markers</span>, <span class="ident">Markers2</span>, <span class="ident">Overview</span>,
@@ -342,6 +354,10 @@
     <span class="ident">overview</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Overview</span><span class="op">&gt;</span>,
 }
 
+<span class="doccomment">/// The tag type of the data.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// The format of the Serato tag data differs between tag types.</span>
+<span class="doccomment">/// Therefore it&#39;s necessary to tell the parser from what kind of the the data originates from.</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">TagType</span> {
     <span class="ident">ID3</span>,
     <span class="ident">FLAC</span>,
@@ -361,6 +377,7 @@
         }
     }
 
+    <span class="doccomment">/// Parse the [`Serato Autotags`](Autotags) tag.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_autotags</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">tag_type</span>: <span class="ident">TagType</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="ident">tag_type</span> {
             <span class="ident">TagType</span>::<span class="ident">ID3</span> <span class="op">=</span><span class="op">&gt;</span> {
@@ -377,6 +394,7 @@
         <span class="prelude-val">Ok</span>(())
     }
 
+    <span class="doccomment">/// Parse the [`Serato BeatGrid`](Beatgrid) tag.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_beatgrid</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">tag_type</span>: <span class="ident">TagType</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="ident">tag_type</span> {
             <span class="ident">TagType</span>::<span class="ident">ID3</span> <span class="op">=</span><span class="op">&gt;</span> {
@@ -393,6 +411,7 @@
         <span class="prelude-val">Ok</span>(())
     }
 
+    <span class="doccomment">/// Parse the [`Serato Markers_`](Markers) tag.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_markers</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">tag_type</span>: <span class="ident">TagType</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="ident">tag_type</span> {
             <span class="ident">TagType</span>::<span class="ident">ID3</span> <span class="op">=</span><span class="op">&gt;</span> {
@@ -406,6 +425,7 @@
         <span class="prelude-val">Ok</span>(())
     }
 
+    <span class="doccomment">/// Parse the [`Serato Markers2`](Markers2) tag.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_markers2</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">tag_type</span>: <span class="ident">TagType</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="ident">tag_type</span> {
             <span class="ident">TagType</span>::<span class="ident">ID3</span> <span class="op">=</span><span class="op">&gt;</span> {
@@ -424,6 +444,7 @@
         <span class="prelude-val">Ok</span>(())
     }
 
+    <span class="doccomment">/// Parse the [`Serato Overview`](Overview) tag.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_overview</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">tag_type</span>: <span class="ident">TagType</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="ident">tag_type</span> {
             <span class="ident">TagType</span>::<span class="ident">ID3</span> <span class="op">=</span><span class="op">&gt;</span> {
@@ -440,7 +461,7 @@
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="doccomment">/// Returns the auto_gain value from the `Serato Autotags` tag.</span>
+    <span class="doccomment">/// Returns the [`auto_gain`](Autotags::auto_gain) value from the [`Serato Autotags`](Autotags) tag.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">auto_gain</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">tag</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">autotags</span> {
             <span class="kw">return</span> <span class="prelude-val">Some</span>(<span class="ident">tag</span>.<span class="ident">auto_gain</span>);
@@ -449,7 +470,7 @@
         <span class="prelude-val">None</span>
     }
 
-    <span class="doccomment">/// Returns the gain_db value from the `Serato Autotags` tag.</span>
+    <span class="doccomment">/// Returns the [`gain_db`](Autotags::gain_db) value from the [`Serato Autotags`](Autotags) tag.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">gain_db</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">tag</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">autotags</span> {
             <span class="kw">return</span> <span class="prelude-val">Some</span>(<span class="ident">tag</span>.<span class="ident">gain_db</span>);
@@ -458,7 +479,7 @@
         <span class="prelude-val">None</span>
     }
 
-    <span class="doccomment">/// Returns the beatgrid from the `Serato BeatGrid` tag.</span>
+    <span class="doccomment">/// Returns the beatgrid from the [`Serato BeatGrid`](Beatgrid) tag.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">beatgrid</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
     ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="kw-2">&amp;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">beatgrid</span>::<span class="ident">NonTerminalMarker</span><span class="op">&gt;</span>, <span class="kw-2">&amp;</span><span class="ident">beatgrid</span>::<span class="ident">TerminalMarker</span>)<span class="op">&gt;</span> {
@@ -469,7 +490,7 @@
         <span class="prelude-val">None</span>
     }
 
-    <span class="doccomment">/// Returns BPM lock status from the `Serato Markers2` tag.</span>
+    <span class="doccomment">/// Returns BPM lock status from the [`Serato Markers2`](Markers2) tag.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">bpm_locked</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">m</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">markers2</span> {
             <span class="kw">return</span> <span class="ident">m</span>.<span class="ident">bpm_locked</span>();
@@ -478,7 +499,7 @@
         <span class="prelude-val">None</span>
     }
 
-    <span class="doccomment">/// Returns cues from the `Serato Markers_` and `Serato Markers2` tags.</span>
+    <span class="doccomment">/// Returns cues from the [`Serato Markers_`](Markers) and [`Serato Markers2`](Markers2) tags.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This retrieves the `Serato Markers2` cues first, then overwrite the values with those from</span>
     <span class="doccomment">/// `Serato Markers_`. This is what Serato does too (i.e. if `Serato Markers_` and `Serato</span>
@@ -542,7 +563,7 @@
         <span class="ident">map</span>.<span class="ident">values</span>().<span class="ident">cloned</span>().<span class="ident">collect</span>()
     }
 
-    <span class="doccomment">/// Returns loops from the `Serato Markers_` and `Serato Markers2` tags.</span>
+    <span class="doccomment">/// Returns loops from the [`Serato Markers_`](Markers) and [`Serato Markers2`](Markers2) tags.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This retrieves the `Serato Markers2` loops first, then overwrite the values with those from</span>
     <span class="doccomment">/// `Serato Markers_`. This is what Serato does too (i.e. if `Serato Markers_` and `Serato</span>
@@ -601,7 +622,8 @@
         <span class="ident">map</span>.<span class="ident">values</span>().<span class="ident">cloned</span>().<span class="ident">collect</span>()
     }
 
-    <span class="doccomment">/// Returns the track color from the `Serato Markers_` and `Serato Markers2` tags.</span>
+    <span class="doccomment">/// Returns the track color from the [`Serato Markers_`](Markers) and [`Serato</span>
+    <span class="doccomment">/// Markers2`](Markers2) tags.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This retrieves the `Serato Markers2` track color first, then overwrites the value with the</span>
     <span class="doccomment">/// one from `Serato Markers_`. This is what Serato does too (i.e. if `Serato Markers_` and</span>
@@ -621,7 +643,7 @@
         <span class="ident">track_color</span>
     }
 
-    <span class="doccomment">/// Returns the waveform overview data color from the `Serato Overview` tag.</span>
+    <span class="doccomment">/// Returns the waveform overview data color from the [`Serato Overview`](Overview) tag.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">overview</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">tag</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">overview</span> {
             <span class="kw">return</span> <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="ident">tag</span>.<span class="ident">data</span>);

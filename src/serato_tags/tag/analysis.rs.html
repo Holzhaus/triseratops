@@ -80,10 +80,24 @@
 <span id="77">77</span>
 <span id="78">78</span>
 <span id="79">79</span>
+<span id="80">80</span>
+<span id="81">81</span>
+<span id="82">82</span>
+<span id="83">83</span>
+<span id="84">84</span>
+<span id="85">85</span>
+<span id="86">86</span>
+<span id="87">87</span>
+<span id="88">88</span>
+<span id="89">89</span>
+<span id="90">90</span>
+<span id="91">91</span>
+<span id="92">92</span>
+<span id="93">93</span>
+<span id="94">94</span>
+<span id="95">95</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! The `Serato Analysis` tag stores the analysis version.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! This is probably the Serato Version number that performed the analysis.</span>
 
 <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">format</span>::<span class="ident">enveloped</span>;
 <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">format</span>::<span class="ident">flac</span>;
@@ -96,6 +110,21 @@
 <span class="kw">use</span> <span class="ident">nom</span>::<span class="ident">error</span>::<span class="ident">ParseError</span>;
 
 <span class="doccomment">/// Represents the  `Serato Analysis` tag.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// This is probably the Serato Version number that performed the analysis.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// # Example</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// ```</span>
+<span class="doccomment">/// use serato_tags::tag::{Analysis, format::id3::ID3Tag};</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// // First, read the tag data from the ID3 GEOB tag (the tag name can be accessed using the</span>
+<span class="doccomment">/// // Analysis::ID3_TAG), then parse the data like this:</span>
+<span class="doccomment">/// fn parse_and_print_markers(data: &amp;[u8]) {</span>
+<span class="doccomment">///     let markers = Analysis::parse_id3(data).expect(&quot;Failed to parse data!&quot;);</span>
+<span class="doccomment">///     println!(&quot;{:?}&quot;, markers);</span>
+<span class="doccomment">/// }</span>
+<span class="doccomment">/// ```</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Analysis</span> {
     <span class="doccomment">/// The analysis version.</span>
@@ -129,16 +158,10 @@
     }
 }
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">take_analysis</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Res</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">Analysis</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">version</span>) <span class="op">=</span> <span class="ident">nom</span>::<span class="ident">error</span>::<span class="ident">context</span>(<span class="string">&quot;take version&quot;</span>, <span class="ident">util</span>::<span class="ident">take_version</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
-    <span class="kw">let</span> <span class="ident">analysis</span> <span class="op">=</span> <span class="ident">Analysis</span> { <span class="ident">version</span> };
-
-    <span class="prelude-val">Ok</span>((<span class="ident">input</span>, <span class="ident">analysis</span>))
-}
-
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">take_ascii_u8</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Res</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">u8</span><span class="op">&gt;</span> {
+<span class="doccomment">/// Returns an `u8` parsed from ASCII char the input slice.</span>
+<span class="kw">fn</span> <span class="ident">take_ascii_u8</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Res</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">u8</span><span class="op">&gt;</span> {
     <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">ascii_number</span>) <span class="op">=</span> <span class="ident">nom</span>::<span class="ident">error</span>::<span class="ident">context</span>(
-        <span class="string">&quot;take major version&quot;</span>,
+        <span class="string">&quot;take ascii integer&quot;</span>,
         <span class="ident">nom</span>::<span class="ident">bytes</span>::<span class="ident">complete</span>::<span class="ident">take_while</span>(<span class="op">|</span><span class="ident">b</span>: <span class="ident">u8</span><span class="op">|</span> <span class="ident">b</span>.<span class="ident">is_ascii_digit</span>()),
     )(<span class="ident">input</span>)<span class="question-mark">?</span>;
     <span class="kw">let</span> (<span class="kw">_</span>, <span class="ident">ascii_number</span>) <span class="op">=</span> <span class="ident">util</span>::<span class="ident">parse_utf8</span>(<span class="ident">ascii_number</span>)<span class="question-mark">?</span>;
@@ -150,7 +173,16 @@
     }
 }
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">take_analysis_ogg</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Res</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">Analysis</span><span class="op">&gt;</span> {
+<span class="doccomment">/// Returns an [`Analysis` struct](Analysis) parsed from the input slice.</span>
+<span class="kw">fn</span> <span class="ident">take_analysis</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Res</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">Analysis</span><span class="op">&gt;</span> {
+    <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">version</span>) <span class="op">=</span> <span class="ident">nom</span>::<span class="ident">error</span>::<span class="ident">context</span>(<span class="string">&quot;take version&quot;</span>, <span class="ident">util</span>::<span class="ident">take_version</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
+    <span class="kw">let</span> <span class="ident">analysis</span> <span class="op">=</span> <span class="ident">Analysis</span> { <span class="ident">version</span> };
+
+    <span class="prelude-val">Ok</span>((<span class="ident">input</span>, <span class="ident">analysis</span>))
+}
+
+<span class="doccomment">/// Returns an [`Analysis` struct](Analysis) parsed from the input slice ([MP4](mp4) version).</span>
+<span class="kw">fn</span> <span class="ident">take_analysis_ogg</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Res</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">Analysis</span><span class="op">&gt;</span> {
     <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">major</span>) <span class="op">=</span> <span class="ident">nom</span>::<span class="ident">error</span>::<span class="ident">context</span>(<span class="string">&quot;take major version&quot;</span>, <span class="ident">take_ascii_u8</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
     <span class="kw">let</span> (<span class="ident">input</span>, <span class="kw">_</span>) <span class="op">=</span>
         <span class="ident">nom</span>::<span class="ident">error</span>::<span class="ident">context</span>(<span class="string">&quot;take version separator&quot;</span>, <span class="ident">nom</span>::<span class="ident">bytes</span>::<span class="ident">complete</span>::<span class="ident">tag</span>(<span class="string">b&quot;.&quot;</span>))(<span class="ident">input</span>)<span class="question-mark">?</span>;

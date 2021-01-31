@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["take_analysis",""],["take_analysis_ogg",""],["take_ascii_u8",""]],"struct":[["Analysis","Represents the  `Serato Analysis` tag."]]});
+initSidebarItems({"struct":[["Analysis","Represents the  `Serato Analysis` tag."]]});

@@ -334,6 +334,18 @@
 <span id="331">331</span>
 <span id="332">332</span>
 <span id="333">333</span>
+<span id="334">334</span>
+<span id="335">335</span>
+<span id="336">336</span>
+<span id="337">337</span>
+<span id="338">338</span>
+<span id="339">339</span>
+<span id="340">340</span>
+<span id="341">341</span>
+<span id="342">342</span>
+<span id="343">343</span>
+<span id="344">344</span>
+<span id="345">345</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! The `Serato Markers_` tag stores information about the first 5 Cues, 9 Loops and the track</span>
 <span class="doccomment">//! color.</span>
@@ -373,6 +385,24 @@
 }
 
 <span class="doccomment">/// Represents the `Serato Markers_` tag.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// It contains the the first 5 cue points, the first 9 loops and the color of the track.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// This seems to be a legacy tag, since it lacks some information such as cue labels and all information of the `Serato Markers_` tag is also part of the [`Serato Markers2`](super::markers2] tag.</span>
+<span class="doccomment">/// If the two tags contradict each other, Serato DJ will prefer the data from the `Serato Markers_` tag.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// # Example</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// ```</span>
+<span class="doccomment">/// use serato_tags::tag::{Markers, format::id3::ID3Tag};</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// // First, read the tag data from the ID3 GEOB tag (the tag name can be accessed using the</span>
+<span class="doccomment">/// // Markers::ID3_TAG), then parse the data like this:</span>
+<span class="doccomment">/// fn parse(data: &amp;[u8]) {</span>
+<span class="doccomment">///     let content = Markers::parse_id3(data).expect(&quot;Failed to parse data!&quot;);</span>
+<span class="doccomment">///     println!(&quot;{:?}&quot;, content);</span>
+<span class="doccomment">/// }</span>
+<span class="doccomment">/// ```</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Markers</span> {
     <span class="doccomment">/// The tag version.</span>
@@ -497,20 +527,7 @@
 <span class="doccomment">/// | `0x7F` | `false` | The position is not set and following 4 bytes be `0x7f7f7f7f`.</span>
 <span class="doccomment">/// | Other  | `_`     | Invalid data, throws an error.</span>
 <span class="doccomment">///</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// # Example</span>
-<span class="doccomment">/// ```</span>
-<span class="doccomment">/// use serato_tags::tag::markers::take_has_position;</span>
-<span class="doccomment">/// use nom::Err;</span>
-<span class="doccomment">/// use nom::error::{Error, ErrorKind};</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// assert_eq!(take_has_position(&amp;[0x00]), Ok((&amp;[][..], true)));</span>
-<span class="doccomment">/// assert_eq!(take_has_position(&amp;[0x7F]), Ok((&amp;[][..], false)));</span>
-<span class="doccomment">/// assert_eq!(take_has_position(&amp;[0x00, 0x05]), Ok((&amp;[0x05][..], true)));</span>
-<span class="doccomment">/// assert!(take_has_position(&amp;[0xAB, 0x00, 0x01]).is_err());</span>
-<span class="doccomment">/// assert!(take_has_position(&amp;[]).is_err());</span>
-<span class="doccomment">/// ```</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">take_has_position</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Res</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">bool</span><span class="op">&gt;</span> {
+<span class="kw">fn</span> <span class="ident">take_has_position</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Res</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">bool</span><span class="op">&gt;</span> {
     <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">position_prefix</span>) <span class="op">=</span> <span class="ident">nom</span>::<span class="ident">number</span>::<span class="ident">complete</span>::<span class="ident">u8</span>(<span class="ident">input</span>)<span class="question-mark">?</span>;
     <span class="kw">match</span> <span class="ident">position_prefix</span> {
         <span class="number">0x00</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>((<span class="ident">input</span>, <span class="bool-val">true</span>)),
@@ -522,20 +539,19 @@
     }
 }
 
+<span class="attribute">#[<span class="ident">test</span>]</span>
+<span class="kw">fn</span> <span class="ident">test_take_has_position</span>() {
+    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">take_has_position</span>(<span class="kw-2">&amp;</span>[<span class="number">0x00</span>]), <span class="prelude-val">Ok</span>((<span class="kw-2">&amp;</span>[][..], <span class="bool-val">true</span>)));
+    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">take_has_position</span>(<span class="kw-2">&amp;</span>[<span class="number">0x7F</span>]), <span class="prelude-val">Ok</span>((<span class="kw-2">&amp;</span>[][..], <span class="bool-val">false</span>)));
+    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">take_has_position</span>(<span class="kw-2">&amp;</span>[<span class="number">0x00</span>, <span class="number">0x05</span>]), <span class="prelude-val">Ok</span>((<span class="kw-2">&amp;</span>[<span class="number">0x05</span>][..], <span class="bool-val">true</span>)));
+    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">take_has_position</span>(<span class="kw-2">&amp;</span>[<span class="number">0xAB</span>, <span class="number">0x00</span>, <span class="number">0x01</span>]).<span class="ident">is_err</span>());
+    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">take_has_position</span>(<span class="kw-2">&amp;</span>[]).<span class="ident">is_err</span>());
+}
+
 <span class="doccomment">/// Returns an `Option&lt;u32&gt;` which contains the position parsed from the next 5 input bytes.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// Uses `take_has_position` internally to determine if the position is set, then either returns</span>
 <span class="doccomment">/// the position as `Some` or ensures the that &quot;no position&quot; constant is used and returns `None`.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// # Example</span>
-<span class="doccomment">/// ```</span>
-<span class="doccomment">/// use serato_tags::tag::markers::take_position;</span>
-<span class="doccomment">/// use nom::Err;</span>
-<span class="doccomment">/// use nom::error::{Error, ErrorKind};</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// assert_eq!(take_position(&amp;[0x00, 0x00, 0x00, 0x00, 0x00]), Ok((&amp;[][..], Some(0))));</span>
-<span class="doccomment">/// assert_eq!(take_position(&amp;[0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x00]), Ok((&amp;[0x00][..], None)));</span>
-<span class="doccomment">/// ```</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">take_position</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Res</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span><span class="op">&gt;</span> {
     <span class="kw">if</span> <span class="ident">input</span>.<span class="ident">len</span>() <span class="op">&lt;</span> <span class="number">5</span> {
         <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">nom</span>::<span class="prelude-val">Err</span>::<span class="ident">Error</span>(<span class="ident">nom</span>::<span class="ident">error</span>::<span class="ident">VerboseError</span>::<span class="ident">from_error_kind</span>(
@@ -556,17 +572,20 @@
     }
 }
 
+<span class="attribute">#[<span class="ident">test</span>]</span>
+<span class="kw">fn</span> <span class="ident">test_take_position</span>() {
+    <span class="macro">assert_eq</span><span class="macro">!</span>(
+        <span class="ident">take_position</span>(<span class="kw-2">&amp;</span>[<span class="number">0x00</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="number">0x00</span>]),
+        <span class="prelude-val">Ok</span>((<span class="kw-2">&amp;</span>[][..], <span class="prelude-val">Some</span>(<span class="number">0</span>)))
+    );
+    <span class="macro">assert_eq</span><span class="macro">!</span>(
+        <span class="ident">take_position</span>(<span class="kw-2">&amp;</span>[<span class="number">0x7F</span>, <span class="number">0x7F</span>, <span class="number">0x7F</span>, <span class="number">0x7F</span>, <span class="number">0x7F</span>, <span class="number">0x00</span>]),
+        <span class="prelude-val">Ok</span>((<span class="kw-2">&amp;</span>[<span class="number">0x00</span>][..], <span class="prelude-val">None</span>))
+    );
+}
+
 <span class="doccomment">/// Returns the `EntryType` for the cue marker parsed from the next input byte.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// # Example</span>
-<span class="doccomment">/// ```</span>
-<span class="doccomment">/// use serato_tags::tag::markers::{EntryType, take_entry_type};</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// assert_eq!(take_entry_type(&amp;[0x00]), Ok((&amp;[][..], EntryType::INVALID)));</span>
-<span class="doccomment">/// assert_eq!(take_entry_type(&amp;[0x03, 0x01]), Ok((&amp;[0x01][..], EntryType::LOOP)));</span>
-<span class="doccomment">/// assert!(take_entry_type(&amp;[0xAB]).is_err());</span>
-<span class="doccomment">/// ```</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">take_entry_type</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Res</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">EntryType</span><span class="op">&gt;</span> {
+<span class="kw">fn</span> <span class="ident">take_entry_type</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Res</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">EntryType</span><span class="op">&gt;</span> {
     <span class="kw">let</span> (<span class="ident">next_input</span>, <span class="ident">position_prefix</span>) <span class="op">=</span> <span class="ident">nom</span>::<span class="ident">number</span>::<span class="ident">complete</span>::<span class="ident">u8</span>(<span class="ident">input</span>)<span class="question-mark">?</span>;
     <span class="kw">match</span> <span class="ident">position_prefix</span> {
         <span class="number">0x00</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>((<span class="ident">next_input</span>, <span class="ident">EntryType</span>::<span class="ident">INVALID</span>)),
@@ -579,8 +598,18 @@
     }
 }
 
+<span class="attribute">#[<span class="ident">test</span>]</span>
+<span class="kw">fn</span> <span class="ident">test_take_entry_type</span>() {
+    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">take_entry_type</span>(<span class="kw-2">&amp;</span>[<span class="number">0x00</span>]), <span class="prelude-val">Ok</span>((<span class="kw-2">&amp;</span>[][..], <span class="ident">EntryType</span>::<span class="ident">INVALID</span>)));
+    <span class="macro">assert_eq</span><span class="macro">!</span>(
+        <span class="ident">take_entry_type</span>(<span class="kw-2">&amp;</span>[<span class="number">0x03</span>, <span class="number">0x01</span>]),
+        <span class="prelude-val">Ok</span>((<span class="kw-2">&amp;</span>[<span class="number">0x01</span>][..], <span class="ident">EntryType</span>::<span class="ident">LOOP</span>))
+    );
+    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">take_entry_type</span>(<span class="kw-2">&amp;</span>[<span class="number">0xAB</span>]).<span class="ident">is_err</span>());
+}
+
 <span class="doccomment">/// Returns a `Marker` parsed from the input slice.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">take_marker</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Res</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">Marker</span><span class="op">&gt;</span> {
+<span class="kw">fn</span> <span class="ident">take_marker</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Res</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">Marker</span><span class="op">&gt;</span> {
     <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">start_position_millis</span>) <span class="op">=</span>
         <span class="ident">nom</span>::<span class="ident">error</span>::<span class="ident">context</span>(<span class="string">&quot;marker start position&quot;</span>, <span class="ident">take_position</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
     <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">end_position_millis</span>) <span class="op">=</span>
@@ -605,7 +634,7 @@
 }
 
 <span class="doccomment">/// Parses the data into a `Markers` struct, consuming the whole input slice.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">take_markers</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Res</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">Markers</span><span class="op">&gt;</span> {
+<span class="kw">fn</span> <span class="ident">take_markers</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Res</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">Markers</span><span class="op">&gt;</span> {
     <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">version</span>) <span class="op">=</span> <span class="ident">util</span>::<span class="ident">take_version</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>)<span class="question-mark">?</span>;
     <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">entries</span>) <span class="op">=</span>
         <span class="ident">nom</span>::<span class="ident">multi</span>::<span class="ident">length_count</span>(<span class="ident">nom</span>::<span class="ident">number</span>::<span class="ident">complete</span>::<span class="ident">be_u32</span>, <span class="ident">take_marker</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
@@ -620,7 +649,7 @@
 }
 
 <span class="doccomment">/// Returns a `Marker` parsed from the input slice (MP4 version).</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">take_marker_mp4</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Res</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">Marker</span><span class="op">&gt;</span> {
+<span class="kw">fn</span> <span class="ident">take_marker_mp4</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Res</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">Marker</span><span class="op">&gt;</span> {
     <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">start_position_millis_raw</span>) <span class="op">=</span>
         <span class="ident">nom</span>::<span class="ident">error</span>::<span class="ident">context</span>(<span class="string">&quot;marker start position&quot;</span>, <span class="ident">nom</span>::<span class="ident">number</span>::<span class="ident">complete</span>::<span class="ident">be_u32</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
     <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">end_position_millis_raw</span>) <span class="op">=</span>
@@ -650,7 +679,7 @@
 }
 
 <span class="doccomment">/// Parses the data into a `Markers` struct, consuming the whole input slice (MP4 version).</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">take_markers_mp4</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Res</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">Markers</span><span class="op">&gt;</span> {
+<span class="kw">fn</span> <span class="ident">take_markers_mp4</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Res</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">Markers</span><span class="op">&gt;</span> {
     <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">version</span>) <span class="op">=</span> <span class="ident">util</span>::<span class="ident">take_version</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>)<span class="question-mark">?</span>;
     <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">entries</span>) <span class="op">=</span>
         <span class="ident">nom</span>::<span class="ident">multi</span>::<span class="ident">length_count</span>(<span class="ident">nom</span>::<span class="ident">number</span>::<span class="ident">complete</span>::<span class="ident">be_u32</span>, <span class="ident">take_marker_mp4</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
@@ -662,11 +691,6 @@
         <span class="ident">track_color</span>,
     };
     <span class="prelude-val">Ok</span>((<span class="ident">input</span>, <span class="ident">markers</span>))
-}
-
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Markers</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> (<span class="kw">_</span>, <span class="ident">markers</span>) <span class="op">=</span> <span class="ident">nom</span>::<span class="ident">combinator</span>::<span class="ident">all_consuming</span>(<span class="ident">take_markers</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
-    <span class="prelude-val">Ok</span>(<span class="ident">markers</span>)
 }
 </pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../../";window.currentCrate = "serato_tags";</script><script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script><script defer src="../../../search-index.js"></script></body></html>
