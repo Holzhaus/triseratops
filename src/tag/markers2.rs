@@ -6,14 +6,14 @@
 //!
 //! The minimum length of this tag seems to be 470 bytes, and shorter contents are padded with null bytes.
 
-use super::format::enveloped;
-use super::format::flac;
-use super::format::id3;
-use super::format::mp4;
-use super::format::ogg;
+use super::format::{enveloped, flac, id3, mp4, ogg, Tag};
+use super::generic::{
+    CensorFlipAction, Color, Cue, Flip, FlipAction, JumpFlipAction, Loop, UnknownFlipAction,
+    Version,
+};
+use super::util::{take_color, take_version};
 use crate::error::Error;
-use crate::util;
-use crate::util::Res;
+use crate::util::{take_utf8, Res};
 use nom::error::ParseError;
 
 /// A marker in the `Serato Markers2` tag.
@@ -30,9 +30,9 @@ pub enum Marker {
     Unknown(UnknownMarker),
     Color(TrackColorMarker),
     BPMLock(BPMLockMarker),
-    Cue(CueMarker),
-    Loop(LoopMarker),
-    Flip(FlipMarker),
+    Cue(Cue),
+    Loop(Loop),
+    Flip(Flip),
 }
 
 /// An unknown marker that we don't have a parser for.
@@ -47,7 +47,7 @@ pub struct UnknownMarker {
 /// `COLOR` markers describe a track's color.
 #[derive(Debug)]
 pub struct TrackColorMarker {
-    pub color: util::Color,
+    pub color: Color,
 }
 
 /// A `BPMLOCK` marker.
@@ -57,98 +57,6 @@ pub struct TrackColorMarker {
 #[derive(Debug)]
 pub struct BPMLockMarker {
     pub is_locked: bool,
-}
-
-/// A `CUE` marker.
-///
-/// Each `CUE` marker contains information about a [cue
-/// point](https://support.serato.com/hc/en-us/articles/360000067696-Cue-Points).
-#[derive(Debug, Clone)]
-pub struct CueMarker {
-    pub index: u8,
-    pub position_millis: u32,
-    pub color: util::Color,
-    pub label: String,
-}
-
-/// A `LOOP` marker.
-///
-/// `LOOP` markers are used to store [saved
-/// loops](https://serato.com/latest/blog/17885/pro-tip-trigger-saved-loops).
-#[derive(Debug, Clone)]
-pub struct LoopMarker {
-    pub index: u8,
-    pub start_position_millis: u32,
-    pub end_position_millis: u32,
-    pub color: util::Color,
-    pub is_locked: bool,
-    pub label: String,
-}
-
-/// A `FLIP` marker.
-///
-/// `FLIP` markers are used for storing [Serato Flip](https://serato.com/dj/pro/expansions/flip)
-/// performances.
-#[derive(Debug, Clone)]
-pub struct FlipMarker {
-    pub index: u8,
-    pub is_enabled: bool,
-    pub label: String,
-    pub is_loop: bool,
-    pub actions: Vec<FlipAction>,
-}
-
-/// An action inside a `FLIP` marker.
-///
-/// Each `FLIP` action with a header that contains its type and length.
-///
-/// The last action is always a jump action where the source position is the time when the Flip
-/// recording was stopped. If looping is enabled, it's target position is the source position of
-/// the first entry. If not, the target position of that last entry is the same as its source
-/// position.
-#[derive(Debug, Clone)]
-pub enum FlipAction {
-    Censor(CensorFlipAction),
-    Jump(JumpFlipAction),
-    Unknown(UnknownFlipAction),
-}
-
-/// A Censor action inside a `FLIP` marker.
-///
-/// Actions of this type are used for censoring (playback speed factor is -1.0) and are followed
-/// with a jump marker from `end_position_seconds` to the playback position that the track would be
-/// at without the reverse playback.
-#[derive(Debug, Clone)]
-pub struct CensorFlipAction {
-    /// The start position of the censoring.
-    ///
-    /// When playback reaches this position, the censoring starts.
-    pub start_position_seconds: f64,
-
-    /// The end position of the censoring.
-    pub end_position_seconds: f64,
-
-    /// The playback speed factor (usually -1.0).
-    pub speed_factor: f64,
-}
-
-/// A Jump action inside a `FLIP` marker.
-#[derive(Debug, Clone)]
-pub struct JumpFlipAction {
-    /// The source position of the jump.
-    ///
-    /// When playback reaches this position, the jump is performed.
-    pub source_position_seconds: f64,
-
-    /// The target position of the jump.
-    pub target_position_seconds: f64,
-}
-
-/// An unknown `FLIP` action that we don't have a parser for.
-#[derive(Debug, Clone)]
-pub struct UnknownFlipAction {
-    pub id: u8,
-    pub data: Vec<u8>,
 }
 
 /// Represents the `Serato Markers2` tag.
@@ -172,7 +80,7 @@ pub struct UnknownFlipAction {
 /// ```
 #[derive(Debug)]
 pub struct Markers2 {
-    pub version: Option<util::Version>,
+    pub version: Option<Version>,
     pub size: usize,
     pub content: Markers2Content,
 }
@@ -187,8 +95,8 @@ impl Markers2 {
         None
     }
 
-    pub fn cues(&self) -> Vec<CueMarker> {
-        let mut cues: Vec<CueMarker> = Vec::new();
+    pub fn cues(&self) -> Vec<Cue> {
+        let mut cues: Vec<Cue> = Vec::new();
         for marker in &self.content.markers {
             if let Marker::Cue(m) = marker {
                 cues.push(m.clone());
@@ -197,8 +105,8 @@ impl Markers2 {
         cues
     }
 
-    pub fn loops(&self) -> Vec<LoopMarker> {
-        let mut loops: Vec<LoopMarker> = Vec::new();
+    pub fn loops(&self) -> Vec<Loop> {
+        let mut loops: Vec<Loop> = Vec::new();
         for marker in &self.content.markers {
             if let Marker::Loop(m) = marker {
                 loops.push(m.clone());
@@ -207,8 +115,8 @@ impl Markers2 {
         loops
     }
 
-    pub fn flips(&self) -> Vec<FlipMarker> {
-        let mut flips: Vec<FlipMarker> = Vec::new();
+    pub fn flips(&self) -> Vec<Flip> {
+        let mut flips: Vec<Flip> = Vec::new();
         for marker in &self.content.markers {
             if let Marker::Flip(m) = marker {
                 flips.push(m.clone());
@@ -217,7 +125,7 @@ impl Markers2 {
         flips
     }
 
-    pub fn track_color(&self) -> Option<util::Color> {
+    pub fn track_color(&self) -> Option<Color> {
         for marker in &self.content.markers {
             if let Marker::Color(m) = marker {
                 return Some(m.color);
@@ -227,7 +135,7 @@ impl Markers2 {
     }
 }
 
-impl util::Tag for Markers2 {
+impl Tag for Markers2 {
     const NAME: &'static str = "Serato Markers2";
 
     fn parse(input: &[u8]) -> Result<Self, Error> {
@@ -268,7 +176,7 @@ impl ogg::OggTag for Markers2 {
 /// Represents the base64-encoded content of the `Serato Markers2` tag.
 #[derive(Debug)]
 pub struct Markers2Content {
-    pub version: util::Version,
+    pub version: Version,
     pub markers: Vec<Marker>,
 }
 
@@ -340,7 +248,7 @@ fn decode_base64_chunks(
 
 fn take_marker_name(input: &[u8]) -> Res<&[u8], String> {
     let (input, _) = nom::combinator::not(nom::bytes::complete::tag(b"\0"))(input)?;
-    let (input, name) = util::take_utf8(input)?;
+    let (input, name) = take_utf8(input)?;
     if name.is_empty() {
         return Err(nom::Err::Incomplete(nom::Needed::Unknown));
     }
@@ -385,7 +293,7 @@ fn take_bpmlock_marker(input: &[u8]) -> Res<&[u8], Marker> {
 
 fn take_color_marker(input: &[u8]) -> Res<&[u8], Marker> {
     let (input, _) = nom::bytes::complete::tag(b"\x00")(input)?;
-    let (input, color) = util::take_color(input)?;
+    let (input, color) = take_color(input)?;
     let marker = TrackColorMarker { color };
     Ok((input, Marker::Color(marker)))
 }
@@ -395,10 +303,10 @@ fn take_cue_marker(input: &[u8]) -> Res<&[u8], Marker> {
     let (input, index) = nom::number::complete::u8(input)?;
     let (input, position_millis) = nom::number::complete::be_u32(input)?;
     let (input, _) = nom::bytes::complete::tag(b"\x00")(input)?;
-    let (input, color) = util::take_color(input)?;
+    let (input, color) = take_color(input)?;
     let (input, _) = nom::bytes::complete::tag(b"\x00\x00")(input)?;
-    let (input, label) = util::take_utf8(input)?;
-    let marker = CueMarker {
+    let (input, label) = take_utf8(input)?;
+    let marker = Cue {
         index,
         position_millis,
         color,
@@ -414,11 +322,11 @@ fn take_loop_marker(input: &[u8]) -> Res<&[u8], Marker> {
     let (input, end_position_millis) = nom::number::complete::be_u32(input)?;
     let (input, _) = nom::bytes::complete::tag(b"\xff\xff\xff\xff")(input)?;
     let (input, _) = nom::bytes::complete::tag(b"\x00")(input)?;
-    let (input, color) = util::take_color(input)?;
+    let (input, color) = take_color(input)?;
     let (input, _) = nom::bytes::complete::tag(b"\x00")(input)?;
     let (input, is_locked) = take_bool(input)?;
-    let (input, label) = util::take_utf8(input)?;
-    let marker = LoopMarker {
+    let (input, label) = take_utf8(input)?;
+    let marker = Loop {
         index,
         start_position_millis,
         end_position_millis,
@@ -433,11 +341,11 @@ fn take_flip_marker(input: &[u8]) -> Res<&[u8], Marker> {
     let (input, _) = nom::bytes::complete::tag(b"\x00")(input)?;
     let (input, index) = nom::number::complete::u8(input)?;
     let (input, is_enabled) = take_bool(input)?;
-    let (input, label) = util::take_utf8(input)?;
+    let (input, label) = take_utf8(input)?;
     let (input, is_loop) = take_bool(input)?;
     let (input, actions) =
         nom::multi::length_count(nom::number::complete::be_u32, take_flip_marker_action)(input)?;
-    let marker = FlipMarker {
+    let marker = Flip {
         index,
         is_enabled,
         label,
@@ -447,6 +355,9 @@ fn take_flip_marker(input: &[u8]) -> Res<&[u8], Marker> {
     Ok((input, Marker::Flip(marker)))
 }
 
+/// Returns a flip `FLIP` action parsed from the input slice.
+///
+/// Each action starts with a header that contains its type and length.
 fn take_flip_marker_action(input: &[u8]) -> Res<&[u8], FlipAction> {
     let (input, id) = nom::number::complete::u8(input)?;
     let (input, data) = nom::multi::length_data(nom::number::complete::be_u32)(input)?;
@@ -488,7 +399,7 @@ fn take_flip_marker_action_censor(input: &[u8]) -> Res<&[u8], FlipAction> {
 }
 
 fn parse_markers2_content(input: &[u8]) -> Res<&[u8], Markers2Content> {
-    let (input, version) = util::take_version(&input)?;
+    let (input, version) = take_version(&input)?;
     let (input, markers) = nom::multi::many0(take_marker)(&input)?;
 
     Ok((input, Markers2Content { version, markers }))
@@ -503,7 +414,7 @@ fn take_nullbytes(input: &[u8]) -> Res<&[u8], &[u8]> {
 
 fn take_markers2(input: &[u8]) -> Res<&[u8], Markers2> {
     let size = input.len();
-    let (input, version) = util::take_version(&input)?;
+    let (input, version) = take_version(&input)?;
     let version = Some(version);
     let (input, base64_chunks) = take_base64_chunks(&input)?;
     let (input, _) = take_nullbytes(&input)?;

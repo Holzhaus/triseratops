@@ -4,9 +4,11 @@ use super::format::enveloped;
 use super::format::flac;
 use super::format::id3;
 use super::format::mp4;
+use super::format::Tag;
+use super::generic::Version;
+use super::util::take_version;
 use crate::error::Error;
-use crate::util;
-use crate::util::Res;
+use crate::util::{take_until_nullbyte, Res};
 
 /// Represents the  `Serato AutoTags` tag.
 ///
@@ -27,7 +29,7 @@ use crate::util::Res;
 #[derive(Debug)]
 pub struct Autotags {
     /// The tag version.
-    pub version: util::Version,
+    pub version: Version,
     /// The track's number of beats per minute (BPM).
     pub bpm: f64,
     /// The track's autogain values (probably comparable to ReplayGain).
@@ -36,7 +38,7 @@ pub struct Autotags {
     pub gain_db: f64,
 }
 
-impl util::Tag for Autotags {
+impl Tag for Autotags {
     const NAME: &'static str = "Serato Autotags";
 
     fn parse(input: &[u8]) -> Result<Self, Error> {
@@ -56,7 +58,7 @@ impl mp4::MP4Tag for Autotags {
 
 /// Returns an `f64` parsed from zero-terminated ASCII chars the input slice.
 fn take_double_str(input: &[u8]) -> Res<&[u8], f64> {
-    let (input, text) = util::take_until_nullbyte(input)?;
+    let (input, text) = take_until_nullbyte(input)?;
     let (_, num) = nom::combinator::all_consuming(nom::number::complete::double)(text)?;
     let (input, _) = nom::number::complete::u8(input)?;
     Ok((input, num))
@@ -77,7 +79,7 @@ fn test_take_double_str() {
 
 /// Returns an [`Autotags` struct] parsed from input slice.
 fn take_autotags(input: &[u8]) -> Res<&[u8], Autotags> {
-    let (input, version) = util::take_version(input).unwrap();
+    let (input, version) = take_version(input).unwrap();
     let (input, bpm) = take_double_str(input)?;
     let (input, auto_gain) = take_double_str(input)?;
     let (input, gain_db) = take_double_str(input)?;

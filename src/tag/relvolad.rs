@@ -1,10 +1,9 @@
 //! The `Serato RelVolAd` tag stores the analysis version.
 
-use super::format::enveloped;
-use super::format::flac;
-use super::format::mp4;
+use super::format::{enveloped, flac, mp4, Tag};
+use super::generic::Version;
+use super::util::take_version;
 use crate::error::Error;
-use crate::util;
 use crate::util::Res;
 
 /// Represents the  `Serato RelVolAd` tag.
@@ -27,10 +26,10 @@ use crate::util::Res;
 #[derive(Debug)]
 pub struct RelVolAd {
     /// The `RelVolAd` version.
-    pub version: util::Version,
+    pub version: Version,
 }
 
-impl util::Tag for RelVolAd {
+impl Tag for RelVolAd {
     const NAME: &'static str = "Serato RelVolAd";
 
     fn parse(input: &[u8]) -> Result<Self, Error> {
@@ -48,7 +47,7 @@ impl mp4::MP4Tag for RelVolAd {
 }
 
 fn take_relvolad(input: &[u8]) -> Res<&[u8], RelVolAd> {
-    let (input, version) = util::take_version(input)?;
+    let (input, version) = take_version(input)?;
     let (input, _) =
         nom::error::context("unknown bytes", nom::bytes::complete::tag(b"\x01\x00\x00"))(input)?;
 

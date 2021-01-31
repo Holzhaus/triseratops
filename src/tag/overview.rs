@@ -2,12 +2,10 @@
 //!
 //! The overview data consists of multiple chunks of 16 bytes.
 
-use super::format::enveloped;
-use super::format::flac;
-use super::format::id3;
-use super::format::mp4;
+use super::format::{enveloped, flac, id3, mp4, Tag};
+use super::generic::Version;
+use super::util::take_version;
 use crate::error::Error;
-use crate::util;
 use crate::util::Res;
 
 /// Represents the `Serato Overview` tag.
@@ -29,12 +27,12 @@ use crate::util::Res;
 #[derive(Debug)]
 pub struct Overview {
     /// The tag version.
-    pub version: util::Version,
+    pub version: Version,
     /// The Waveform overview data.
     pub data: Vec<Vec<u8>>,
 }
 
-impl util::Tag for Overview {
+impl Tag for Overview {
     const NAME: &'static str = "Serato Overview";
 
     fn parse(input: &[u8]) -> Result<Self, Error> {
@@ -84,7 +82,7 @@ fn take_chunks(input: &[u8]) -> Res<&[u8], Vec<Vec<u8>>> {
 
 /// Returns an [`Overview` struct](Overview) parsed from the input slice.
 fn take_overview(input: &[u8]) -> Res<&[u8], Overview> {
-    let (input, version) = util::take_version(&input)?;
+    let (input, version) = take_version(&input)?;
     let (input, data) = take_chunks(input)?;
 
     let overview = Overview { version, data };

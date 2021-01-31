@@ -1,11 +1,9 @@
 //! The `Serato BeatGrid` tag stores the beatgrid markers.
 
-use super::format::enveloped;
-use super::format::flac;
-use super::format::id3;
-use super::format::mp4;
+use super::format::{enveloped, flac, id3, mp4, Tag};
+use super::generic::Version;
+use super::util::take_version;
 use crate::error::Error;
-use crate::util;
 use crate::util::Res;
 
 /// Represents the terminal beatgrid marker in the `Serato BeatGrid` tag.
@@ -51,7 +49,7 @@ pub struct NonTerminalMarker {
 #[derive(Debug)]
 pub struct Beatgrid {
     /// The analysis version.
-    pub version: util::Version,
+    pub version: Version,
     /// Zero or more non-terminal beatgrid markers.
     pub non_terminal_markers: Vec<NonTerminalMarker>,
     /// The terminal beatgrid marker.
@@ -60,7 +58,7 @@ pub struct Beatgrid {
     pub footer: u8,
 }
 
-impl util::Tag for Beatgrid {
+impl Tag for Beatgrid {
     const NAME: &'static str = "Serato BeatGrid";
 
     fn parse(input: &[u8]) -> Result<Self, Error> {
@@ -123,7 +121,7 @@ fn take_terminal_marker(input: &[u8]) -> Res<&[u8], TerminalMarker> {
 
 /// Take a [`Beatgrid` struct] parsed from the input slice.
 fn take_beatgrid(input: &[u8]) -> Res<&[u8], Beatgrid> {
-    let (input, version) = util::take_version(&input)?;
+    let (input, version) = take_version(&input)?;
     let (input, non_terminal_markers) =
         nom::multi::length_count(take_non_terminal_marker_count, take_non_terminal_marker)(input)?;
     let (input, terminal_marker) = take_terminal_marker(input)?;

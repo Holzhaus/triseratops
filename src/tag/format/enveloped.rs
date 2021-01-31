@@ -2,10 +2,11 @@
 extern crate base64;
 extern crate nom;
 
+use super::Tag;
 use crate::error::Error;
-use crate::util;
+use crate::util::{take_utf8, Res};
 
-pub trait EnvelopedTag: util::Tag {
+pub trait EnvelopedTag: Tag {
     fn parse_enveloped(input: &[u8]) -> Result<Self, Error> {
         let (_, encoded) = nom::combinator::all_consuming(take_base64_with_newline)(input)?;
         let content = envelope_decode_with_name(encoded, Self::NAME)?;
@@ -15,7 +16,7 @@ pub trait EnvelopedTag: util::Tag {
 
 pub fn parse_envelope(input: &[u8]) -> Result<(String, Vec<u8>), Error> {
     let (input, _) = nom::bytes::complete::tag(b"application/octet-stream\x00\x00")(input)?;
-    let (input, name) = util::take_utf8(input)?;
+    let (input, name) = take_utf8(input)?;
     Ok((name, input.to_vec()))
 }
 
@@ -27,7 +28,7 @@ pub fn is_newline(byte: u8) -> bool {
     byte == b'\n'
 }
 
-pub fn take_base64_with_newline(input: &[u8]) -> util::Res<&[u8], &[u8]> {
+pub fn take_base64_with_newline(input: &[u8]) -> Res<&[u8], &[u8]> {
     nom::bytes::complete::take_while(|b| is_base64(b) || is_newline(b))(input)
 }
 

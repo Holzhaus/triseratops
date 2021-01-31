@@ -4,12 +4,12 @@
 //! This is redundant with some of the information from the `Serato Markers2` tag. Serato will
 //! prefer information from `Serato Markers_` if it's present.
 
-use super::format::enveloped;
-use super::format::id3;
-use super::format::mp4;
+use super::format::{enveloped, id3, mp4, Tag};
+use super::generic::{Color, Version};
+use super::serato32;
+use super::util::{take_color, take_version};
 use crate::error::Error;
-use crate::util;
-use crate::util::{Res, Tag};
+use crate::util::Res;
 use nom::error::ParseError;
 
 /// Represents a single marker in the `Serato Markers_` tag.
@@ -24,7 +24,7 @@ pub struct Marker {
     /// The color of the cue.
     ///
     /// For loop, this field should always be `#27AAE1`.
-    pub color: util::Color,
+    pub color: Color,
 
     /// The type of this marker.
     pub marker_type: MarkerType,
@@ -57,13 +57,13 @@ pub struct Marker {
 #[derive(Debug)]
 pub struct Markers {
     /// The tag version.
-    pub version: util::Version,
+    pub version: Version,
 
     /// The marker entries.
     pub entries: Vec<Marker>,
 
     /// The color of the track in Serato's library view.
-    pub track_color: util::Color,
+    pub track_color: Color,
 }
 
 impl Markers {
@@ -95,12 +95,12 @@ impl Markers {
         loops
     }
 
-    pub fn track_color(&self) -> util::Color {
+    pub fn track_color(&self) -> Color {
         self.track_color
     }
 }
 
-impl util::Tag for Markers {
+impl Tag for Markers {
     const NAME: &'static str = "Serato Markers_";
 
     fn parse(input: &[u8]) -> Result<Self, Error> {
@@ -215,7 +215,7 @@ pub fn take_position(input: &[u8]) -> Res<&[u8], Option<u32>> {
     }
     let (input, has_position) = nom::error::context("take has_position", take_has_position)(input)?;
     if has_position {
-        let (input, data) = util::serato32::take_u32(input)?;
+        let (input, data) = serato32::take_u32(input)?;
         Ok((input, Some(data)))
     } else {
         let (input, _) = nom::bytes::complete::tag(b"\x7f\x7f\x7f\x7f")(input)?;
@@ -272,7 +272,7 @@ fn take_marker(input: &[u8]) -> Res<&[u8], Marker> {
         "marker unknown bytes",
         nom::bytes::complete::tag(b"\x00\x7F\x7F\x7F\x7F\x7F"),
     )(input)?;
-    let (input, color) = nom::error::context("marker color", util::serato32::take_color)(input)?;
+    let (input, color) = nom::error::context("marker color", serato32::take_color)(input)?;
     let (input, marker_type) = nom::error::context("marker type", take_marker_type)(input)?;
     let (input, is_locked) = nom::error::context("marker locked state", take_bool)(input)?;
     Ok((
@@ -289,10 +289,10 @@ fn take_marker(input: &[u8]) -> Res<&[u8], Marker> {
 
 /// Parses the data into a `Markers` struct, consuming the whole input slice.
 fn take_markers(input: &[u8]) -> Res<&[u8], Markers> {
-    let (input, version) = util::take_version(&input)?;
+    let (input, version) = take_version(&input)?;
     let (input, entries) =
         nom::multi::length_count(nom::number::complete::be_u32, take_marker)(input)?;
-    let (input, track_color) = nom::combinator::all_consuming(util::serato32::take_color)(input)?;
+    let (input, track_color) = nom::combinator::all_consuming(serato32::take_color)(input)?;
 
     let markers = Markers {
         version,
@@ -310,7 +310,7 @@ fn take_marker_mp4(input: &[u8]) -> Res<&[u8], Marker> {
         nom::error::context("marker end position", nom::number::complete::be_u32)(input)?;
     let (input, _) =
         nom::error::context("marker unknown bytes", nom::bytes::complete::take(6usize))(input)?;
-    let (input, color) = nom::error::context("marker color", util::take_color)(input)?;
+    let (input, color) = nom::error::context("marker color", take_color)(input)?;
     let (input, marker_type) = nom::error::context("marker type", take_marker_type)(input)?;
     let (input, is_locked) = nom::error::context("marker locked state", take_bool)(input)?;
 
@@ -334,10 +334,10 @@ fn take_marker_mp4(input: &[u8]) -> Res<&[u8], Marker> {
 
 /// Parses the data into a `Markers` struct, consuming the whole input slice (MP4 version).
 fn take_markers_mp4(input: &[u8]) -> Res<&[u8], Markers> {
-    let (input, version) = util::take_version(&input)?;
+    let (input, version) = take_version(&input)?;
     let (input, entries) =
         nom::multi::length_count(nom::number::complete::be_u32, take_marker_mp4)(input)?;
-    let (input, track_color) = nom::combinator::all_consuming(util::serato32::take_color)(input)?;
+    let (input, track_color) = nom::combinator::all_consuming(serato32::take_color)(input)?;
 
     let markers = Markers {
         version,

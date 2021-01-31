@@ -1,13 +1,10 @@
 //! The `Serato Analysis` tag stores the analysis version.
 
-use super::format::enveloped;
-use super::format::flac;
-use super::format::id3;
-use super::format::mp4;
-use super::format::ogg;
+use super::format::{enveloped, flac, id3, mp4, ogg, Tag};
+use super::generic::Version;
+use super::util::take_version;
 use crate::error::Error;
-use crate::util;
-use crate::util::Res;
+use crate::util::{parse_utf8, Res};
 use nom::error::ParseError;
 
 /// Represents the  `Serato Analysis` tag.
@@ -29,10 +26,10 @@ use nom::error::ParseError;
 #[derive(Debug)]
 pub struct Analysis {
     /// The analysis version.
-    pub version: util::Version,
+    pub version: Version,
 }
 
-impl util::Tag for Analysis {
+impl Tag for Analysis {
     const NAME: &'static str = "Serato Analysis";
 
     fn parse(input: &[u8]) -> Result<Self, Error> {
@@ -65,7 +62,7 @@ fn take_ascii_u8(input: &[u8]) -> Res<&[u8], u8> {
         "take ascii integer",
         nom::bytes::complete::take_while(|b: u8| b.is_ascii_digit()),
     )(input)?;
-    let (_, ascii_number) = util::parse_utf8(ascii_number)?;
+    let (_, ascii_number) = parse_utf8(ascii_number)?;
     match ascii_number.parse::<u8>() {
         Ok(number) => Ok((input, number)),
         Err(std::num::ParseIntError { .. }) => Err(nom::Err::Error(
@@ -76,7 +73,7 @@ fn take_ascii_u8(input: &[u8]) -> Res<&[u8], u8> {
 
 /// Returns an [`Analysis` struct](Analysis) parsed from the input slice.
 fn take_analysis(input: &[u8]) -> Res<&[u8], Analysis> {
-    let (input, version) = nom::error::context("take version", util::take_version)(input)?;
+    let (input, version) = nom::error::context("take version", take_version)(input)?;
     let analysis = Analysis { version };
 
     Ok((input, analysis))
@@ -88,7 +85,7 @@ fn take_analysis_ogg(input: &[u8]) -> Res<&[u8], Analysis> {
     let (input, _) =
         nom::error::context("take version separator", nom::bytes::complete::tag(b"."))(input)?;
     let (input, minor) = nom::error::context("take major version", take_ascii_u8)(input)?;
-    let version = util::Version { major, minor };
+    let version = Version { major, minor };
 
     let analysis = Analysis { version };
     Ok((input, analysis))

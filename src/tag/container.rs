@@ -2,10 +2,9 @@
 //! Serato's tags.
 use super::{
     beatgrid, format::flac::FLACTag, format::id3::ID3Tag, format::mp4::MP4Tag, format::ogg::OggTag,
-    markers, markers2, Autotags, Beatgrid, Markers, Markers2, Overview,
+    generic, markers, Autotags, Beatgrid, Markers, Markers2, Overview,
 };
 use crate::error::Error;
-use crate::util;
 
 /// Provides a streamlined interface for retrieving Serato tag data.
 ///
@@ -172,7 +171,7 @@ impl TagContainer {
     /// This retrieves the `Serato Markers2` cues first, then overwrite the values with those from
     /// `Serato Markers_`. This is what Serato does too (i.e. if `Serato Markers_` and `Serato
     /// Markers2` contradict each other, Serato will use the values from `Serato Markers_`).
-    pub fn cues(&self) -> Vec<markers2::CueMarker> {
+    pub fn cues(&self) -> Vec<generic::Cue> {
         let mut map = std::collections::BTreeMap::new();
 
         // First, insert all cue from the `Serato Markers2` tag into the map.
@@ -209,7 +208,7 @@ impl TagContainer {
 
                             map.insert(
                                 index,
-                                markers2::CueMarker {
+                                generic::Cue {
                                     index,
                                     position_millis,
                                     color: marker.color,
@@ -236,7 +235,7 @@ impl TagContainer {
     /// This retrieves the `Serato Markers2` loops first, then overwrite the values with those from
     /// `Serato Markers_`. This is what Serato does too (i.e. if `Serato Markers_` and `Serato
     /// Markers2` contradict each other, Serato will use the values from `Serato Markers_`).
-    pub fn loops(&self) -> Vec<markers2::LoopMarker> {
+    pub fn loops(&self) -> Vec<generic::Loop> {
         let mut map = std::collections::BTreeMap::new();
 
         // First, insert all cue from the `Serato Markers2` tag into the map.
@@ -273,7 +272,7 @@ impl TagContainer {
 
                     map.insert(
                         index,
-                        markers2::LoopMarker {
+                        generic::Loop {
                             index,
                             start_position_millis,
                             end_position_millis,
@@ -291,7 +290,7 @@ impl TagContainer {
     }
 
     /// Returns [flips](https://serato.com/dj/pro/expansions/flip) from the [`Serato Markers2`](Markers2) tag.
-    pub fn flips(&self) -> Vec<markers2::FlipMarker> {
+    pub fn flips(&self) -> Vec<generic::Flip> {
         if let Some(m) = &self.markers2 {
             return m.flips();
         }
@@ -306,7 +305,7 @@ impl TagContainer {
     /// one from `Serato Markers_`. This is what Serato does too (i.e. if `Serato Markers_` and
     /// `Serato Markers2` contradict each other, Serato will use the value from `Serato
     /// Markers_`).
-    pub fn track_color(&self) -> Option<util::Color> {
+    pub fn track_color(&self) -> Option<generic::Color> {
         let mut track_color = None;
 
         if let Some(m) = &self.markers2 {

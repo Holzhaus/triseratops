@@ -1,5 +1,8 @@
 //! Parsers for Serato's file tags
 pub mod format;
+pub mod generic;
+pub mod serato32;
+pub(self) mod util;
 
 pub mod container;
 pub use container::TagContainer;

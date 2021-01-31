@@ -1,9 +1,9 @@
 //! ID3 tags
 
+use super::Tag;
 use crate::error::Error;
-use crate::util;
 
-pub trait ID3Tag: util::Tag {
+pub trait ID3Tag: Tag {
     /// Name of the ID3 tag that this data is stored in.
     const ID3_TAG: &'static str = Self::NAME;
 

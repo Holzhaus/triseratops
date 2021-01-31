@@ -2,11 +2,10 @@
 //!
 //! This is probably the Serato Version number that performed the analysis.
 
-use super::format::enveloped;
-use super::format::flac;
-use super::format::mp4;
+use super::format::{enveloped, flac, mp4, Tag};
+use super::generic::Version;
+use super::util::take_version;
 use crate::error::Error;
-use crate::util;
 use crate::util::Res;
 
 /// Represents the  `Serato VidAssoc` tag.
@@ -29,10 +28,10 @@ use crate::util::Res;
 #[derive(Debug)]
 pub struct VidAssoc {
     /// The `VidAssoc` version.
-    pub version: util::Version,
+    pub version: Version,
 }
 
-impl util::Tag for VidAssoc {
+impl Tag for VidAssoc {
     const NAME: &'static str = "Serato VidAssoc";
 
     fn parse(input: &[u8]) -> Result<Self, Error> {
@@ -50,7 +49,7 @@ impl mp4::MP4Tag for VidAssoc {
 }
 
 fn take_vidassoc(input: &[u8]) -> Res<&[u8], VidAssoc> {
-    let (input, version) = util::take_version(input)?;
+    let (input, version) = take_version(input)?;
     let (input, _) =
         nom::error::context("unknown bytes", nom::bytes::complete::tag(b"\x01\x00"))(input)?;
     // TODO: what do these bytes mean?
