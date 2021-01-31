@@ -1,5 +1,5 @@
-# serato-tags
+# seratodj
 
-Rust library to parse metadata from Serato DJ Pro.
+Rust library to parse metadata and database files written by the Serato DJ software.
 
-**Note:** This is a toy project for now, don't get too excited.
+**Note:** This library is currently still under heavy development and might have breaking API changes in the future.

@@ -17,7 +17,7 @@ use crate::util::{take_until_nullbyte, Res};
 /// # Example
 ///
 /// ```
-/// use serato_tags::tag::{Autotags, format::id3::ID3Tag};
+/// use seratodj::tag::{Autotags, format::id3::ID3Tag};
 ///
 /// // First, read the tag data from the ID3 GEOB tag (the tag name can be accessed using the
 /// // Autotags::ID3_TAG), then parse the data like this:

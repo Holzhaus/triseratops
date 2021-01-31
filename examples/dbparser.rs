@@ -1,10 +1,10 @@
-use serato_tags::library::database;
+use seratodj::library::database;
 use std::env;
 use std::fs::File;
 use std::io::Read;
 use std::string::String;
 
-fn main() -> Result<(), serato_tags::error::Error> {
+fn main() -> Result<(), seratodj::error::Error> {
     let mut args: Vec<String> = env::args().collect();
     let _prog = args.remove(0);
 

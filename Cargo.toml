@@ -1,5 +1,5 @@
 [package]
-name = "serato-tags"
+name = "seratodj"
 version = "0.1.0"
 authors = ["Jan Holthuis <jan.holthuis@ruhr-uni-bochum.de>"]
 description = "A library for parsing Serato DJ's metadata and database."

@@ -1,9 +1,9 @@
 extern crate id3;
-extern crate serato_tags;
+extern crate seratodj;
 
 use id3::Tag;
-use serato_tags::tag::format::id3::ID3Tag;
-use serato_tags::tag::TagType;
+use seratodj::tag::format::id3::ID3Tag;
+use seratodj::tag::TagType;
 use std::env;
 use std::io::BufRead;
 use std::io::BufReader;
@@ -22,11 +22,11 @@ fn read_str(reader: &mut dyn BufRead) -> Result<String, Error> {
     Ok(s.unwrap().to_string())
 }
 
-fn main() -> Result<(), serato_tags::error::Error> {
+fn main() -> Result<(), seratodj::error::Error> {
     let args: Vec<String> = env::args().collect();
     let filename = &args[1];
 
-    let mut container = serato_tags::tag::TagContainer::new();
+    let mut container = seratodj::tag::TagContainer::new();
 
     let tag = Tag::read_from_path(filename).unwrap();
     for frame in tag.frames() {
@@ -55,34 +55,34 @@ fn main() -> Result<(), serato_tags::error::Error> {
 
         println!("  Data: {} bytes", data.len());
         match &content_desc[..] {
-            serato_tags::tag::Analysis::ID3_TAG => {
-                let tag = serato_tags::tag::Analysis::parse_id3(&data)?;
+            seratodj::tag::Analysis::ID3_TAG => {
+                let tag = seratodj::tag::Analysis::parse_id3(&data)?;
                 let output = format!("{:#?}", tag);
                 println!("{}", textwrap::indent(&output, "    "));
             }
-            serato_tags::tag::Autotags::ID3_TAG => {
-                let tag = serato_tags::tag::Autotags::parse_id3(&data)?;
+            seratodj::tag::Autotags::ID3_TAG => {
+                let tag = seratodj::tag::Autotags::parse_id3(&data)?;
                 let output = format!("{:#?}", tag);
                 println!("{}", textwrap::indent(&output, "    "));
             }
-            serato_tags::tag::Beatgrid::ID3_TAG => {
-                let tag = serato_tags::tag::Beatgrid::parse_id3(&data)?;
+            seratodj::tag::Beatgrid::ID3_TAG => {
+                let tag = seratodj::tag::Beatgrid::parse_id3(&data)?;
                 let output = format!("{:#?}", tag);
                 println!("{}", textwrap::indent(&output, "    "));
             }
-            serato_tags::tag::Markers::ID3_TAG => {
-                let tag = serato_tags::tag::Markers::parse_id3(&data)?;
+            seratodj::tag::Markers::ID3_TAG => {
+                let tag = seratodj::tag::Markers::parse_id3(&data)?;
                 let output = format!("{:#?}", tag);
                 println!("{}", textwrap::indent(&output, "    "));
                 container.parse_markers(&data, TagType::ID3)?;
             }
-            serato_tags::tag::Markers2::ID3_TAG => {
-                let tag = serato_tags::tag::Markers2::parse_id3(&data)?;
+            seratodj::tag::Markers2::ID3_TAG => {
+                let tag = seratodj::tag::Markers2::parse_id3(&data)?;
                 let output = format!("{:#?}", tag);
                 println!("{}", textwrap::indent(&output, "    "));
             }
-            serato_tags::tag::Overview::ID3_TAG => {
-                let tag = serato_tags::tag::Overview::parse_id3(&data)?;
+            seratodj::tag::Overview::ID3_TAG => {
+                let tag = seratodj::tag::Overview::parse_id3(&data)?;
                 let output = format!("{:#?}", tag);
                 println!("{}", textwrap::indent(&output, "    "));
             }

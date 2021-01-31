@@ -1,6 +1,6 @@
-extern crate serato_tags;
+extern crate seratodj;
 
-use serato_tags::library::filesystem;
+use seratodj::library::filesystem;
 use std::path::PathBuf;
 
 #[test]

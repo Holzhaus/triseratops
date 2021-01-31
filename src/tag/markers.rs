@@ -45,7 +45,7 @@ pub struct Marker {
 /// # Example
 ///
 /// ```
-/// use serato_tags::tag::{Markers, format::id3::ID3Tag};
+/// use seratodj::tag::{Markers, format::id3::ID3Tag};
 ///
 /// // First, read the tag data from the ID3 GEOB tag (the tag name can be accessed using the
 /// // Markers::ID3_TAG), then parse the data like this:
@@ -149,7 +149,7 @@ pub enum MarkerType {
 ///
 /// # Example
 /// ```
-/// use serato_tags::tag::markers::take_bool;
+/// use seratodj::tag::markers::take_bool;
 /// use nom::Err;
 /// use nom::error::{Error, ErrorKind};
 ///
