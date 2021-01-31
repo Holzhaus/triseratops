@@ -27,7 +27,7 @@ pub struct Marker {
     pub color: util::Color,
 
     /// The type of this marker.
-    pub entry_type: EntryType,
+    pub marker_type: MarkerType,
 
     /// Indicates whether the loop is locked.
     ///
@@ -71,7 +71,7 @@ impl Markers {
         let mut index: u8 = 0;
         let mut cues = Vec::new();
         for marker in &self.entries {
-            if marker.entry_type != EntryType::INVALID && marker.entry_type != EntryType::CUE {
+            if marker.marker_type != MarkerType::Invalid && marker.marker_type != MarkerType::Cue {
                 continue;
             }
 
@@ -85,7 +85,7 @@ impl Markers {
         let mut index: u8 = 0;
         let mut loops = Vec::new();
         for marker in &self.entries {
-            if marker.entry_type != EntryType::LOOP {
+            if marker.marker_type != MarkerType::Loop {
                 continue;
             }
 
@@ -124,20 +124,23 @@ impl mp4::MP4Tag for Markers {
     }
 }
 
-/// The Type of a Marker.
-///
-/// # Values
-///
-/// | Value  | `EntryType` | Description
-/// | ------ | ----------- | ----------------------------------------
-/// | `0x00` | `INVALID`   | Used for unset cues.
-/// | `0x01` | `CUE`       | Used for cues.
-/// | `0x03` | `LOOP`      | Used for loops (both set and unset ones).
+/// Type of a Marker.
 #[derive(Debug, PartialEq)]
-pub enum EntryType {
-    INVALID,
-    CUE,
-    LOOP,
+pub enum MarkerType {
+    /// Used for unset cues.
+    ///
+    /// In the binary format, this is represented by `0x00`.
+    ///
+    /// **Note:** For unset loops, use [`MarkerType::Loop`](MarkerType::Loop) without a position.
+    Invalid,
+    /// Used for set cues.
+    ///
+    /// In the binary format, this is represented by `0x01`.
+    Cue,
+    /// Used for loops (both set and unset ones).
+    ///
+    /// In the binary format, this is represented by `0x03`.
+    Loop,
 }
 
 /// Returns a bool parsed from the next input byte.
@@ -235,13 +238,13 @@ fn test_take_position() {
     );
 }
 
-/// Returns the `EntryType` for the cue marker parsed from the next input byte.
-fn take_entry_type(input: &[u8]) -> Res<&[u8], EntryType> {
+/// Returns the [`MarkerType`](MarkerType) for the cue marker parsed from the next input byte.
+fn take_marker_type(input: &[u8]) -> Res<&[u8], MarkerType> {
     let (next_input, position_prefix) = nom::number::complete::u8(input)?;
     match position_prefix {
-        0x00 => Ok((next_input, EntryType::INVALID)),
-        0x01 => Ok((next_input, EntryType::CUE)),
-        0x03 => Ok((next_input, EntryType::LOOP)),
+        0x00 => Ok((next_input, MarkerType::Invalid)),
+        0x01 => Ok((next_input, MarkerType::Cue)),
+        0x03 => Ok((next_input, MarkerType::Loop)),
         _ => Err(nom::Err::Error(nom::error::VerboseError::from_error_kind(
             input,
             nom::error::ErrorKind::Tag,
@@ -250,13 +253,16 @@ fn take_entry_type(input: &[u8]) -> Res<&[u8], EntryType> {
 }
 
 #[test]
-fn test_take_entry_type() {
-    assert_eq!(take_entry_type(&[0x00]), Ok((&[][..], EntryType::INVALID)));
+fn test_take_marker_type() {
     assert_eq!(
-        take_entry_type(&[0x03, 0x01]),
-        Ok((&[0x01][..], EntryType::LOOP))
+        take_marker_type(&[0x00]),
+        Ok((&[][..], MarkerType::Invalid))
     );
-    assert!(take_entry_type(&[0xAB]).is_err());
+    assert_eq!(
+        take_marker_type(&[0x03, 0x01]),
+        Ok((&[0x01][..], MarkerType::Loop))
+    );
+    assert!(take_marker_type(&[0xAB]).is_err());
 }
 
 /// Returns a `Marker` parsed from the input slice.
@@ -270,7 +276,7 @@ fn take_marker(input: &[u8]) -> Res<&[u8], Marker> {
         nom::bytes::complete::tag(b"\x00\x7F\x7F\x7F\x7F\x7F"),
     )(input)?;
     let (input, color) = nom::error::context("marker color", util::serato32::take_color)(input)?;
-    let (input, entry_type) = nom::error::context("marker type", take_entry_type)(input)?;
+    let (input, marker_type) = nom::error::context("marker type", take_marker_type)(input)?;
     let (input, is_locked) = nom::error::context("marker locked state", take_bool)(input)?;
     Ok((
         input,
@@ -278,7 +284,7 @@ fn take_marker(input: &[u8]) -> Res<&[u8], Marker> {
             start_position_millis,
             end_position_millis,
             color,
-            entry_type,
+            marker_type,
             is_locked,
         },
     ))
@@ -308,11 +314,11 @@ fn take_marker_mp4(input: &[u8]) -> Res<&[u8], Marker> {
     let (input, _) =
         nom::error::context("marker unknown bytes", nom::bytes::complete::take(6usize))(input)?;
     let (input, color) = nom::error::context("marker color", util::take_color)(input)?;
-    let (input, entry_type) = nom::error::context("marker type", take_entry_type)(input)?;
+    let (input, marker_type) = nom::error::context("marker type", take_marker_type)(input)?;
     let (input, is_locked) = nom::error::context("marker locked state", take_bool)(input)?;
 
     let start_position_millis = Some(start_position_millis_raw);
-    let end_position_millis = if entry_type == EntryType::LOOP {
+    let end_position_millis = if marker_type == MarkerType::Loop {
         Some(end_position_millis_raw)
     } else {
         None
@@ -323,7 +329,7 @@ fn take_marker_mp4(input: &[u8]) -> Res<&[u8], Marker> {
             start_position_millis,
             end_position_millis,
             color,
-            entry_type,
+            marker_type,
             is_locked,
         },
     ))

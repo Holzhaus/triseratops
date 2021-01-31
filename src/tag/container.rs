@@ -185,14 +185,14 @@ impl TagContainer {
         // Now, iterate over the cue markers from the `Serato Markers_` tag.
         if let Some(m) = &self.markers {
             for (index, marker) in m.cues() {
-                match marker.entry_type {
+                match marker.marker_type {
                     // If a cue is set in `Serato Markers2` but is invalid in `Serato Markers_`,
                     // remove it.
-                    markers::EntryType::INVALID => {
+                    markers::MarkerType::Invalid => {
                         map.remove(&index);
                         continue;
                     }
-                    markers::EntryType::CUE => {
+                    markers::MarkerType::Cue => {
                         if marker.start_position_millis == None {
                             // This shouldn't be possible if the `Serato Markers_` data is valid.
                             // Ideally, this should be checked during the parsing state.
@@ -249,7 +249,7 @@ impl TagContainer {
         // Now, iterate over the cue markers from the `Serato Markers_` tag.
         if let Some(m) = &self.markers {
             for (index, marker) in m.loops() {
-                if marker.entry_type != markers::EntryType::LOOP {
+                if marker.marker_type != markers::MarkerType::Loop {
                     // This can only happen is `Markers::cues()` returns non-cue markers, which
                     // would be a bug.
                     // FIXME: Throw error here?
