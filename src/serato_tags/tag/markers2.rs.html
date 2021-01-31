@@ -513,6 +513,16 @@
 <span id="510">510</span>
 <span id="511">511</span>
 <span id="512">512</span>
+<span id="513">513</span>
+<span id="514">514</span>
+<span id="515">515</span>
+<span id="516">516</span>
+<span id="517">517</span>
+<span id="518">518</span>
+<span id="519">519</span>
+<span id="520">520</span>
+<span id="521">521</span>
+<span id="522">522</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! The `Serato Markers2` tag stores various kinds of track &quot;markers&quot; like Cue Points, Saved Loops, Flips.</span>
 <span class="doccomment">//!</span>
@@ -605,7 +615,7 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// `FLIP` markers are used for storing [Serato Flip](https://serato.com/dj/pro/expansions/flip)</span>
 <span class="doccomment">/// performances.</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">FlipMarker</span> {
     <span class="kw">pub</span> <span class="ident">index</span>: <span class="ident">u8</span>,
     <span class="kw">pub</span> <span class="ident">is_enabled</span>: <span class="ident">bool</span>,
@@ -622,7 +632,7 @@
 <span class="doccomment">/// recording was stopped. If looping is enabled, it&#39;s target position is the source position of</span>
 <span class="doccomment">/// the first entry. If not, the target position of that last entry is the same as its source</span>
 <span class="doccomment">/// position.</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">FlipAction</span> {
     <span class="ident">Censor</span>(<span class="ident">CensorFlipAction</span>),
     <span class="ident">Jump</span>(<span class="ident">JumpFlipAction</span>),
@@ -634,7 +644,7 @@
 <span class="doccomment">/// Actions of this type are used for censoring (playback speed factor is -1.0) and are followed</span>
 <span class="doccomment">/// with a jump marker from `end_position_seconds` to the playback position that the track would be</span>
 <span class="doccomment">/// at without the reverse playback.</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CensorFlipAction</span> {
     <span class="doccomment">/// The start position of the censoring.</span>
     <span class="doccomment">///</span>
@@ -649,7 +659,7 @@
 }
 
 <span class="doccomment">/// A Jump action inside a `FLIP` marker.</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">JumpFlipAction</span> {
     <span class="doccomment">/// The source position of the jump.</span>
     <span class="doccomment">///</span>
@@ -661,7 +671,7 @@
 }
 
 <span class="doccomment">/// An unknown `FLIP` action that we don&#39;t have a parser for.</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">UnknownFlipAction</span> {
     <span class="kw">pub</span> <span class="ident">id</span>: <span class="ident">u8</span>,
     <span class="kw">pub</span> <span class="ident">data</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
@@ -721,6 +731,16 @@
             }
         }
         <span class="ident">loops</span>
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">flips</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">FlipMarker</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">flips</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">FlipMarker</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
+        <span class="kw">for</span> <span class="ident">marker</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">content</span>.<span class="ident">markers</span> {
+            <span class="kw">if</span> <span class="kw">let</span> <span class="ident">Marker</span>::<span class="ident">Flip</span>(<span class="ident">m</span>) <span class="op">=</span> <span class="ident">marker</span> {
+                <span class="ident">flips</span>.<span class="ident">push</span>(<span class="ident">m</span>.<span class="ident">clone</span>());
+            }
+        }
+        <span class="ident">flips</span>
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">track_color</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">util</span>::<span class="ident">Color</span><span class="op">&gt;</span> {
