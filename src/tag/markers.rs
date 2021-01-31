@@ -214,15 +214,12 @@ pub fn take_position(input: &[u8]) -> Res<&[u8], Option<u32>> {
         )));
     }
     let (input, has_position) = nom::error::context("take has_position", take_has_position)(input)?;
-    match has_position {
-        true => {
-            let (input, data) = util::serato32::take_u32(input)?;
-            Ok((input, Some(data)))
-        }
-        false => {
-            let (input, _) = nom::bytes::complete::tag(b"\x7f\x7f\x7f\x7f")(input)?;
-            Ok((input, None))
-        }
+    if has_position {
+        let (input, data) = util::serato32::take_u32(input)?;
+        Ok((input, Some(data)))
+    } else {
+        let (input, _) = nom::bytes::complete::tag(b"\x7f\x7f\x7f\x7f")(input)?;
+        Ok((input, None))
     }
 }
 
