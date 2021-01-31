@@ -4,7 +4,7 @@ version = "0.1.0"
 authors = ["Jan Holthuis <jan.holthuis@ruhr-uni-bochum.de>"]
 description = "A library for parsing Serato DJ's metadata and database."
 readme = "README.md"
-repository = "https://github.com/Holzhaus/serato-tags-rs"
+repository = "https://github.com/Holzhaus/seratodj-rs"
 license = "AGPL-3.0-or-later"
 keywords = [
     "serato", "dj", "tag", "metadata", "id3", "geob", "flac", "ogg", "mp4",
