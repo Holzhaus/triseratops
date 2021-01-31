@@ -46,16 +46,10 @@ impl ogg::OggTag for Analysis {
     }
 }
 
-pub fn take_analysis(input: &[u8]) -> Res<&[u8], Analysis> {
-    let (input, version) = nom::error::context("take version", util::take_version)(input)?;
-    let analysis = Analysis { version };
-
-    Ok((input, analysis))
-}
-
-pub fn take_ascii_u8(input: &[u8]) -> Res<&[u8], u8> {
+/// Returns an `u8` parsed from ASCII char the input slice.
+fn take_ascii_u8(input: &[u8]) -> Res<&[u8], u8> {
     let (input, ascii_number) = nom::error::context(
-        "take major version",
+        "take ascii integer",
         nom::bytes::complete::take_while(|b: u8| b.is_ascii_digit()),
     )(input)?;
     let (_, ascii_number) = util::parse_utf8(ascii_number)?;
@@ -67,7 +61,16 @@ pub fn take_ascii_u8(input: &[u8]) -> Res<&[u8], u8> {
     }
 }
 
-pub fn take_analysis_ogg(input: &[u8]) -> Res<&[u8], Analysis> {
+/// Returns an [`Analysis` struct](Analysis) parsed from the input slice.
+fn take_analysis(input: &[u8]) -> Res<&[u8], Analysis> {
+    let (input, version) = nom::error::context("take version", util::take_version)(input)?;
+    let analysis = Analysis { version };
+
+    Ok((input, analysis))
+}
+
+/// Returns an [`Analysis` struct](Analysis) parsed from the input slice ([MP4](mp4) version).
+fn take_analysis_ogg(input: &[u8]) -> Res<&[u8], Analysis> {
     let (input, major) = nom::error::context("take major version", take_ascii_u8)(input)?;
     let (input, _) =
         nom::error::context("take version separator", nom::bytes::complete::tag(b"."))(input)?;

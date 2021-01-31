@@ -33,16 +33,11 @@ impl mp4::MP4Tag for RelVolAd {
     const MP4_ATOM: &'static str = "----:com.serato.dj:relvol";
 }
 
-pub fn take_relvolad(input: &[u8]) -> Res<&[u8], RelVolAd> {
+fn take_relvolad(input: &[u8]) -> Res<&[u8], RelVolAd> {
     let (input, version) = util::take_version(input)?;
     let (input, _) =
         nom::error::context("unknown bytes", nom::bytes::complete::tag(b"\x01\x00\x00"))(input)?;
 
     let relvolad = RelVolAd { version };
     Ok((input, relvolad))
-}
-
-pub fn parse(input: &[u8]) -> Result<RelVolAd, Error> {
-    let (_, relvolad) = nom::combinator::all_consuming(take_relvolad)(input)?;
-    Ok(relvolad)
 }

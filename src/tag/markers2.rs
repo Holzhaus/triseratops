@@ -244,14 +244,17 @@ pub struct Markers2Content {
     pub markers: Vec<Marker>,
 }
 
+/// Returns true if `chr` is a valid ASCII character.
 fn is_base64(chr: u8) -> bool {
     chr.is_ascii_alphanumeric() || chr == b'+' || chr == b'/'
 }
 
+/// Returns a nullbyte from the input slice (non-consuming).
 pub fn peek_nullbyte(input: &[u8]) -> Res<&[u8], &[u8]> {
     nom::combinator::peek(nom::bytes::complete::tag(b"\0"))(input)
 }
 
+/// Returns a nullbyte or newline character from the input slice (non-consuming).
 pub fn peek_newline_or_nullbyte(input: &[u8]) -> Res<&[u8], &[u8]> {
     nom::combinator::peek(nom::branch::alt((
         nom::bytes::complete::tag(b"\n"),
@@ -259,7 +262,7 @@ pub fn peek_newline_or_nullbyte(input: &[u8]) -> Res<&[u8], &[u8]> {
     )))(input)
 }
 
-pub fn take_base64_chunk(input: &[u8]) -> Res<&[u8], &[u8]> {
+fn take_base64_chunk(input: &[u8]) -> Res<&[u8], &[u8]> {
     let (input, encoded_data) = nom::error::context(
         "Get base64 encoded chunk",
         nom::bytes::complete::take_while1(is_base64),
@@ -272,7 +275,7 @@ pub fn take_base64_chunk(input: &[u8]) -> Res<&[u8], &[u8]> {
     Ok((input, encoded_data))
 }
 
-pub fn take_base64_chunks(input: &[u8]) -> Res<&[u8], Vec<&[u8]>> {
+fn take_base64_chunks(input: &[u8]) -> Res<&[u8], Vec<&[u8]>> {
     let (input, (base64data, _)) = nom::error::context(
         "Get all base64 encoded chunks",
         nom::multi::many_till(take_base64_chunk, peek_nullbyte),
@@ -280,7 +283,7 @@ pub fn take_base64_chunks(input: &[u8]) -> Res<&[u8], Vec<&[u8]>> {
     Ok((input, base64data))
 }
 
-pub fn decode_base64_chunks(
+fn decode_base64_chunks(
     encoded_chunks: Vec<&[u8]>,
 ) -> Result<Vec<u8>, nom::Err<nom::error::VerboseError<&[u8]>>> {
     let mut decoded_data = Vec::new();
@@ -307,7 +310,7 @@ pub fn decode_base64_chunks(
     Ok(decoded_data)
 }
 
-pub fn take_marker_name(input: &[u8]) -> Res<&[u8], String> {
+fn take_marker_name(input: &[u8]) -> Res<&[u8], String> {
     let (input, _) = nom::combinator::not(nom::bytes::complete::tag(b"\0"))(input)?;
     let (input, name) = util::take_utf8(input)?;
     if name.is_empty() {
@@ -316,7 +319,8 @@ pub fn take_marker_name(input: &[u8]) -> Res<&[u8], String> {
     Ok((input, name))
 }
 
-pub fn take_marker(input: &[u8]) -> Res<&[u8], Marker> {
+/// Returns a [`Marker`] parsed from the input slice.
+fn take_marker(input: &[u8]) -> Res<&[u8], Marker> {
     let (input, name) = take_marker_name(input)?;
     let (input, data) = nom::multi::length_data(nom::number::complete::be_u32)(input)?;
 
@@ -338,26 +342,27 @@ pub fn take_marker(input: &[u8]) -> Res<&[u8], Marker> {
     Ok((input, marker))
 }
 
-pub fn take_bool(input: &[u8]) -> Res<&[u8], bool> {
+/// Returns a boolean parsed from the input slice.
+fn take_bool(input: &[u8]) -> Res<&[u8], bool> {
     let (input, number) = nom::number::complete::u8(input)?;
     let value = number != 0;
     Ok((input, value))
 }
 
-pub fn take_bpmlock_marker(input: &[u8]) -> Res<&[u8], Marker> {
+fn take_bpmlock_marker(input: &[u8]) -> Res<&[u8], Marker> {
     let (input, is_locked) = take_bool(input)?;
     let marker = BPMLockMarker { is_locked };
     Ok((input, Marker::BPMLock(marker)))
 }
 
-pub fn take_color_marker(input: &[u8]) -> Res<&[u8], Marker> {
+fn take_color_marker(input: &[u8]) -> Res<&[u8], Marker> {
     let (input, _) = nom::bytes::complete::tag(b"\x00")(input)?;
     let (input, color) = util::take_color(input)?;
     let marker = TrackColorMarker { color };
     Ok((input, Marker::Color(marker)))
 }
 
-pub fn take_cue_marker(input: &[u8]) -> Res<&[u8], Marker> {
+fn take_cue_marker(input: &[u8]) -> Res<&[u8], Marker> {
     let (input, _) = nom::bytes::complete::tag(b"\x00")(input)?;
     let (input, index) = nom::number::complete::u8(input)?;
     let (input, position_millis) = nom::number::complete::be_u32(input)?;
@@ -374,7 +379,7 @@ pub fn take_cue_marker(input: &[u8]) -> Res<&[u8], Marker> {
     Ok((input, Marker::Cue(marker)))
 }
 
-pub fn take_loop_marker(input: &[u8]) -> Res<&[u8], Marker> {
+fn take_loop_marker(input: &[u8]) -> Res<&[u8], Marker> {
     let (input, _) = nom::bytes::complete::tag(b"\x00")(input)?;
     let (input, index) = nom::number::complete::u8(input)?;
     let (input, start_position_millis) = nom::number::complete::be_u32(input)?;
@@ -396,7 +401,7 @@ pub fn take_loop_marker(input: &[u8]) -> Res<&[u8], Marker> {
     Ok((input, Marker::Loop(marker)))
 }
 
-pub fn take_flip_marker(input: &[u8]) -> Res<&[u8], Marker> {
+fn take_flip_marker(input: &[u8]) -> Res<&[u8], Marker> {
     let (input, _) = nom::bytes::complete::tag(b"\x00")(input)?;
     let (input, index) = nom::number::complete::u8(input)?;
     let (input, is_enabled) = take_bool(input)?;
@@ -414,7 +419,7 @@ pub fn take_flip_marker(input: &[u8]) -> Res<&[u8], Marker> {
     Ok((input, Marker::Flip(marker)))
 }
 
-pub fn take_flip_marker_action(input: &[u8]) -> Res<&[u8], FlipAction> {
+fn take_flip_marker_action(input: &[u8]) -> Res<&[u8], FlipAction> {
     let (input, id) = nom::number::complete::u8(input)?;
     let (input, data) = nom::multi::length_data(nom::number::complete::be_u32)(input)?;
     let (_, action) = match id {
@@ -432,7 +437,7 @@ pub fn take_flip_marker_action(input: &[u8]) -> Res<&[u8], FlipAction> {
     Ok((input, action))
 }
 
-pub fn take_flip_marker_action_jump(input: &[u8]) -> Res<&[u8], FlipAction> {
+fn take_flip_marker_action_jump(input: &[u8]) -> Res<&[u8], FlipAction> {
     let (input, source_position_seconds) = nom::number::complete::be_f64(input)?;
     let (input, target_position_seconds) = nom::number::complete::be_f64(input)?;
     let action = JumpFlipAction {
@@ -442,7 +447,7 @@ pub fn take_flip_marker_action_jump(input: &[u8]) -> Res<&[u8], FlipAction> {
     Ok((input, FlipAction::Jump(action)))
 }
 
-pub fn take_flip_marker_action_censor(input: &[u8]) -> Res<&[u8], FlipAction> {
+fn take_flip_marker_action_censor(input: &[u8]) -> Res<&[u8], FlipAction> {
     let (input, start_position_seconds) = nom::number::complete::be_f64(input)?;
     let (input, end_position_seconds) = nom::number::complete::be_f64(input)?;
     let (input, speed_factor) = nom::number::complete::be_f64(input)?;
@@ -454,7 +459,7 @@ pub fn take_flip_marker_action_censor(input: &[u8]) -> Res<&[u8], FlipAction> {
     Ok((input, FlipAction::Censor(action)))
 }
 
-pub fn parse_markers2_content(input: &[u8]) -> Res<&[u8], Markers2Content> {
+fn parse_markers2_content(input: &[u8]) -> Res<&[u8], Markers2Content> {
     let (input, version) = util::take_version(&input)?;
     let (input, markers) = nom::multi::many0(take_marker)(&input)?;
 
@@ -468,7 +473,7 @@ fn take_nullbytes(input: &[u8]) -> Res<&[u8], &[u8]> {
     )(input)
 }
 
-pub fn take_markers2(input: &[u8]) -> Res<&[u8], Markers2> {
+fn take_markers2(input: &[u8]) -> Res<&[u8], Markers2> {
     let size = input.len();
     let (input, version) = util::take_version(&input)?;
     let version = Some(version);
@@ -486,9 +491,4 @@ pub fn take_markers2(input: &[u8]) -> Res<&[u8], Markers2> {
         content,
     };
     Ok((input, markers2))
-}
-
-pub fn parse(input: &[u8]) -> Result<Markers2, Error> {
-    let (_, markers2) = nom::combinator::all_consuming(take_markers2)(input)?;
-    Ok(markers2)
 }

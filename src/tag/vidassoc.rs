@@ -33,7 +33,7 @@ impl mp4::MP4Tag for VidAssoc {
     const MP4_ATOM: &'static str = "----:com.serato.dj:videoassociation";
 }
 
-pub fn take_vidassoc(input: &[u8]) -> Res<&[u8], VidAssoc> {
+fn take_vidassoc(input: &[u8]) -> Res<&[u8], VidAssoc> {
     let (input, version) = util::take_version(input)?;
     let (input, _) =
         nom::error::context("unknown bytes", nom::bytes::complete::tag(b"\x01\x00"))(input)?;

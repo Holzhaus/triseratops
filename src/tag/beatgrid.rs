@@ -65,26 +65,28 @@ impl mp4::MP4Tag for Beatgrid {
 /// Returns a `u32` parsed from the input slice, decremented by 1.
 ///
 /// This is necessary to get the number of *non*-terminal beatgrid markers (in contrast to *all* markers).
-///
-/// # Example
-/// ```
-/// use serato_tags::tag::beatgrid::take_non_terminal_marker_count;
-/// use nom::Err;
-/// use nom::error::{Error, ErrorKind};
-///
-/// assert_eq!(take_non_terminal_marker_count(&[0x00, 0x00, 0x00, 0x01]), Ok((&[][..], 0x00)));
-/// assert_eq!(take_non_terminal_marker_count(&[0x89, 0xAB, 0xCD, 0xEF, 0x12]), Ok((&[0x12][..], 0x89ABCDEE)));
-/// assert!(take_non_terminal_marker_count(&[0x00, 0x00, 0x00, 0x00]).is_err());
-/// assert!(take_non_terminal_marker_count(&[0xC0, 0xFF, 0xEE]).is_err());
-/// ```
-pub fn take_non_terminal_marker_count(input: &[u8]) -> Res<&[u8], u32> {
+fn take_non_terminal_marker_count(input: &[u8]) -> Res<&[u8], u32> {
     let (input, count) =
         nom::combinator::verify(nom::number::complete::be_u32, |x: &u32| x > &0u32)(input)?;
     Ok((input, count - 1))
 }
 
+#[test]
+fn test_take_non_terminal_marker_count() {
+    assert_eq!(
+        take_non_terminal_marker_count(&[0x00, 0x00, 0x00, 0x01]),
+        Ok((&[][..], 0x00))
+    );
+    assert_eq!(
+        take_non_terminal_marker_count(&[0x89, 0xAB, 0xCD, 0xEF, 0x12]),
+        Ok((&[0x12][..], 0x89ABCDEE))
+    );
+    assert!(take_non_terminal_marker_count(&[0x00, 0x00, 0x00, 0x00]).is_err());
+    assert!(take_non_terminal_marker_count(&[0xC0, 0xFF, 0xEE]).is_err());
+}
+
 /// Returns a non-terminal beatgrid marker parsed from the input slice.
-pub fn take_non_terminal_marker(input: &[u8]) -> Res<&[u8], NonTerminalMarker> {
+fn take_non_terminal_marker(input: &[u8]) -> Res<&[u8], NonTerminalMarker> {
     let (input, position) = nom::number::complete::be_f32(input)?;
     let (input, beats_till_next_marker) = nom::number::complete::be_u32(input)?;
     Ok((
@@ -103,6 +105,7 @@ fn take_terminal_marker(input: &[u8]) -> Res<&[u8], TerminalMarker> {
     Ok((input, TerminalMarker { position, bpm }))
 }
 
+/// Take a [`Beatgrid` struct] parsed from the input slice.
 fn take_beatgrid(input: &[u8]) -> Res<&[u8], Beatgrid> {
     let (input, version) = util::take_version(&input)?;
     let (input, non_terminal_markers) =
@@ -117,9 +120,4 @@ fn take_beatgrid(input: &[u8]) -> Res<&[u8], Beatgrid> {
         footer,
     };
     Ok((input, beatgrid))
-}
-
-pub fn parse(input: &[u8]) -> Result<Beatgrid, Error> {
-    let (_, beatgrid) = nom::combinator::all_consuming(take_beatgrid)(input)?;
-    Ok(beatgrid)
 }

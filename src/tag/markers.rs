@@ -160,20 +160,7 @@ pub fn take_bool(input: &[u8]) -> Res<&[u8], bool> {
 /// | `0x7F` | `false` | The position is not set and following 4 bytes be `0x7f7f7f7f`.
 /// | Other  | `_`     | Invalid data, throws an error.
 ///
-///
-/// # Example
-/// ```
-/// use serato_tags::tag::markers::take_has_position;
-/// use nom::Err;
-/// use nom::error::{Error, ErrorKind};
-///
-/// assert_eq!(take_has_position(&[0x00]), Ok((&[][..], true)));
-/// assert_eq!(take_has_position(&[0x7F]), Ok((&[][..], false)));
-/// assert_eq!(take_has_position(&[0x00, 0x05]), Ok((&[0x05][..], true)));
-/// assert!(take_has_position(&[0xAB, 0x00, 0x01]).is_err());
-/// assert!(take_has_position(&[]).is_err());
-/// ```
-pub fn take_has_position(input: &[u8]) -> Res<&[u8], bool> {
+fn take_has_position(input: &[u8]) -> Res<&[u8], bool> {
     let (input, position_prefix) = nom::number::complete::u8(input)?;
     match position_prefix {
         0x00 => Ok((input, true)),
@@ -185,20 +172,19 @@ pub fn take_has_position(input: &[u8]) -> Res<&[u8], bool> {
     }
 }
 
+#[test]
+fn test_take_has_position() {
+    assert_eq!(take_has_position(&[0x00]), Ok((&[][..], true)));
+    assert_eq!(take_has_position(&[0x7F]), Ok((&[][..], false)));
+    assert_eq!(take_has_position(&[0x00, 0x05]), Ok((&[0x05][..], true)));
+    assert!(take_has_position(&[0xAB, 0x00, 0x01]).is_err());
+    assert!(take_has_position(&[]).is_err());
+}
+
 /// Returns an `Option<u32>` which contains the position parsed from the next 5 input bytes.
 ///
 /// Uses `take_has_position` internally to determine if the position is set, then either returns
 /// the position as `Some` or ensures the that "no position" constant is used and returns `None`.
-///
-/// # Example
-/// ```
-/// use serato_tags::tag::markers::take_position;
-/// use nom::Err;
-/// use nom::error::{Error, ErrorKind};
-///
-/// assert_eq!(take_position(&[0x00, 0x00, 0x00, 0x00, 0x00]), Ok((&[][..], Some(0))));
-/// assert_eq!(take_position(&[0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x00]), Ok((&[0x00][..], None)));
-/// ```
 pub fn take_position(input: &[u8]) -> Res<&[u8], Option<u32>> {
     if input.len() < 5 {
         return Err(nom::Err::Error(nom::error::VerboseError::from_error_kind(
@@ -219,17 +205,20 @@ pub fn take_position(input: &[u8]) -> Res<&[u8], Option<u32>> {
     }
 }
 
+#[test]
+fn test_take_position() {
+    assert_eq!(
+        take_position(&[0x00, 0x00, 0x00, 0x00, 0x00]),
+        Ok((&[][..], Some(0)))
+    );
+    assert_eq!(
+        take_position(&[0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x00]),
+        Ok((&[0x00][..], None))
+    );
+}
+
 /// Returns the `EntryType` for the cue marker parsed from the next input byte.
-///
-/// # Example
-/// ```
-/// use serato_tags::tag::markers::{EntryType, take_entry_type};
-///
-/// assert_eq!(take_entry_type(&[0x00]), Ok((&[][..], EntryType::INVALID)));
-/// assert_eq!(take_entry_type(&[0x03, 0x01]), Ok((&[0x01][..], EntryType::LOOP)));
-/// assert!(take_entry_type(&[0xAB]).is_err());
-/// ```
-pub fn take_entry_type(input: &[u8]) -> Res<&[u8], EntryType> {
+fn take_entry_type(input: &[u8]) -> Res<&[u8], EntryType> {
     let (next_input, position_prefix) = nom::number::complete::u8(input)?;
     match position_prefix {
         0x00 => Ok((next_input, EntryType::INVALID)),
@@ -242,8 +231,18 @@ pub fn take_entry_type(input: &[u8]) -> Res<&[u8], EntryType> {
     }
 }
 
+#[test]
+fn test_take_entry_type() {
+    assert_eq!(take_entry_type(&[0x00]), Ok((&[][..], EntryType::INVALID)));
+    assert_eq!(
+        take_entry_type(&[0x03, 0x01]),
+        Ok((&[0x01][..], EntryType::LOOP))
+    );
+    assert!(take_entry_type(&[0xAB]).is_err());
+}
+
 /// Returns a `Marker` parsed from the input slice.
-pub fn take_marker(input: &[u8]) -> Res<&[u8], Marker> {
+fn take_marker(input: &[u8]) -> Res<&[u8], Marker> {
     let (input, start_position_millis) =
         nom::error::context("marker start position", take_position)(input)?;
     let (input, end_position_millis) =
@@ -268,7 +267,7 @@ pub fn take_marker(input: &[u8]) -> Res<&[u8], Marker> {
 }
 
 /// Parses the data into a `Markers` struct, consuming the whole input slice.
-pub fn take_markers(input: &[u8]) -> Res<&[u8], Markers> {
+fn take_markers(input: &[u8]) -> Res<&[u8], Markers> {
     let (input, version) = util::take_version(&input)?;
     let (input, entries) =
         nom::multi::length_count(nom::number::complete::be_u32, take_marker)(input)?;
@@ -283,7 +282,7 @@ pub fn take_markers(input: &[u8]) -> Res<&[u8], Markers> {
 }
 
 /// Returns a `Marker` parsed from the input slice (MP4 version).
-pub fn take_marker_mp4(input: &[u8]) -> Res<&[u8], Marker> {
+fn take_marker_mp4(input: &[u8]) -> Res<&[u8], Marker> {
     let (input, start_position_millis_raw) =
         nom::error::context("marker start position", nom::number::complete::be_u32)(input)?;
     let (input, end_position_millis_raw) =
@@ -313,7 +312,7 @@ pub fn take_marker_mp4(input: &[u8]) -> Res<&[u8], Marker> {
 }
 
 /// Parses the data into a `Markers` struct, consuming the whole input slice (MP4 version).
-pub fn take_markers_mp4(input: &[u8]) -> Res<&[u8], Markers> {
+fn take_markers_mp4(input: &[u8]) -> Res<&[u8], Markers> {
     let (input, version) = util::take_version(&input)?;
     let (input, entries) =
         nom::multi::length_count(nom::number::complete::be_u32, take_marker_mp4)(input)?;
@@ -325,9 +324,4 @@ pub fn take_markers_mp4(input: &[u8]) -> Res<&[u8], Markers> {
         track_color,
     };
     Ok((input, markers))
-}
-
-pub fn parse(input: &[u8]) -> Result<Markers, Error> {
-    let (_, markers) = nom::combinator::all_consuming(take_markers)(input)?;
-    Ok(markers)
 }
