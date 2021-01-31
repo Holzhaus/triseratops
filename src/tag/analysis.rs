@@ -1,6 +1,4 @@
 //! The `Serato Analysis` tag stores the analysis version.
-//!
-//! This is probably the Serato Version number that performed the analysis.
 
 use super::format::enveloped;
 use super::format::flac;
@@ -13,6 +11,21 @@ use crate::util::Res;
 use nom::error::ParseError;
 
 /// Represents the  `Serato Analysis` tag.
+///
+/// This is probably the Serato Version number that performed the analysis.
+///
+/// # Example
+///
+/// ```
+/// use serato_tags::tag::{Analysis, format::id3::ID3Tag};
+///
+/// // First, read the tag data from the ID3 GEOB tag (the tag name can be accessed using the
+/// // Analysis::ID3_TAG), then parse the data like this:
+/// fn parse_and_print_markers(data: &[u8]) {
+///     let markers = Analysis::parse_id3(data).expect("Failed to parse data!");
+///     println!("{:?}", markers);
+/// }
+/// ```
 #[derive(Debug)]
 pub struct Analysis {
     /// The analysis version.

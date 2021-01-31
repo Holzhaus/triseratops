@@ -1,4 +1,4 @@
-//! Error types
+//! Error types and helper functions.
 
 extern crate base64;
 extern crate thiserror;
@@ -39,29 +39,7 @@ pub enum Error {
     /// Represents decode error.
     #[error("Envelope name mismatch")]
     EnvelopeNameMismatch { expected: String, actual: String },
-
-    /// Represents a failure to read from input.
-    #[error("Read error")]
-    ReadError { source: std::io::Error },
-
-    /// Represents all other cases of `std::io::Error`.
-    #[error(transparent)]
-    IOError(#[from] std::io::Error),
 }
-
-//impl From<nom::Err<&[u8]>> for Error {
-//    fn from(e: nom::Err<&[u8]>) -> Self {
-//        match e {
-//            nom::Err::Incomplete(needed) => Error::ParseIncomplete(needed),
-//            nom::Err::Error(err) => {
-//                println!("err: {:?}", err);
-//                Error::ParseError
-//            },
-//            nom::Err::Failure(err) => Error::ParseError,
-//
-//        }
-//    }
-//}
 
 fn convert_err(
     item: &(&[u8], nom::error::VerboseErrorKind),
@@ -85,9 +63,3 @@ impl From<nom::Err<nom::error::VerboseError<&[u8]>>> for Error {
         }
     }
 }
-
-//impl From<nom::error::Error<&[u8]>> for Error {
-//    fn from(e: nom::error::Error<&[u8]>) -> Self {
-//        Error::ParseError
-//    }
-//}

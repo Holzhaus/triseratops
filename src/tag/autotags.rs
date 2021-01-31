@@ -9,6 +9,21 @@ use crate::util;
 use crate::util::Res;
 
 /// Represents the  `Serato AutoTags` tag.
+///
+/// It stores BPM an gain values.
+///
+/// # Example
+///
+/// ```
+/// use serato_tags::tag::{Autotags, format::id3::ID3Tag};
+///
+/// // First, read the tag data from the ID3 GEOB tag (the tag name can be accessed using the
+/// // Autotags::ID3_TAG), then parse the data like this:
+/// fn parse(data: &[u8]) {
+///     let content = Autotags::parse_id3(data).expect("Failed to parse data!");
+///     println!("{:?}", content);
+/// }
+/// ```
 #[derive(Debug)]
 pub struct Autotags {
     /// The tag version.

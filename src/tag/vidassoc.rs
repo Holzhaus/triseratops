@@ -10,6 +10,22 @@ use crate::util;
 use crate::util::Res;
 
 /// Represents the  `Serato VidAssoc` tag.
+///
+/// **Note:** This tag has not been reverse-engineered yet. Judging from the name it contains
+/// "Video Association" data.
+///
+/// # Example
+///
+/// ```
+/// use serato_tags::tag::{VidAssoc, format::flac::FLACTag};
+///
+/// // First, read the tag data from the FLAC VORBIS_COMMENT (the tag name can be accessed using the
+/// // VidAssoc::FLAC_TAG), then parse the data like this:
+/// fn parse(data: &[u8]) {
+///     let content = VidAssoc::parse_flac(data).expect("Failed to parse data!");
+///     println!("{:?}", content);
+/// }
+/// ```
 #[derive(Debug)]
 pub struct VidAssoc {
     /// The `VidAssoc` version.

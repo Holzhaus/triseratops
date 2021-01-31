@@ -32,6 +32,22 @@ pub struct NonTerminalMarker {
 }
 
 /// Represents the `Serato BeatGrid` tag.
+///
+/// It stores the Beatgrid as a sequence of zero or more [non-terminal beatgrid markers](NonTerminalMarker) and
+/// a single [terminal beatgrid markers](TerminalMarker).
+///
+/// # Example
+///
+/// ```
+/// use serato_tags::tag::{Beatgrid, format::id3::ID3Tag};
+///
+/// // First, read the tag data from the ID3 GEOB tag (the tag name can be accessed using the
+/// // Beatgrid::ID3_TAG), then parse the data like this:
+/// fn parse(data: &[u8]) {
+///     let content = Beatgrid::parse_id3(data).expect("Failed to parse data!");
+///     println!("{:?}", content);
+/// }
+/// ```
 #[derive(Debug)]
 pub struct Beatgrid {
     /// The analysis version.

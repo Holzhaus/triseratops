@@ -36,6 +36,24 @@ pub struct Marker {
 }
 
 /// Represents the `Serato Markers_` tag.
+///
+/// It contains the the first 5 cue points, the first 9 loops and the color of the track.
+///
+/// This seems to be a legacy tag, since it lacks some information such as cue labels and all information of the `Serato Markers_` tag is also part of the [`Serato Markers2`](super::markers2] tag.
+/// If the two tags contradict each other, Serato DJ will prefer the data from the `Serato Markers_` tag.
+///
+/// # Example
+///
+/// ```
+/// use serato_tags::tag::{Markers, format::id3::ID3Tag};
+///
+/// // First, read the tag data from the ID3 GEOB tag (the tag name can be accessed using the
+/// // Markers::ID3_TAG), then parse the data like this:
+/// fn parse(data: &[u8]) {
+///     let content = Markers::parse_id3(data).expect("Failed to parse data!");
+///     println!("{:?}", content);
+/// }
+/// ```
 #[derive(Debug)]
 pub struct Markers {
     /// The tag version.

@@ -1,6 +1,4 @@
 //! The `Serato RelVolAd` tag stores the analysis version.
-//!
-//! This is probably the Serato Version number that performed the analysis.
 
 use super::format::enveloped;
 use super::format::flac;
@@ -10,6 +8,22 @@ use crate::util;
 use crate::util::Res;
 
 /// Represents the  `Serato RelVolAd` tag.
+///
+/// **Note:** This tag has not been reverse-engineered yet. Judging from the name it contains
+/// information about relative volume adjustments, but at this point that is just speculation.
+///
+/// # Example
+///
+/// ```
+/// use serato_tags::tag::{RelVolAd, format::flac::FLACTag};
+///
+/// // First, read the tag data from the FLAC VORBIS_COMMENT (the tag name can be accessed using the
+/// // RelVolAd::FLAC_TAG), then parse the data like this:
+/// fn parse(data: &[u8]) {
+///     let content = RelVolAd::parse_flac(data).expect("Failed to parse data!");
+///     println!("{:?}", content);
+/// }
+/// ```
 #[derive(Debug)]
 pub struct RelVolAd {
     /// The `RelVolAd` version.

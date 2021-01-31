@@ -152,6 +152,24 @@ pub struct UnknownFlipAction {
 }
 
 /// Represents the `Serato Markers2` tag.
+///
+/// It contains all cue points, loops and [flips](https://serato.com/dj/pro/expansions/flip), as well as the BPM-lock state and color of the track.
+///
+/// Note that some information is also duplicated in the legacy [`Serato Markers_`](super::Markers) tag.
+/// If the two tags contradict each other, Serato DJ will prefer the data from the `Serato Markers_` tag.
+///
+/// # Example
+///
+/// ```
+/// use serato_tags::tag::{Markers2, format::id3::ID3Tag};
+///
+/// // First, read the tag data from the ID3 GEOB tag (the tag name can be accessed using the
+/// // Markers2::ID3_TAG), then parse the data like this:
+/// fn parse(data: &[u8]) {
+///     let content = Markers2::parse_id3(data).expect("Failed to parse data!");
+///     println!("{:?}", content);
+/// }
+/// ```
 #[derive(Debug)]
 pub struct Markers2 {
     pub version: Option<util::Version>,

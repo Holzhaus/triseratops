@@ -3,10 +3,13 @@
 //!
 //! # Metadata
 //!
-//! Serato's formats are pretty complex and store redundant data which might be contradictory if
-//! edited by hand. To make it straightforward to access the metadata, this library provides
-//! [`TagContainer` struct](`tag::TagContainer`), which provides access to all important attributes
-//! and implements the same conflict resolution strategies that the Serato DJ software uses.
+//! Serato's formats are pretty complex and store redundant data which might lead to situation
+//! where that data contradicts each other (e.g. if the data was edited by hand).
+//!
+//! To make it straightforward to access the metadata, this library provides
+//! the [`TagContainer` struct](`tag::TagContainer`), which provides access to all important
+//! attributes and implements the same conflict resolution strategies that the Serato DJ software
+//! uses.
 //!
 //! ```
 //! use serato_tags::tag::{TagContainer, TagType};

@@ -1,4 +1,5 @@
-//! This module provides the `TagContainer` class.
+//! Provides the [`TagContainer` struct](TagContainer), a simple interface to access data in
+//! Serato's tags.
 use super::{
     beatgrid, format::flac::FLACTag, format::id3::ID3Tag, format::mp4::MP4Tag, format::ogg::OggTag,
     markers, markers2, Autotags, Beatgrid, Markers, Markers2, Overview,
@@ -21,6 +22,10 @@ pub struct TagContainer {
     overview: Option<Overview>,
 }
 
+/// The tag type of the data.
+///
+/// The format of the Serato tag data differs between tag types.
+/// Therefore it's necessary to tell the parser from what kind of the the data originates from.
 pub enum TagType {
     ID3,
     FLAC,
@@ -40,6 +45,7 @@ impl TagContainer {
         }
     }
 
+    /// Parse the [`Serato Autotags`](Autotags) tag.
     pub fn parse_autotags(&mut self, input: &[u8], tag_type: TagType) -> Result<(), Error> {
         match tag_type {
             TagType::ID3 => {
@@ -56,6 +62,7 @@ impl TagContainer {
         Ok(())
     }
 
+    /// Parse the [`Serato BeatGrid`](Beatgrid) tag.
     pub fn parse_beatgrid(&mut self, input: &[u8], tag_type: TagType) -> Result<(), Error> {
         match tag_type {
             TagType::ID3 => {
@@ -72,6 +79,7 @@ impl TagContainer {
         Ok(())
     }
 
+    /// Parse the [`Serato Markers_`](Markers) tag.
     pub fn parse_markers(&mut self, input: &[u8], tag_type: TagType) -> Result<(), Error> {
         match tag_type {
             TagType::ID3 => {
@@ -85,6 +93,7 @@ impl TagContainer {
         Ok(())
     }
 
+    /// Parse the [`Serato Markers2`](Markers2) tag.
     pub fn parse_markers2(&mut self, input: &[u8], tag_type: TagType) -> Result<(), Error> {
         match tag_type {
             TagType::ID3 => {
@@ -103,6 +112,7 @@ impl TagContainer {
         Ok(())
     }
 
+    /// Parse the [`Serato Overview`](Overview) tag.
     pub fn parse_overview(&mut self, input: &[u8], tag_type: TagType) -> Result<(), Error> {
         match tag_type {
             TagType::ID3 => {
@@ -119,7 +129,7 @@ impl TagContainer {
         Ok(())
     }
 
-    /// Returns the auto_gain value from the `Serato Autotags` tag.
+    /// Returns the [`auto_gain`](Autotags::auto_gain) value from the [`Serato Autotags`](Autotags) tag.
     pub fn auto_gain(&self) -> Option<f64> {
         if let Some(tag) = &self.autotags {
             return Some(tag.auto_gain);
@@ -128,7 +138,7 @@ impl TagContainer {
         None
     }
 
-    /// Returns the gain_db value from the `Serato Autotags` tag.
+    /// Returns the [`gain_db`](Autotags::gain_db) value from the [`Serato Autotags`](Autotags) tag.
     pub fn gain_db(&self) -> Option<f64> {
         if let Some(tag) = &self.autotags {
             return Some(tag.gain_db);
@@ -137,7 +147,7 @@ impl TagContainer {
         None
     }
 
-    /// Returns the beatgrid from the `Serato BeatGrid` tag.
+    /// Returns the beatgrid from the [`Serato BeatGrid`](Beatgrid) tag.
     pub fn beatgrid(
         &self,
     ) -> Option<(&Vec<beatgrid::NonTerminalMarker>, &beatgrid::TerminalMarker)> {
@@ -148,7 +158,7 @@ impl TagContainer {
         None
     }
 
-    /// Returns BPM lock status from the `Serato Markers2` tag.
+    /// Returns BPM lock status from the [`Serato Markers2`](Markers2) tag.
     pub fn bpm_locked(&self) -> Option<bool> {
         if let Some(m) = &self.markers2 {
             return m.bpm_locked();
@@ -157,7 +167,7 @@ impl TagContainer {
         None
     }
 
-    /// Returns cues from the `Serato Markers_` and `Serato Markers2` tags.
+    /// Returns cues from the [`Serato Markers_`](Markers) and [`Serato Markers2`](Markers2) tags.
     ///
     /// This retrieves the `Serato Markers2` cues first, then overwrite the values with those from
     /// `Serato Markers_`. This is what Serato does too (i.e. if `Serato Markers_` and `Serato
@@ -221,7 +231,7 @@ impl TagContainer {
         map.values().cloned().collect()
     }
 
-    /// Returns loops from the `Serato Markers_` and `Serato Markers2` tags.
+    /// Returns loops from the [`Serato Markers_`](Markers) and [`Serato Markers2`](Markers2) tags.
     ///
     /// This retrieves the `Serato Markers2` loops first, then overwrite the values with those from
     /// `Serato Markers_`. This is what Serato does too (i.e. if `Serato Markers_` and `Serato
@@ -280,7 +290,8 @@ impl TagContainer {
         map.values().cloned().collect()
     }
 
-    /// Returns the track color from the `Serato Markers_` and `Serato Markers2` tags.
+    /// Returns the track color from the [`Serato Markers_`](Markers) and [`Serato
+    /// Markers2`](Markers2) tags.
     ///
     /// This retrieves the `Serato Markers2` track color first, then overwrites the value with the
     /// one from `Serato Markers_`. This is what Serato does too (i.e. if `Serato Markers_` and
@@ -300,7 +311,7 @@ impl TagContainer {
         track_color
     }
 
-    /// Returns the waveform overview data color from the `Serato Overview` tag.
+    /// Returns the waveform overview data color from the [`Serato Overview`](Overview) tag.
     pub fn overview(&self) -> Option<&Vec<Vec<u8>>> {
         if let Some(tag) = &self.overview {
             return Some(&tag.data);
