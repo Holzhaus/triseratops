@@ -214,7 +214,8 @@ pub mod serato32 {
     /// ```
     pub fn take_color(input: &[u8]) -> Res<&[u8], Color> {
         let (input, (red, green, blue)) = take(input)?;
-        Ok((input, Color { red, green, blue }))
+        let color = Color { red, green, blue };
+        Ok((input, color))
     }
 
     /// Returns a `u32` decoded from the first 4 input bytes.

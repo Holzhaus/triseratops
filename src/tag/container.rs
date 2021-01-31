@@ -290,6 +290,15 @@ impl TagContainer {
         map.values().cloned().collect()
     }
 
+    /// Returns [flips](https://serato.com/dj/pro/expansions/flip) from the [`Serato Markers2`](Markers2) tag.
+    pub fn flips(&self) -> Vec<markers2::FlipMarker> {
+        if let Some(m) = &self.markers2 {
+            return m.flips();
+        }
+
+        vec![]
+    }
+
     /// Returns the track color from the [`Serato Markers_`](Markers) and [`Serato
     /// Markers2`](Markers2) tags.
     ///

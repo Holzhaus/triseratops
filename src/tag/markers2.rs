@@ -89,7 +89,7 @@ pub struct LoopMarker {
 ///
 /// `FLIP` markers are used for storing [Serato Flip](https://serato.com/dj/pro/expansions/flip)
 /// performances.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct FlipMarker {
     pub index: u8,
     pub is_enabled: bool,
@@ -106,7 +106,7 @@ pub struct FlipMarker {
 /// recording was stopped. If looping is enabled, it's target position is the source position of
 /// the first entry. If not, the target position of that last entry is the same as its source
 /// position.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum FlipAction {
     Censor(CensorFlipAction),
     Jump(JumpFlipAction),
@@ -118,7 +118,7 @@ pub enum FlipAction {
 /// Actions of this type are used for censoring (playback speed factor is -1.0) and are followed
 /// with a jump marker from `end_position_seconds` to the playback position that the track would be
 /// at without the reverse playback.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct CensorFlipAction {
     /// The start position of the censoring.
     ///
@@ -133,7 +133,7 @@ pub struct CensorFlipAction {
 }
 
 /// A Jump action inside a `FLIP` marker.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct JumpFlipAction {
     /// The source position of the jump.
     ///
@@ -145,7 +145,7 @@ pub struct JumpFlipAction {
 }
 
 /// An unknown `FLIP` action that we don't have a parser for.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct UnknownFlipAction {
     pub id: u8,
     pub data: Vec<u8>,
@@ -205,6 +205,16 @@ impl Markers2 {
             }
         }
         loops
+    }
+
+    pub fn flips(&self) -> Vec<FlipMarker> {
+        let mut flips: Vec<FlipMarker> = Vec::new();
+        for marker in &self.content.markers {
+            if let Marker::Flip(m) = marker {
+                flips.push(m.clone());
+            }
+        }
+        flips
     }
 
     pub fn track_color(&self) -> Option<util::Color> {
