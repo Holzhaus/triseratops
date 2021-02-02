@@ -12,7 +12,7 @@
 //! uses.
 //!
 //! ```
-//! use seratodj::tag::{TagContainer, TagType};
+//! use triseratops::tag::{TagContainer, TagType};
 //!
 //! fn parse_and_print_cues(markers_data: &[u8], markers2_data: &[u8]) {
 //!     let mut tags = TagContainer::new();
@@ -29,7 +29,7 @@
 //! individual tag structs directly:
 //!
 //! ```
-//! use seratodj::tag::{Markers, format::id3::ID3Tag};
+//! use triseratops::tag::{Markers, format::id3::ID3Tag};
 //!
 //! fn parse_and_print_markers(data: &[u8]) {
 //!     let markers = Markers::parse_id3(data).expect("Failed to parse data!");

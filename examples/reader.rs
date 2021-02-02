@@ -1,9 +1,7 @@
 extern crate id3;
-extern crate seratodj;
+extern crate triseratops;
 
 use id3::Tag;
-use seratodj::tag::format::id3::ID3Tag;
-use seratodj::tag::TagType;
 use std::env;
 use std::io::BufRead;
 use std::io::BufReader;
@@ -12,6 +10,8 @@ use std::io::ErrorKind;
 use std::io::Read;
 use std::str;
 use std::string::String;
+use triseratops::tag::format::id3::ID3Tag;
+use triseratops::tag::TagType;
 
 fn read_str(reader: &mut dyn BufRead) -> Result<String, Error> {
     let mut value = vec![];
@@ -22,11 +22,11 @@ fn read_str(reader: &mut dyn BufRead) -> Result<String, Error> {
     Ok(s.unwrap().to_string())
 }
 
-fn main() -> Result<(), seratodj::error::Error> {
+fn main() -> Result<(), triseratops::error::Error> {
     let args: Vec<String> = env::args().collect();
     let filename = &args[1];
 
-    let mut container = seratodj::tag::TagContainer::new();
+    let mut container = triseratops::tag::TagContainer::new();
 
     let tag = Tag::read_from_path(filename).unwrap();
     for frame in tag.frames() {
@@ -55,34 +55,34 @@ fn main() -> Result<(), seratodj::error::Error> {
 
         println!("  Data: {} bytes", data.len());
         match &content_desc[..] {
-            seratodj::tag::Analysis::ID3_TAG => {
-                let tag = seratodj::tag::Analysis::parse_id3(&data)?;
+            triseratops::tag::Analysis::ID3_TAG => {
+                let tag = triseratops::tag::Analysis::parse_id3(&data)?;
                 let output = format!("{:#?}", tag);
                 println!("{}", textwrap::indent(&output, "    "));
             }
-            seratodj::tag::Autotags::ID3_TAG => {
-                let tag = seratodj::tag::Autotags::parse_id3(&data)?;
+            triseratops::tag::Autotags::ID3_TAG => {
+                let tag = triseratops::tag::Autotags::parse_id3(&data)?;
                 let output = format!("{:#?}", tag);
                 println!("{}", textwrap::indent(&output, "    "));
             }
-            seratodj::tag::Beatgrid::ID3_TAG => {
-                let tag = seratodj::tag::Beatgrid::parse_id3(&data)?;
+            triseratops::tag::Beatgrid::ID3_TAG => {
+                let tag = triseratops::tag::Beatgrid::parse_id3(&data)?;
                 let output = format!("{:#?}", tag);
                 println!("{}", textwrap::indent(&output, "    "));
             }
-            seratodj::tag::Markers::ID3_TAG => {
-                let tag = seratodj::tag::Markers::parse_id3(&data)?;
+            triseratops::tag::Markers::ID3_TAG => {
+                let tag = triseratops::tag::Markers::parse_id3(&data)?;
                 let output = format!("{:#?}", tag);
                 println!("{}", textwrap::indent(&output, "    "));
                 container.parse_markers(&data, TagType::ID3)?;
             }
-            seratodj::tag::Markers2::ID3_TAG => {
-                let tag = seratodj::tag::Markers2::parse_id3(&data)?;
+            triseratops::tag::Markers2::ID3_TAG => {
+                let tag = triseratops::tag::Markers2::parse_id3(&data)?;
                 let output = format!("{:#?}", tag);
                 println!("{}", textwrap::indent(&output, "    "));
             }
-            seratodj::tag::Overview::ID3_TAG => {
-                let tag = seratodj::tag::Overview::parse_id3(&data)?;
+            triseratops::tag::Overview::ID3_TAG => {
+                let tag = triseratops::tag::Overview::parse_id3(&data)?;
                 let output = format!("{:#?}", tag);
                 println!("{}", textwrap::indent(&output, "    "));
             }

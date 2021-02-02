@@ -16,7 +16,7 @@ use crate::util::Res;
 /// # Example
 ///
 /// ```
-/// use seratodj::tag::{VidAssoc, format::flac::FLACTag};
+/// use triseratops::tag::{VidAssoc, format::flac::FLACTag};
 ///
 /// // First, read the tag data from the FLAC VORBIS_COMMENT (the tag name can be accessed using the
 /// // VidAssoc::FLAC_TAG), then parse the data like this:

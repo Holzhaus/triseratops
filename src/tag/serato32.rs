@@ -37,7 +37,7 @@ use nom::number::complete::u8;
 ///
 /// # Example
 /// ```rust
-/// use seratodj::tag::serato32::{decode, encode};
+/// use triseratops::tag::serato32::{decode, encode};
 ///
 /// assert_eq!(decode(0x00, 0x00, 0x01, 0x4C), (0x00, 0x00, 0xCC));
 ///
@@ -55,7 +55,7 @@ pub fn decode(enc1: u8, enc2: u8, enc3: u8, enc4: u8) -> (u8, u8, u8) {
 ///
 /// # Example
 /// ```rust
-/// use seratodj::tag::serato32::{decode, encode};
+/// use triseratops::tag::serato32::{decode, encode};
 ///
 /// assert_eq!(encode(0x00, 0x00, 0xCC), (0x00, 0x00, 0x01, 0x4C));
 ///
@@ -74,7 +74,7 @@ pub fn encode(dec1: u8, dec2: u8, dec3: u8) -> (u8, u8, u8, u8) {
 ///
 /// # Example
 /// ```
-/// use seratodj::tag::serato32::take;
+/// use triseratops::tag::serato32::take;
 /// use nom::Err;
 /// use nom::error::{Error, ErrorKind};
 ///
@@ -96,8 +96,8 @@ pub fn take(input: &[u8]) -> Res<&[u8], (u8, u8, u8)> {
 ///
 /// # Example
 /// ```
-/// use seratodj::tag::generic::Color;
-/// use seratodj::tag::serato32::take_color;
+/// use triseratops::tag::generic::Color;
+/// use triseratops::tag::serato32::take_color;
 /// use nom::Err;
 /// use nom::error::{Error, ErrorKind};
 ///
@@ -117,7 +117,7 @@ pub fn take_color(input: &[u8]) -> Res<&[u8], Color> {
 ///
 /// # Example
 /// ```
-/// use seratodj::tag::serato32::take_u32;
+/// use triseratops::tag::serato32::take_u32;
 /// use nom::Err;
 /// use nom::error::{Error, ErrorKind};
 ///

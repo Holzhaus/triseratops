@@ -1,10 +1,10 @@
-use seratodj::library::database;
 use std::env;
 use std::fs::File;
 use std::io::Read;
 use std::string::String;
+use triseratops::library::database;
 
-fn main() -> Result<(), seratodj::error::Error> {
+fn main() -> Result<(), triseratops::error::Error> {
     let mut args: Vec<String> = env::args().collect();
     let _prog = args.remove(0);
 
