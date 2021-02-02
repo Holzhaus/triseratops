@@ -1,7 +1,7 @@
-extern crate seratodj;
+extern crate triseratops;
 
-use seratodj::library::filesystem;
 use std::path::PathBuf;
+use triseratops::library::filesystem;
 
 #[test]
 fn library_dir_detection() {

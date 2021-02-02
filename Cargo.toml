@@ -1,8 +1,8 @@
 [package]
-name = "seratodj"
+name = "triseratops"
 version = "0.0.1"
 authors = ["Jan Holthuis <jan.holthuis@ruhr-uni-bochum.de>"]
-description = "A library for parsing Serato DJ's metadata and database."
+description = "The robust, in-depth Serato Parser & Serializer."
 readme = "README.md"
 repository = "https://github.com/Holzhaus/seratodj-rs"
 license = "AGPL-3.0-or-later"

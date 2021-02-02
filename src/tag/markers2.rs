@@ -71,7 +71,7 @@ pub struct BPMLockMarker {
 /// # Example
 ///
 /// ```
-/// use seratodj::tag::{Markers2, format::id3::ID3Tag};
+/// use triseratops::tag::{Markers2, format::id3::ID3Tag};
 ///
 /// // First, read the tag data from the ID3 GEOB tag (the tag name can be accessed using the
 /// // Markers2::ID3_TAG), then parse the data like this:

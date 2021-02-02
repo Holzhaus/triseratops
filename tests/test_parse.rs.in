@@ -3,7 +3,7 @@
 fn {name}() {{
     println!("Parsing file: {filepath}");
     let input = include_bytes!("{filepath}");
-    let value = match seratodj::tag::{parser}::parse_{tag_type}(&input[..]) {{
+    let value = match triseratops::tag::{parser}::parse_{tag_type}(&input[..]) {{
         Ok(value) => value,
         Err(err) => {{
             eprintln!("Error: {{:?}}", err);
