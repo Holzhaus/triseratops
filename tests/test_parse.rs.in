@@ -23,6 +23,8 @@ fn {name}() {{
     let output = writer.get_ref().as_slice();
     assert_eq!(bytes_written, output.len(), "Number of written bytes is incorrect");
 
+    // The last two bytes of the base64 encoding in FLAC/MP4 tags is *random* (maybe an
+    // out-of-bound read?), so we can't use it for roundtrip tests.
     let tag_type = "{tag_type}";
     if tag_type == "flac" || tag_type == "mp4" {{
         assert_eq!(input[..input.len()-2], output[..output.len()-2], "Input does not match output!");
