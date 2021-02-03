@@ -4,6 +4,7 @@ extern crate nom;
 
 use super::enveloped::EnvelopedTag;
 use crate::error::Error;
+use std::io;
 
 pub trait FLACTag: EnvelopedTag {
     /// Name of the `VORBIS_COMMENT` that this data is stored in.
@@ -11,5 +12,9 @@ pub trait FLACTag: EnvelopedTag {
 
     fn parse_flac(input: &[u8]) -> Result<Self, Error> {
         Self::parse_enveloped(&input)
+    }
+
+    fn write_flac(&self, writer: impl io::Write) -> Result<usize, Error> {
+        self.write_enveloped(writer)
     }
 }

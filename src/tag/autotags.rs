@@ -6,9 +6,10 @@ use super::format::id3;
 use super::format::mp4;
 use super::format::Tag;
 use super::generic::Version;
-use super::util::take_version;
+use super::util::{take_version, write_version};
 use crate::error::Error;
 use crate::util::{take_until_nullbyte, Res};
+use std::io;
 
 /// Represents the  `Serato AutoTags` tag.
 ///
@@ -44,6 +45,10 @@ impl Tag for Autotags {
     fn parse(input: &[u8]) -> Result<Self, Error> {
         let (_, autotags) = nom::combinator::all_consuming(take_autotags)(input)?;
         Ok(autotags)
+    }
+
+    fn write(&self, writer: impl io::Write) -> Result<usize, Error> {
+        write_autotags(writer, &self)
     }
 }
 
@@ -92,4 +97,21 @@ fn take_autotags(input: &[u8]) -> Res<&[u8], Autotags> {
     };
 
     Ok((input, autotags))
+}
+
+pub fn write_double_str(
+    mut writer: impl io::Write,
+    number: f64,
+    width: usize,
+) -> Result<usize, Error> {
+    let number_str = format!("{:.*}\0", width, number);
+    Ok(writer.write(number_str.as_bytes())?)
+}
+
+pub fn write_autotags(mut writer: impl io::Write, autotags: &Autotags) -> Result<usize, Error> {
+    let mut bytes_written = write_version(&mut writer, &autotags.version)?;
+    bytes_written += write_double_str(&mut writer, autotags.bpm, 2)?;
+    bytes_written += write_double_str(&mut writer, autotags.auto_gain, 3)?;
+    bytes_written += write_double_str(&mut writer, autotags.gain_db, 3)?;
+    Ok(bytes_written)
 }

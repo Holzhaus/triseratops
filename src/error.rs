@@ -39,6 +39,10 @@ pub enum Error {
     /// Represents decode error.
     #[error("Envelope name mismatch")]
     EnvelopeNameMismatch { expected: String, actual: String },
+
+    /// Represents all other cases of `std::io::Error`.
+    #[error(transparent)]
+    IOError(#[from] std::io::Error),
 }
 
 fn convert_err(

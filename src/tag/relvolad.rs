@@ -2,9 +2,10 @@
 
 use super::format::{enveloped, flac, mp4, Tag};
 use super::generic::Version;
-use super::util::take_version;
+use super::util::{take_version, write_version};
 use crate::error::Error;
 use crate::util::Res;
+use std::io;
 
 /// Represents the  `Serato RelVolAd` tag.
 ///
@@ -36,6 +37,10 @@ impl Tag for RelVolAd {
         let (_, overview) = nom::combinator::all_consuming(take_relvolad)(input)?;
         Ok(overview)
     }
+
+    fn write(&self, writer: impl io::Write) -> Result<usize, Error> {
+        write_relvolad(writer, &self)
+    }
 }
 
 impl enveloped::EnvelopedTag for RelVolAd {}
@@ -53,4 +58,10 @@ fn take_relvolad(input: &[u8]) -> Res<&[u8], RelVolAd> {
 
     let relvolad = RelVolAd { version };
     Ok((input, relvolad))
+}
+
+fn write_relvolad(mut writer: impl io::Write, relvolad: &RelVolAd) -> Result<usize, Error> {
+    let bytes_written = write_version(&mut writer, &relvolad.version)?;
+    // TODO: Implement this
+    Ok(bytes_written)
 }

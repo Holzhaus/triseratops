@@ -2,9 +2,10 @@
 
 use super::format::{enveloped, flac, id3, mp4, Tag};
 use super::generic::Version;
-use super::util::take_version;
+use super::util::{take_version, write_version};
 use crate::error::Error;
 use crate::util::Res;
+use std::io;
 
 /// Represents the terminal beatgrid marker in the `Serato BeatGrid` tag.
 ///
@@ -64,6 +65,10 @@ impl Tag for Beatgrid {
     fn parse(input: &[u8]) -> Result<Self, Error> {
         let (_, autotags) = nom::combinator::all_consuming(take_beatgrid)(input)?;
         Ok(autotags)
+    }
+
+    fn write(&self, writer: impl io::Write) -> Result<usize, Error> {
+        write_beatgrid(writer, &self)
     }
 }
 
@@ -134,4 +139,34 @@ fn take_beatgrid(input: &[u8]) -> Res<&[u8], Beatgrid> {
         footer,
     };
     Ok((input, beatgrid))
+}
+
+pub fn write_non_terminal_marker(
+    mut writer: impl io::Write,
+    marker: &NonTerminalMarker,
+) -> Result<usize, Error> {
+    let mut bytes_written = writer.write(&marker.position.to_be_bytes())?;
+    bytes_written += writer.write(&marker.beats_till_next_marker.to_be_bytes())?;
+    Ok(bytes_written)
+}
+
+pub fn write_terminal_marker(
+    mut writer: impl io::Write,
+    marker: &TerminalMarker,
+) -> Result<usize, Error> {
+    let mut bytes_written = writer.write(&marker.position.to_be_bytes())?;
+    bytes_written += writer.write(&marker.bpm.to_be_bytes())?;
+    Ok(bytes_written)
+}
+
+pub fn write_beatgrid(mut writer: impl io::Write, beatgrid: &Beatgrid) -> Result<usize, Error> {
+    let mut bytes_written = write_version(&mut writer, &beatgrid.version)?;
+    let num_markers = beatgrid.non_terminal_markers.len() as u32 + 1;
+    bytes_written += writer.write(&num_markers.to_be_bytes())?;
+    for marker in &beatgrid.non_terminal_markers {
+        bytes_written += write_non_terminal_marker(&mut writer, &marker)?;
+    }
+    bytes_written += write_terminal_marker(&mut writer, &beatgrid.terminal_marker)?;
+    bytes_written += writer.write(&[beatgrid.footer])?;
+    Ok(bytes_written)
 }

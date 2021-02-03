@@ -3,9 +3,35 @@
 fn {name}() {{
     println!("Parsing file: {filepath}");
     let input = include_bytes!("{filepath}");
-    let res = seratodj::tag::{parser}::parse_{tag_type}(&input[..]);
-    if let Err(err) = res {{
-        eprintln!("Error: {{:?}}", err);
-        unreachable!();
+    let value = match seratodj::tag::{parser}::parse_{tag_type}(&input[..]) {{
+        Ok(value) => value,
+        Err(err) => {{
+            eprintln!("Error: {{:?}}", err);
+            unreachable!();
+        }}
+    }};
+
+    let tag_name = "{tag_name}";
+    if tag_name == "relvolad" || tag_name == "vidassoc" {{
+        return;
+    }}
+
+    let mut writer = Cursor::new(vec![]);
+    let bytes_written = match value.write_{tag_type}(&mut writer) {{
+        Ok(x) => x,
+        Err(err) => {{
+            eprintln!("Error: {{:?}}", err);
+            unreachable!();
+        }}
+    }};
+
+    let output = writer.get_ref().as_slice();
+    assert_eq!(bytes_written, output.len(), "Number of written bytes is incorrect");
+
+    let tag_type = "{tag_type}";
+    if tag_type == "flac" || tag_type == "mp4" {{
+        assert_eq!(input[..input.len()-2], output[..output.len()-2], "Input does not match output!");
+    }} else {{
+        assert_eq!(input, output, "Input does not match output!");
     }}
 }}

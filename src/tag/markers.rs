@@ -7,10 +7,12 @@
 use super::format::{enveloped, id3, mp4, Tag};
 use super::generic::{Color, Version};
 use super::serato32;
-use super::util::{take_color, take_version};
+use super::util::{take_color, take_version, write_color, write_version};
 use crate::error::Error;
 use crate::util::Res;
 use nom::error::ParseError;
+use std::io;
+use std::io::Cursor;
 
 /// Represents a single marker in the `Serato Markers_` tag.
 #[derive(Debug)]
@@ -107,6 +109,10 @@ impl Tag for Markers {
         let (_, autotags) = nom::combinator::all_consuming(take_markers)(input)?;
         Ok(autotags)
     }
+
+    fn write(&self, writer: impl io::Write) -> Result<usize, Error> {
+        write_markers(writer, &self)
+    }
 }
 
 impl id3::ID3Tag for Markers {}
@@ -121,6 +127,13 @@ impl mp4::MP4Tag for Markers {
         let content = super::format::enveloped::envelope_decode_with_name(encoded, Self::NAME)?;
         let (_, markers) = nom::combinator::all_consuming(take_markers_mp4)(content.as_slice())?;
         Ok(markers)
+    }
+
+    fn write_mp4(&self, writer: impl io::Write) -> Result<usize, Error> {
+        let mut buffer = Cursor::new(vec![]);
+        write_markers_mp4(&mut buffer, &self)?;
+        let plain_data = &buffer.get_ref()[..];
+        enveloped::envelope_encode_with_name(writer, plain_data, Self::NAME)
     }
 }
 
@@ -337,7 +350,8 @@ fn take_markers_mp4(input: &[u8]) -> Res<&[u8], Markers> {
     let (input, version) = take_version(&input)?;
     let (input, entries) =
         nom::multi::length_count(nom::number::complete::be_u32, take_marker_mp4)(input)?;
-    let (input, track_color) = nom::combinator::all_consuming(serato32::take_color)(input)?;
+    let (input, _) = nom::bytes::complete::tag(b"\0")(input)?;
+    let (input, track_color) = nom::combinator::all_consuming(take_color)(input)?;
 
     let markers = Markers {
         version,
@@ -345,4 +359,84 @@ fn take_markers_mp4(input: &[u8]) -> Res<&[u8], Markers> {
         track_color,
     };
     Ok((input, markers))
+}
+
+fn write_position(mut writer: impl io::Write, position: &Option<u32>) -> Result<usize, Error> {
+    match position {
+        Some(value) => {
+            let mut bytes_written = writer.write(b"\x00")?;
+            bytes_written += serato32::write_u32(writer, *value)?;
+            Ok(bytes_written)
+        }
+        None => Ok(writer.write(b"\x7F\x7F\x7F\x7F\x7F")?),
+    }
+}
+
+fn write_position_mp4(mut writer: impl io::Write, position: &Option<u32>) -> Result<usize, Error> {
+    // TODO: Implement this
+    let data = match position {
+        Some(millis) => millis.to_be_bytes(),
+        None => *b"\xFF\xFF\xFF\xFF",
+    };
+    Ok(writer.write(&data)?)
+}
+
+fn write_marker_type(mut writer: impl io::Write, marker_type: &MarkerType) -> Result<usize, Error> {
+    let byte: u8 = match marker_type {
+        MarkerType::Invalid => 0x00,
+        MarkerType::Cue => 0x01,
+        MarkerType::Loop => 0x03,
+    };
+    Ok(writer.write(&[byte])?)
+}
+
+fn write_bool(mut writer: impl io::Write, value: bool) -> Result<usize, Error> {
+    let byte: u8 = match value {
+        true => 0x01,
+        false => 0x00,
+    };
+    Ok(writer.write(&[byte])?)
+}
+
+fn write_marker(mut writer: impl io::Write, marker: &Marker) -> Result<usize, Error> {
+    let mut bytes_written = write_position(&mut writer, &marker.start_position_millis)?;
+    bytes_written += write_position(&mut writer, &marker.end_position_millis)?;
+    bytes_written += writer.write(b"\x00\x7F\x7F\x7F\x7F\x7F")?;
+    bytes_written += serato32::write_color(&mut writer, &marker.color)?;
+    bytes_written += write_marker_type(&mut writer, &marker.marker_type)?;
+    bytes_written += write_bool(&mut writer, marker.is_locked)?;
+    Ok(bytes_written)
+}
+
+fn write_marker_mp4(mut writer: impl io::Write, marker: &Marker) -> Result<usize, Error> {
+    let mut bytes_written = write_position_mp4(&mut writer, &marker.start_position_millis)?;
+    bytes_written += write_position_mp4(&mut writer, &marker.end_position_millis)?;
+    bytes_written += writer.write(b"\x00\xFF\xFF\xFF\xFF\x00")?;
+    bytes_written += write_color(&mut writer, &marker.color)?;
+    bytes_written += write_marker_type(&mut writer, &marker.marker_type)?;
+    bytes_written += write_bool(&mut writer, marker.is_locked)?;
+    Ok(bytes_written)
+}
+
+pub fn write_markers(mut writer: impl io::Write, markers: &Markers) -> Result<usize, Error> {
+    let mut bytes_written = write_version(&mut writer, &markers.version)?;
+    let num_markers = markers.entries.len() as u32;
+    bytes_written += writer.write(&num_markers.to_be_bytes())?;
+    for marker in &markers.entries {
+        bytes_written += write_marker(&mut writer, &marker)?;
+    }
+    bytes_written += serato32::write_color(writer, &markers.track_color)?;
+    Ok(bytes_written)
+}
+
+pub fn write_markers_mp4(mut writer: impl io::Write, markers: &Markers) -> Result<usize, Error> {
+    let mut bytes_written = write_version(&mut writer, &markers.version)?;
+    let num_markers = markers.entries.len() as u32;
+    bytes_written += writer.write(&num_markers.to_be_bytes())?;
+    for marker in &markers.entries {
+        bytes_written += write_marker_mp4(&mut writer, &marker)?;
+    }
+    bytes_written += writer.write(b"\x00")?;
+    bytes_written += write_color(writer, &markers.track_color)?;
+    Ok(bytes_written)
 }

@@ -3,8 +3,10 @@ extern crate nom;
 
 use super::generic::Color;
 use super::generic::Version;
+use crate::error::Error;
 use crate::util::Res;
 use nom::bytes::complete::take;
+use std::io;
 
 /// Returns a `Color` struct parsed from the first 3 input bytes.
 pub fn take_color(input: &[u8]) -> Res<&[u8], Color> {
@@ -42,6 +44,10 @@ fn test_take_color() {
     assert!(take_color(&[0xAB, 0xCD]).is_err());
 }
 
+pub fn write_color(mut writer: impl io::Write, color: &Color) -> Result<usize, Error> {
+    Ok(writer.write(&[color.red, color.green, color.blue])?)
+}
+
 /// Returns a `Version` struct parsed from the first 2 input bytes.
 pub fn take_version(input: &[u8]) -> Res<&[u8], Version> {
     let (input, version) = take(2usize)(input)?;
@@ -65,4 +71,8 @@ fn test_take_version() {
         Ok((&[0x03][..], Version { major: 1, minor: 2 }))
     );
     assert!(take_version(&[0x0A]).is_err());
+}
+
+pub fn write_version(mut writer: impl io::Write, version: &Version) -> Result<usize, Error> {
+    Ok(writer.write(&[version.major, version.minor])?)
 }

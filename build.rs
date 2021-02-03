@@ -24,6 +24,7 @@ use seratodj::tag::format::id3::ID3Tag;
 use seratodj::tag::format::flac::FLACTag;
 use seratodj::tag::format::mp4::MP4Tag;
 use seratodj::tag::format::ogg::OggTag;
+use std::io::Cursor;
 "#
     )
     .unwrap();
@@ -79,6 +80,7 @@ fn write_tag_test(test_file: &mut File, filepath: &Path, tag_name: &str) {
         name = test_name,
         filepath = filepath.to_str().unwrap(),
         parser = parser,
+        tag_name = tag_name,
         tag_type = tag_type,
     )
     .unwrap();

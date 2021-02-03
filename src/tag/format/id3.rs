@@ -2,6 +2,7 @@
 
 use super::Tag;
 use crate::error::Error;
+use std::io;
 
 pub trait ID3Tag: Tag {
     /// Name of the ID3 tag that this data is stored in.
@@ -9,5 +10,9 @@ pub trait ID3Tag: Tag {
 
     fn parse_id3(input: &[u8]) -> Result<Self, Error> {
         Self::parse(&input)
+    }
+
+    fn write_id3(&self, writer: impl io::Write) -> Result<usize, Error> {
+        self.write(writer)
     }
 }

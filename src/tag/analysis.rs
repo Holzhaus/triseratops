@@ -1,11 +1,11 @@
 //! The `Serato Analysis` tag stores the analysis version.
-
 use super::format::{enveloped, flac, id3, mp4, ogg, Tag};
 use super::generic::Version;
-use super::util::take_version;
+use super::util::{take_version, write_version};
 use crate::error::Error;
 use crate::util::{parse_utf8, Res};
 use nom::error::ParseError;
+use std::io;
 
 /// Represents the  `Serato Analysis` tag.
 ///
@@ -33,8 +33,12 @@ impl Tag for Analysis {
     const NAME: &'static str = "Serato Analysis";
 
     fn parse(input: &[u8]) -> Result<Self, Error> {
-        let (_, analysis) = nom::combinator::all_consuming(take_analysis)(input)?;
+        let analysis = parse_analysis(input)?;
         Ok(analysis)
+    }
+
+    fn write(&self, writer: impl io::Write) -> Result<usize, Error> {
+        write_analysis(writer, &self)
     }
 }
 
@@ -51,8 +55,12 @@ impl ogg::OggTag for Analysis {
     const OGG_COMMENT: &'static str = "serato_analysis_ver";
 
     fn parse_ogg(input: &[u8]) -> Result<Self, Error> {
-        let (_, analysis) = nom::combinator::all_consuming(take_analysis_ogg)(input)?;
+        let analysis = parse_analysis_ogg(input)?;
         Ok(analysis)
+    }
+
+    fn write_ogg(&self, writer: impl io::Write) -> Result<usize, Error> {
+        write_analysis_ogg(writer, &self)
     }
 }
 
@@ -89,4 +97,44 @@ fn take_analysis_ogg(input: &[u8]) -> Res<&[u8], Analysis> {
 
     let analysis = Analysis { version };
     Ok((input, analysis))
+}
+
+pub fn parse_analysis(input: &[u8]) -> Result<Analysis, Error> {
+    let (_, analysis) = nom::combinator::all_consuming(take_analysis)(input)?;
+    Ok(analysis)
+}
+
+pub fn parse_analysis_ogg(input: &[u8]) -> Result<Analysis, Error> {
+    let (_, analysis) = nom::combinator::all_consuming(take_analysis_ogg)(input)?;
+    Ok(analysis)
+}
+
+/// Serialize [`Analysis` struct](Analysis) to bytes.
+pub fn write_analysis(writer: impl io::Write, analysis: &Analysis) -> Result<usize, Error> {
+    write_version(writer, &analysis.version)
+}
+
+/// Serialize [`Analysis` struct](Analysis) to bytes ([Ogg](super::format::ogg) version).
+pub fn write_analysis_ogg(mut writer: impl io::Write, analysis: &Analysis) -> Result<usize, Error> {
+    Ok(writer.write(&[
+        analysis.version.major + 0x30,
+        b'.',
+        analysis.version.minor + 0x30,
+    ])?)
+}
+
+#[test]
+fn test_write_analysis() {
+    use std::io::Cursor;
+
+    let mut writer = Cursor::new(vec![0; 15]);
+    let bytes_written = write_analysis(
+        &mut writer,
+        &Analysis {
+            version: Version { major: 2, minor: 4 },
+        },
+    )
+    .unwrap();
+    assert_eq!(bytes_written, 2);
+    assert_eq!(&writer.get_ref()[..2], &[2, 4]);
 }

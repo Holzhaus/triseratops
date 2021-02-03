@@ -4,9 +4,10 @@
 
 use super::format::{enveloped, flac, mp4, Tag};
 use super::generic::Version;
-use super::util::take_version;
+use super::util::{take_version, write_version};
 use crate::error::Error;
 use crate::util::Res;
+use std::io;
 
 /// Represents the  `Serato VidAssoc` tag.
 ///
@@ -38,6 +39,10 @@ impl Tag for VidAssoc {
         let (_, vidassoc) = nom::combinator::all_consuming(take_vidassoc)(input)?;
         Ok(vidassoc)
     }
+
+    fn write(&self, writer: impl io::Write) -> Result<usize, Error> {
+        write_vidassoc(writer, &self)
+    }
 }
 
 impl enveloped::EnvelopedTag for VidAssoc {}
@@ -57,4 +62,10 @@ fn take_vidassoc(input: &[u8]) -> Res<&[u8], VidAssoc> {
 
     let vidassoc = VidAssoc { version };
     Ok((input, vidassoc))
+}
+
+fn write_vidassoc(mut writer: impl io::Write, vidassoc: &VidAssoc) -> Result<usize, Error> {
+    let bytes_written = write_version(&mut writer, &vidassoc.version)?;
+    // TODO: Implement this
+    Ok(bytes_written)
 }

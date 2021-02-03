@@ -4,9 +4,10 @@
 
 use super::format::{enveloped, flac, id3, mp4, Tag};
 use super::generic::Version;
-use super::util::take_version;
+use super::util::{take_version, write_version};
 use crate::error::Error;
 use crate::util::Res;
+use std::io;
 
 /// Represents the `Serato Overview` tag.
 ///
@@ -38,6 +39,10 @@ impl Tag for Overview {
     fn parse(input: &[u8]) -> Result<Self, Error> {
         let (_, overview) = nom::combinator::all_consuming(take_overview)(input)?;
         Ok(overview)
+    }
+
+    fn write(&self, writer: impl io::Write) -> Result<usize, Error> {
+        write_overview(writer, &self)
     }
 }
 
@@ -87,4 +92,17 @@ fn take_overview(input: &[u8]) -> Res<&[u8], Overview> {
 
     let overview = Overview { version, data };
     Ok((input, overview))
+}
+
+fn write_chunk(mut writer: impl io::Write, chunk: &[u8]) -> Result<usize, Error> {
+    // TODO: Handle chunks with invalid size
+    Ok(writer.write(chunk)?)
+}
+
+pub fn write_overview(mut writer: impl io::Write, overview: &Overview) -> Result<usize, Error> {
+    let mut bytes_written = write_version(&mut writer, &overview.version)?;
+    for chunk in &overview.data {
+        bytes_written += write_chunk(&mut writer, chunk.as_slice())?;
+    }
+    Ok(bytes_written)
 }

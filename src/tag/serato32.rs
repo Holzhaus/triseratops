@@ -30,8 +30,10 @@
 //! | `serato32` value | `06 32 10 00` | `00000110001100100001000000000000`
 
 use super::generic::Color;
+use crate::error::Error;
 use crate::util::Res;
 use nom::number::complete::u8;
+use std::io;
 
 /// Decodes value from Serato's 32-bit custom format to 24-bit plaintext.
 ///
@@ -92,6 +94,12 @@ pub fn take(input: &[u8]) -> Res<&[u8], (u8, u8, u8)> {
     Ok((input, value))
 }
 
+pub fn write(mut writer: impl io::Write, data: (u8, u8, u8)) -> Result<usize, Error> {
+    let (in1, in2, in3) = data;
+    let (byte1, byte2, byte3, byte4) = encode(in1, in2, in3);
+    Ok(writer.write(&[byte1, byte2, byte3, byte4])?)
+}
+
 /// Returns a `Color` decoded from the first 4 input bytes.
 ///
 /// # Example
@@ -109,6 +117,10 @@ pub fn take_color(input: &[u8]) -> Res<&[u8], Color> {
     let (input, (red, green, blue)) = take(input)?;
     let color = Color { red, green, blue };
     Ok((input, color))
+}
+
+pub fn write_color(writer: impl io::Write, color: &Color) -> Result<usize, Error> {
+    write(writer, (color.red, color.green, color.blue))
 }
 
 /// Returns a `u32` decoded from the first 4 input bytes.
@@ -129,4 +141,11 @@ pub fn take_u32(input: &[u8]) -> Res<&[u8], u32> {
     let (input, (a, b, c)) = take(input)?;
     let value = (a as u32) << 16 | (b as u32) << 8 | c as u32;
     Ok((input, value))
+}
+
+pub fn write_u32(writer: impl io::Write, value: u32) -> Result<usize, Error> {
+    let byte1 = ((value >> 16) & 0xFF) as u8;
+    let byte2 = ((value >> 8) & 0xFF) as u8;
+    let byte3 = (value & 0xFF) as u8;
+    write(writer, (byte1, byte2, byte3))
 }
