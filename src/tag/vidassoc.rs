@@ -30,6 +30,8 @@ use std::io;
 pub struct VidAssoc {
     /// The `VidAssoc` version.
     pub version: Version,
+    /// The data (not reverse-engineered yet)
+    pub data: Vec<u8>,
 }
 
 impl Tag for VidAssoc {
@@ -55,17 +57,15 @@ impl mp4::MP4Tag for VidAssoc {
 
 fn take_vidassoc(input: &[u8]) -> Res<&[u8], VidAssoc> {
     let (input, version) = take_version(input)?;
-    let (input, _) =
-        nom::error::context("unknown bytes", nom::bytes::complete::tag(b"\x01\x00"))(input)?;
-    // TODO: what do these bytes mean?
-    let (input, _) = nom::bytes::complete::take_while(|_| true)(input)?;
+    let (input, data) = nom::combinator::rest(input)?;
+    let data = data.to_vec();
 
-    let vidassoc = VidAssoc { version };
+    let vidassoc = VidAssoc { version, data };
     Ok((input, vidassoc))
 }
 
 fn write_vidassoc(mut writer: impl io::Write, vidassoc: &VidAssoc) -> Result<usize, Error> {
-    let bytes_written = write_version(&mut writer, &vidassoc.version)?;
-    // TODO: Implement this
+    let mut bytes_written = write_version(&mut writer, &vidassoc.version)?;
+    bytes_written += writer.write(&vidassoc.data.as_slice())?;
     Ok(bytes_written)
 }

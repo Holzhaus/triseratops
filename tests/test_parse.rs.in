@@ -12,7 +12,7 @@ fn {name}() {{
     }};
 
     let tag_name = "{tag_name}";
-    if tag_name == "relvolad" || tag_name == "vidassoc" {{
+    if tag_name == "relvolad" {{
         return;
     }}
 
