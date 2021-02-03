@@ -11,11 +11,6 @@ fn {name}() {{
         }}
     }};
 
-    let tag_name = "{tag_name}";
-    if tag_name == "relvolad" {{
-        return;
-    }}
-
     let mut writer = Cursor::new(vec![]);
     let bytes_written = match value.write_{tag_type}(&mut writer) {{
         Ok(x) => x,

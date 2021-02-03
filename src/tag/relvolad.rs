@@ -28,6 +28,8 @@ use std::io;
 pub struct RelVolAd {
     /// The `RelVolAd` version.
     pub version: Version,
+    /// The data (not reverse-engineered yet)
+    pub data: Vec<u8>,
 }
 
 impl Tag for RelVolAd {
@@ -53,15 +55,15 @@ impl mp4::MP4Tag for RelVolAd {
 
 fn take_relvolad(input: &[u8]) -> Res<&[u8], RelVolAd> {
     let (input, version) = take_version(input)?;
-    let (input, _) =
-        nom::error::context("unknown bytes", nom::bytes::complete::tag(b"\x01\x00\x00"))(input)?;
+    let (input, data) = nom::combinator::rest(input)?;
+    let data = data.to_vec();
 
-    let relvolad = RelVolAd { version };
+    let relvolad = RelVolAd { version, data };
     Ok((input, relvolad))
 }
 
 fn write_relvolad(mut writer: impl io::Write, relvolad: &RelVolAd) -> Result<usize, Error> {
-    let bytes_written = write_version(&mut writer, &relvolad.version)?;
-    // TODO: Implement this
+    let mut bytes_written = write_version(&mut writer, &relvolad.version)?;
+    bytes_written += writer.write(&relvolad.data.as_slice())?;
     Ok(bytes_written)
 }
