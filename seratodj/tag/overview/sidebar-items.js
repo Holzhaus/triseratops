@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["Overview","Represents the `Serato Overview` tag."]]});
+initSidebarItems({"fn":[["write_overview",""]],"struct":[["Overview","Represents the `Serato Overview` tag."]]});

@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["Analysis","Represents the  `Serato Analysis` tag."]]});
+initSidebarItems({"fn":[["parse_analysis",""],["parse_analysis_ogg",""],["write_analysis","Serialize `Analysis` struct to bytes."],["write_analysis_ogg","Serialize `Analysis` struct to bytes (Ogg version)."]],"struct":[["Analysis","Represents the  `Serato Analysis` tag."]]});

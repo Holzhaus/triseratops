@@ -16,6 +16,11 @@
 <span id="13">13</span>
 <span id="14">14</span>
 <span id="15">15</span>
+<span id="16">16</span>
+<span id="17">17</span>
+<span id="18">18</span>
+<span id="19">19</span>
+<span id="20">20</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! FLAC tags</span>
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">base64</span>;
@@ -23,6 +28,7 @@
 
 <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">enveloped</span>::<span class="ident">EnvelopedTag</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">error</span>::<span class="ident">Error</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>;
 
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">FLACTag</span>: <span class="ident">EnvelopedTag</span> {
     <span class="doccomment">/// Name of the `VORBIS_COMMENT` that this data is stored in.</span>
@@ -30,6 +36,10 @@
 
     <span class="kw">fn</span> <span class="ident">parse_flac</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="self">Self</span>::<span class="ident">parse_enveloped</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>)
+    }
+
+    <span class="kw">fn</span> <span class="ident">write_flac</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">writer</span>: <span class="kw">impl</span> <span class="ident">io</span>::<span class="ident">Write</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">write_enveloped</span>(<span class="ident">writer</span>)
     }
 }
 </pre></div>
