@@ -126,12 +126,12 @@
 <span class="doccomment">//! uses.</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! ```</span>
-<span class="doccomment">//! use triseratops::tag::{TagContainer, TagType};</span>
+<span class="doccomment">//! use triseratops::tag::{TagContainer, TagFormat};</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! fn parse_and_print_cues(markers_data: &amp;[u8], markers2_data: &amp;[u8]) {</span>
 <span class="doccomment">//!     let mut tags = TagContainer::new();</span>
-<span class="doccomment">//!     tags.parse_markers(markers_data, TagType::ID3).expect(&quot;Failed to parse Markers data!&quot;);</span>
-<span class="doccomment">//!     tags.parse_markers2(markers2_data, TagType::ID3).expect(&quot;Failed to parse Markers2 data!&quot;);</span>
+<span class="doccomment">//!     tags.parse_markers(markers_data, TagFormat::ID3).expect(&quot;Failed to parse Markers data!&quot;);</span>
+<span class="doccomment">//!     tags.parse_markers2(markers2_data, TagFormat::ID3).expect(&quot;Failed to parse Markers2 data!&quot;);</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//!     for cue in tags.cues() {</span>
 <span class="doccomment">//!         println!(&quot;{:?}&quot;, cue);</span>

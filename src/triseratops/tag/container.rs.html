@@ -337,6 +337,9 @@
 <span id="334">334</span>
 <span id="335">335</span>
 <span id="336">336</span>
+<span id="337">337</span>
+<span id="338">338</span>
+<span id="339">339</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Provides the [`TagContainer` struct](TagContainer), a simple interface to access data in</span>
 <span class="doccomment">//! Serato&#39;s tags.</span>
@@ -365,7 +368,7 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// The format of the Serato tag data differs between tag types.</span>
 <span class="doccomment">/// Therefore it&#39;s necessary to tell the parser from what kind of the the data originates from.</span>
-<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">TagType</span> {
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">TagFormat</span> {
     <span class="ident">ID3</span>,
     <span class="ident">FLAC</span>,
     <span class="ident">MP4</span>,
@@ -385,66 +388,66 @@
     }
 
     <span class="doccomment">/// Parse the [`Serato Autotags`](Autotags) tag.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_autotags</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">tag_type</span>: <span class="ident">TagType</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">match</span> <span class="ident">tag_type</span> {
-            <span class="ident">TagType</span>::<span class="ident">ID3</span> <span class="op">=</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_autotags</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">tag_format</span>: <span class="ident">TagFormat</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
+        <span class="kw">match</span> <span class="ident">tag_format</span> {
+            <span class="ident">TagFormat</span>::<span class="ident">ID3</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="self">self</span>.<span class="ident">autotags</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Autotags</span>::<span class="ident">parse_id3</span>(<span class="ident">input</span>)<span class="question-mark">?</span>);
             }
-            <span class="ident">TagType</span>::<span class="ident">FLAC</span> <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="ident">TagFormat</span>::<span class="ident">FLAC</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="self">self</span>.<span class="ident">autotags</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Autotags</span>::<span class="ident">parse_flac</span>(<span class="ident">input</span>)<span class="question-mark">?</span>);
             }
-            <span class="ident">TagType</span>::<span class="ident">MP4</span> <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="ident">TagFormat</span>::<span class="ident">MP4</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="self">self</span>.<span class="ident">autotags</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Autotags</span>::<span class="ident">parse_mp4</span>(<span class="ident">input</span>)<span class="question-mark">?</span>);
             }
-            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">UnsupportedTagType</span>),
+            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">UnsupportedTagFormat</span>),
         }
         <span class="prelude-val">Ok</span>(())
     }
 
     <span class="doccomment">/// Parse the [`Serato BeatGrid`](Beatgrid) tag.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_beatgrid</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">tag_type</span>: <span class="ident">TagType</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">match</span> <span class="ident">tag_type</span> {
-            <span class="ident">TagType</span>::<span class="ident">ID3</span> <span class="op">=</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_beatgrid</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">tag_format</span>: <span class="ident">TagFormat</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
+        <span class="kw">match</span> <span class="ident">tag_format</span> {
+            <span class="ident">TagFormat</span>::<span class="ident">ID3</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="self">self</span>.<span class="ident">beatgrid</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Beatgrid</span>::<span class="ident">parse_id3</span>(<span class="ident">input</span>)<span class="question-mark">?</span>);
             }
-            <span class="ident">TagType</span>::<span class="ident">FLAC</span> <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="ident">TagFormat</span>::<span class="ident">FLAC</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="self">self</span>.<span class="ident">beatgrid</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Beatgrid</span>::<span class="ident">parse_flac</span>(<span class="ident">input</span>)<span class="question-mark">?</span>);
             }
-            <span class="ident">TagType</span>::<span class="ident">MP4</span> <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="ident">TagFormat</span>::<span class="ident">MP4</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="self">self</span>.<span class="ident">beatgrid</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Beatgrid</span>::<span class="ident">parse_mp4</span>(<span class="ident">input</span>)<span class="question-mark">?</span>);
             }
-            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">UnsupportedTagType</span>),
+            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">UnsupportedTagFormat</span>),
         }
         <span class="prelude-val">Ok</span>(())
     }
 
     <span class="doccomment">/// Parse the [`Serato Markers_`](Markers) tag.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_markers</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">tag_type</span>: <span class="ident">TagType</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">match</span> <span class="ident">tag_type</span> {
-            <span class="ident">TagType</span>::<span class="ident">ID3</span> <span class="op">=</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_markers</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">tag_format</span>: <span class="ident">TagFormat</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
+        <span class="kw">match</span> <span class="ident">tag_format</span> {
+            <span class="ident">TagFormat</span>::<span class="ident">ID3</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="self">self</span>.<span class="ident">markers</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Markers</span>::<span class="ident">parse_id3</span>(<span class="ident">input</span>)<span class="question-mark">?</span>);
             }
-            <span class="ident">TagType</span>::<span class="ident">MP4</span> <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="ident">TagFormat</span>::<span class="ident">MP4</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="self">self</span>.<span class="ident">markers</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Markers</span>::<span class="ident">parse_mp4</span>(<span class="ident">input</span>)<span class="question-mark">?</span>);
             }
-            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">UnsupportedTagType</span>),
+            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">UnsupportedTagFormat</span>),
         }
         <span class="prelude-val">Ok</span>(())
     }
 
     <span class="doccomment">/// Parse the [`Serato Markers2`](Markers2) tag.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_markers2</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">tag_type</span>: <span class="ident">TagType</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">match</span> <span class="ident">tag_type</span> {
-            <span class="ident">TagType</span>::<span class="ident">ID3</span> <span class="op">=</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_markers2</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">tag_format</span>: <span class="ident">TagFormat</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
+        <span class="kw">match</span> <span class="ident">tag_format</span> {
+            <span class="ident">TagFormat</span>::<span class="ident">ID3</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="self">self</span>.<span class="ident">markers2</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Markers2</span>::<span class="ident">parse_id3</span>(<span class="ident">input</span>)<span class="question-mark">?</span>);
             }
-            <span class="ident">TagType</span>::<span class="ident">FLAC</span> <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="ident">TagFormat</span>::<span class="ident">FLAC</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="self">self</span>.<span class="ident">markers2</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Markers2</span>::<span class="ident">parse_flac</span>(<span class="ident">input</span>)<span class="question-mark">?</span>);
             }
-            <span class="ident">TagType</span>::<span class="ident">MP4</span> <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="ident">TagFormat</span>::<span class="ident">MP4</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="self">self</span>.<span class="ident">markers2</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Markers2</span>::<span class="ident">parse_mp4</span>(<span class="ident">input</span>)<span class="question-mark">?</span>);
             }
-            <span class="ident">TagType</span>::<span class="ident">Ogg</span> <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="ident">TagFormat</span>::<span class="ident">Ogg</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="self">self</span>.<span class="ident">markers2</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Markers2</span>::<span class="ident">parse_ogg</span>(<span class="ident">input</span>)<span class="question-mark">?</span>);
             }
         }
@@ -452,18 +455,18 @@
     }
 
     <span class="doccomment">/// Parse the [`Serato Overview`](Overview) tag.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_overview</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">tag_type</span>: <span class="ident">TagType</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">match</span> <span class="ident">tag_type</span> {
-            <span class="ident">TagType</span>::<span class="ident">ID3</span> <span class="op">=</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_overview</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">tag_format</span>: <span class="ident">TagFormat</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
+        <span class="kw">match</span> <span class="ident">tag_format</span> {
+            <span class="ident">TagFormat</span>::<span class="ident">ID3</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="self">self</span>.<span class="ident">overview</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Overview</span>::<span class="ident">parse_id3</span>(<span class="ident">input</span>)<span class="question-mark">?</span>);
             }
-            <span class="ident">TagType</span>::<span class="ident">FLAC</span> <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="ident">TagFormat</span>::<span class="ident">FLAC</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="self">self</span>.<span class="ident">overview</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Overview</span>::<span class="ident">parse_flac</span>(<span class="ident">input</span>)<span class="question-mark">?</span>);
             }
-            <span class="ident">TagType</span>::<span class="ident">MP4</span> <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="ident">TagFormat</span>::<span class="ident">MP4</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="self">self</span>.<span class="ident">overview</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Overview</span>::<span class="ident">parse_mp4</span>(<span class="ident">input</span>)<span class="question-mark">?</span>);
             }
-            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">UnsupportedTagType</span>),
+            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">UnsupportedTagFormat</span>),
         }
         <span class="prelude-val">Ok</span>(())
     }
@@ -540,28 +543,28 @@
                             <span class="kw">continue</span>;
                         }
 
+                        <span class="kw">let</span> <span class="ident">position_millis</span> <span class="op">=</span> <span class="ident">marker</span>.<span class="ident">start_position_millis</span>.<span class="ident">unwrap</span>();
+
                         <span class="comment">// If the cue is set in both `Serato Markers2` and `Serato Markers_`, use</span>
                         <span class="comment">// the version from `Serato Markers_`, but keep the label from `Serato</span>
                         <span class="comment">// Markers2` because the `Serato Markers_` tag doesn&#39;t contain labels.</span>
-                        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">c</span>) <span class="op">=</span> <span class="ident">map</span>.<span class="ident">remove</span>(<span class="kw-2">&amp;</span><span class="ident">index</span>) {
-                            <span class="kw">let</span> <span class="ident">position_millis</span> <span class="op">=</span> <span class="ident">marker</span>.<span class="ident">start_position_millis</span>.<span class="ident">unwrap</span>();
+                        <span class="kw">let</span> <span class="ident">markers2_cue</span> <span class="op">=</span> <span class="ident">map</span>.<span class="ident">remove</span>(<span class="kw-2">&amp;</span><span class="ident">index</span>);
+                        <span class="kw">let</span> <span class="ident">label</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">markers2_cue</span> {
+                            <span class="prelude-val">Some</span>(<span class="ident">c</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">c</span>.<span class="ident">label</span>,
+                            <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">String</span>::<span class="ident">new</span>(),
+                        };
 
-                            <span class="ident">map</span>.<span class="ident">insert</span>(
+                        <span class="ident">map</span>.<span class="ident">insert</span>(
+                            <span class="ident">index</span>,
+                            <span class="ident">generic</span>::<span class="ident">Cue</span> {
                                 <span class="ident">index</span>,
-                                <span class="ident">generic</span>::<span class="ident">Cue</span> {
-                                    <span class="ident">index</span>,
-                                    <span class="ident">position_millis</span>,
-                                    <span class="ident">color</span>: <span class="ident">marker</span>.<span class="ident">color</span>,
-                                    <span class="ident">label</span>: <span class="ident">c</span>.<span class="ident">label</span>,
-                                },
-                            );
-                        }
+                                <span class="ident">position_millis</span>,
+                                <span class="ident">color</span>: <span class="ident">marker</span>.<span class="ident">color</span>,
+                                <span class="ident">label</span>,
+                            },
+                        );
                     }
-                    <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> {
-                        <span class="comment">// This can only happen is `Markers::cues()` returns non-cue markers, which</span>
-                        <span class="comment">// would be a bug.</span>
-                        <span class="comment">// FIXME: Throw error here?</span>
-                    }
+                    <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> {} <span class="comment">// Ignore loop markers</span>
                 }
             }
         }
@@ -596,32 +599,35 @@
                 }
 
                 <span class="kw">if</span> <span class="ident">marker</span>.<span class="ident">start_position_millis</span> <span class="op">=</span><span class="op">=</span> <span class="prelude-val">None</span> <span class="op">|</span><span class="op">|</span> <span class="ident">marker</span>.<span class="ident">end_position_millis</span> <span class="op">=</span><span class="op">=</span> <span class="prelude-val">None</span> {
-                    <span class="comment">// This shouldn&#39;t be possible if the `Serato Markers_` data is valid.</span>
-                    <span class="comment">// Ideally, this should be checked during the parsing state.</span>
-                    <span class="comment">// FIXME: Throw error here?</span>
+                    <span class="comment">// This may happen even for valid data, because unset loops lack the start/end</span>
+                    <span class="comment">// position.</span>
                     <span class="ident">map</span>.<span class="ident">remove</span>(<span class="kw-2">&amp;</span><span class="ident">index</span>);
                     <span class="kw">continue</span>;
                 }
 
-                <span class="comment">// If the cue is set in both `Serato Markers2` and `Serato Markers_`, use</span>
+                <span class="kw">let</span> <span class="ident">start_position_millis</span> <span class="op">=</span> <span class="ident">marker</span>.<span class="ident">start_position_millis</span>.<span class="ident">unwrap</span>();
+                <span class="kw">let</span> <span class="ident">end_position_millis</span> <span class="op">=</span> <span class="ident">marker</span>.<span class="ident">end_position_millis</span>.<span class="ident">unwrap</span>();
+
+                <span class="comment">// If the loop is set in both `Serato Markers2` and `Serato Markers_`, use</span>
                 <span class="comment">// the version from `Serato Markers_`, but keep the label from `Serato</span>
                 <span class="comment">// Markers2` because the `Serato Markers_` tag doesn&#39;t contain labels.</span>
-                <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">c</span>) <span class="op">=</span> <span class="ident">map</span>.<span class="ident">remove</span>(<span class="kw-2">&amp;</span><span class="ident">index</span>) {
-                    <span class="kw">let</span> <span class="ident">start_position_millis</span> <span class="op">=</span> <span class="ident">marker</span>.<span class="ident">start_position_millis</span>.<span class="ident">unwrap</span>();
-                    <span class="kw">let</span> <span class="ident">end_position_millis</span> <span class="op">=</span> <span class="ident">marker</span>.<span class="ident">end_position_millis</span>.<span class="ident">unwrap</span>();
+                <span class="kw">let</span> <span class="ident">markers2_loop</span> <span class="op">=</span> <span class="ident">map</span>.<span class="ident">remove</span>(<span class="kw-2">&amp;</span><span class="ident">index</span>);
+                <span class="kw">let</span> <span class="ident">label</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">markers2_loop</span> {
+                    <span class="prelude-val">Some</span>(<span class="ident">c</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">c</span>.<span class="ident">label</span>,
+                    <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">String</span>::<span class="ident">new</span>(),
+                };
 
-                    <span class="ident">map</span>.<span class="ident">insert</span>(
+                <span class="ident">map</span>.<span class="ident">insert</span>(
+                    <span class="ident">index</span>,
+                    <span class="ident">generic</span>::<span class="ident">Loop</span> {
                         <span class="ident">index</span>,
-                        <span class="ident">generic</span>::<span class="ident">Loop</span> {
-                            <span class="ident">index</span>,
-                            <span class="ident">start_position_millis</span>,
-                            <span class="ident">end_position_millis</span>,
-                            <span class="ident">color</span>: <span class="ident">marker</span>.<span class="ident">color</span>,
-                            <span class="ident">label</span>: <span class="ident">c</span>.<span class="ident">label</span>,
-                            <span class="ident">is_locked</span>: <span class="ident">marker</span>.<span class="ident">is_locked</span>,
-                        },
-                    );
-                }
+                        <span class="ident">start_position_millis</span>,
+                        <span class="ident">end_position_millis</span>,
+                        <span class="ident">color</span>: <span class="ident">marker</span>.<span class="ident">color</span>,
+                        <span class="ident">label</span>,
+                        <span class="ident">is_locked</span>: <span class="ident">marker</span>.<span class="ident">is_locked</span>,
+                    },
+                );
             }
         }
 

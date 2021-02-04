@@ -80,12 +80,12 @@
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">thiserror</span>::<span class="ident">Error</span>, <span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Error</span> {
     <span class="doccomment">/// Represents an generic parse error.</span>
-    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;Generic parse input&quot;</span>)]</span>
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;Generic parse error&quot;</span>)]</span>
     <span class="ident">ParseError</span>,
 
-    <span class="doccomment">/// Thrown when trying to parse a tag with an unsupported tag type.</span>
-    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;Unsupported tag type&quot;</span>)]</span>
-    <span class="ident">UnsupportedTagType</span>,
+    <span class="doccomment">/// Thrown when trying to parse a tag with an unsupported tag format.</span>
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;Unsupported tag format&quot;</span>)]</span>
+    <span class="ident">UnsupportedTagFormat</span>,
 
     <span class="doccomment">/// Represents an generic parse error.</span>
     <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;Incomplete parse error&quot;</span>)]</span>
