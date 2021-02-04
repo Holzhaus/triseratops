@@ -24,12 +24,17 @@ directly from those file types. You need to use a separately library (e.g.
 [`id3`](https://crates.io/crates/id3) for MP3/AIFF) to read the actual tag data
 from media files.
 
-### Why did you write this?
+### What's the history behind this library?
 
 Work on reversing the format and a corresponding parser was started in 2019.
-The goal was to integrating it into [Mixxx](https://mixxx.org), a free
+The goal was to integrate such a parser into [Mixxx](https://mixxx.org), a free
 and open-source DJ software to reduce vendor lock-in and allow former Serato
 DJ users to migrate to Mixxx without losing their cue points, beatgrids, etc.
+
+Mixxx currently uses a different implemented (in C++) to parse those tags, but
+since it will [aoide](https://gitlab.com/uklotzde/aoide-rs) for library
+management at some point in the future, it made sense to write a new parser in
+Rust.
 
 ## License
 
