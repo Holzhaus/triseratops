@@ -7,7 +7,7 @@ extern crate thiserror;
 #[derive(thiserror::Error, Debug)]
 pub enum Error {
     /// Represents an generic parse error.
-    #[error("Generic parse input")]
+    #[error("Generic parse error")]
     ParseError,
 
     /// Thrown when trying to parse a tag with an unsupported tag format.
