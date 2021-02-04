@@ -200,28 +200,28 @@ impl TagContainer {
                             continue;
                         }
 
+                        let position_millis = marker.start_position_millis.unwrap();
+
                         // If the cue is set in both `Serato Markers2` and `Serato Markers_`, use
                         // the version from `Serato Markers_`, but keep the label from `Serato
                         // Markers2` because the `Serato Markers_` tag doesn't contain labels.
-                        if let Some(c) = map.remove(&index) {
-                            let position_millis = marker.start_position_millis.unwrap();
+                        let markers2_cue = map.remove(&index);
+                        let label = match markers2_cue {
+                            Some(c) => c.label,
+                            None => String::new(),
+                        };
 
-                            map.insert(
+                        map.insert(
+                            index,
+                            generic::Cue {
                                 index,
-                                generic::Cue {
-                                    index,
-                                    position_millis,
-                                    color: marker.color,
-                                    label: c.label,
-                                },
-                            );
-                        }
+                                position_millis,
+                                color: marker.color,
+                                label,
+                            },
+                        );
                     }
-                    _ => {
-                        // This can only happen is `Markers::cues()` returns non-cue markers, which
-                        // would be a bug.
-                        // FIXME: Throw error here?
-                    }
+                    _ => {} // Ignore loop markers
                 }
             }
         }
@@ -256,32 +256,35 @@ impl TagContainer {
                 }
 
                 if marker.start_position_millis == None || marker.end_position_millis == None {
-                    // This shouldn't be possible if the `Serato Markers_` data is valid.
-                    // Ideally, this should be checked during the parsing state.
-                    // FIXME: Throw error here?
+                    // This may happen even for valid data, because unset loops lack the start/end
+                    // position.
                     map.remove(&index);
                     continue;
                 }
 
-                // If the cue is set in both `Serato Markers2` and `Serato Markers_`, use
+                let start_position_millis = marker.start_position_millis.unwrap();
+                let end_position_millis = marker.end_position_millis.unwrap();
+
+                // If the loop is set in both `Serato Markers2` and `Serato Markers_`, use
                 // the version from `Serato Markers_`, but keep the label from `Serato
                 // Markers2` because the `Serato Markers_` tag doesn't contain labels.
-                if let Some(c) = map.remove(&index) {
-                    let start_position_millis = marker.start_position_millis.unwrap();
-                    let end_position_millis = marker.end_position_millis.unwrap();
+                let markers2_loop = map.remove(&index);
+                let label = match markers2_loop {
+                    Some(c) => c.label,
+                    None => String::new(),
+                };
 
-                    map.insert(
+                map.insert(
+                    index,
+                    generic::Loop {
                         index,
-                        generic::Loop {
-                            index,
-                            start_position_millis,
-                            end_position_millis,
-                            color: marker.color,
-                            label: c.label,
-                            is_locked: marker.is_locked,
-                        },
-                    );
-                }
+                        start_position_millis,
+                        end_position_millis,
+                        color: marker.color,
+                        label,
+                        is_locked: marker.is_locked,
+                    },
+                );
             }
         }
 
