@@ -1,0 +1,28 @@
+use std::env;
+use std::string::String;
+use triseratops::library::{Library, Track};
+
+fn main() -> Result<(), triseratops::error::Error> {
+    let mut args: Vec<String> = env::args().collect();
+    let _prog = args.remove(0);
+
+    if args.len() != 1 {
+        panic!("Expected exactly 1 argument!")
+    }
+    let path = args.remove(0);
+
+    let library = Library::read_from_path(path)?;
+    let tracks: Vec<&Track> = library.tracks().collect();
+    println!("Library ({} tracks)", tracks.len());
+    println!("{:#?}", tracks);
+    let subcrates = library.subcrates();
+    for subcrate in subcrates {
+        println!();
+        print!("Subcrate: {}", &subcrate);
+        let subcrate_tracks = library.subcrate(subcrate)?;
+        println!(" ({} tracks)", subcrate_tracks.len());
+        println!("{:#?}", subcrate_tracks);
+    }
+
+    Ok(())
+}
