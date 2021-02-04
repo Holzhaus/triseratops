@@ -14,12 +14,12 @@
 //! uses.
 //!
 //! ```
-//! use triseratops::tag::{TagContainer, TagType};
+//! use triseratops::tag::{TagContainer, TagFormat};
 //!
 //! fn parse_and_print_cues(markers_data: &[u8], markers2_data: &[u8]) {
 //!     let mut tags = TagContainer::new();
-//!     tags.parse_markers(markers_data, TagType::ID3).expect("Failed to parse Markers data!");
-//!     tags.parse_markers2(markers2_data, TagType::ID3).expect("Failed to parse Markers2 data!");
+//!     tags.parse_markers(markers_data, TagFormat::ID3).expect("Failed to parse Markers data!");
+//!     tags.parse_markers2(markers2_data, TagFormat::ID3).expect("Failed to parse Markers2 data!");
 //!
 //!     for cue in tags.cues() {
 //!         println!("{:?}", cue);

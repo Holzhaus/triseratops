@@ -6,7 +6,7 @@ pub(self) mod util;
 
 pub mod container;
 pub use container::TagContainer;
-pub use container::TagType;
+pub use container::TagFormat;
 
 pub mod analysis;
 pub use self::analysis::Analysis;

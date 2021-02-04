@@ -25,7 +25,7 @@ pub struct TagContainer {
 ///
 /// The format of the Serato tag data differs between tag types.
 /// Therefore it's necessary to tell the parser from what kind of the the data originates from.
-pub enum TagType {
+pub enum TagFormat {
     ID3,
     FLAC,
     MP4,
@@ -45,66 +45,66 @@ impl TagContainer {
     }
 
     /// Parse the [`Serato Autotags`](Autotags) tag.
-    pub fn parse_autotags(&mut self, input: &[u8], tag_type: TagType) -> Result<(), Error> {
-        match tag_type {
-            TagType::ID3 => {
+    pub fn parse_autotags(&mut self, input: &[u8], tag_format: TagFormat) -> Result<(), Error> {
+        match tag_format {
+            TagFormat::ID3 => {
                 self.autotags = Some(Autotags::parse_id3(input)?);
             }
-            TagType::FLAC => {
+            TagFormat::FLAC => {
                 self.autotags = Some(Autotags::parse_flac(input)?);
             }
-            TagType::MP4 => {
+            TagFormat::MP4 => {
                 self.autotags = Some(Autotags::parse_mp4(input)?);
             }
-            _ => return Err(Error::UnsupportedTagType),
+            _ => return Err(Error::UnsupportedTagFormat),
         }
         Ok(())
     }
 
     /// Parse the [`Serato BeatGrid`](Beatgrid) tag.
-    pub fn parse_beatgrid(&mut self, input: &[u8], tag_type: TagType) -> Result<(), Error> {
-        match tag_type {
-            TagType::ID3 => {
+    pub fn parse_beatgrid(&mut self, input: &[u8], tag_format: TagFormat) -> Result<(), Error> {
+        match tag_format {
+            TagFormat::ID3 => {
                 self.beatgrid = Some(Beatgrid::parse_id3(input)?);
             }
-            TagType::FLAC => {
+            TagFormat::FLAC => {
                 self.beatgrid = Some(Beatgrid::parse_flac(input)?);
             }
-            TagType::MP4 => {
+            TagFormat::MP4 => {
                 self.beatgrid = Some(Beatgrid::parse_mp4(input)?);
             }
-            _ => return Err(Error::UnsupportedTagType),
+            _ => return Err(Error::UnsupportedTagFormat),
         }
         Ok(())
     }
 
     /// Parse the [`Serato Markers_`](Markers) tag.
-    pub fn parse_markers(&mut self, input: &[u8], tag_type: TagType) -> Result<(), Error> {
-        match tag_type {
-            TagType::ID3 => {
+    pub fn parse_markers(&mut self, input: &[u8], tag_format: TagFormat) -> Result<(), Error> {
+        match tag_format {
+            TagFormat::ID3 => {
                 self.markers = Some(Markers::parse_id3(input)?);
             }
-            TagType::MP4 => {
+            TagFormat::MP4 => {
                 self.markers = Some(Markers::parse_mp4(input)?);
             }
-            _ => return Err(Error::UnsupportedTagType),
+            _ => return Err(Error::UnsupportedTagFormat),
         }
         Ok(())
     }
 
     /// Parse the [`Serato Markers2`](Markers2) tag.
-    pub fn parse_markers2(&mut self, input: &[u8], tag_type: TagType) -> Result<(), Error> {
-        match tag_type {
-            TagType::ID3 => {
+    pub fn parse_markers2(&mut self, input: &[u8], tag_format: TagFormat) -> Result<(), Error> {
+        match tag_format {
+            TagFormat::ID3 => {
                 self.markers2 = Some(Markers2::parse_id3(input)?);
             }
-            TagType::FLAC => {
+            TagFormat::FLAC => {
                 self.markers2 = Some(Markers2::parse_flac(input)?);
             }
-            TagType::MP4 => {
+            TagFormat::MP4 => {
                 self.markers2 = Some(Markers2::parse_mp4(input)?);
             }
-            TagType::Ogg => {
+            TagFormat::Ogg => {
                 self.markers2 = Some(Markers2::parse_ogg(input)?);
             }
         }
@@ -112,18 +112,18 @@ impl TagContainer {
     }
 
     /// Parse the [`Serato Overview`](Overview) tag.
-    pub fn parse_overview(&mut self, input: &[u8], tag_type: TagType) -> Result<(), Error> {
-        match tag_type {
-            TagType::ID3 => {
+    pub fn parse_overview(&mut self, input: &[u8], tag_format: TagFormat) -> Result<(), Error> {
+        match tag_format {
+            TagFormat::ID3 => {
                 self.overview = Some(Overview::parse_id3(input)?);
             }
-            TagType::FLAC => {
+            TagFormat::FLAC => {
                 self.overview = Some(Overview::parse_flac(input)?);
             }
-            TagType::MP4 => {
+            TagFormat::MP4 => {
                 self.overview = Some(Overview::parse_mp4(input)?);
             }
-            _ => return Err(Error::UnsupportedTagType),
+            _ => return Err(Error::UnsupportedTagFormat),
         }
         Ok(())
     }

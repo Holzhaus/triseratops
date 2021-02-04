@@ -10,9 +10,9 @@ pub enum Error {
     #[error("Generic parse input")]
     ParseError,
 
-    /// Thrown when trying to parse a tag with an unsupported tag type.
-    #[error("Unsupported tag type")]
-    UnsupportedTagType,
+    /// Thrown when trying to parse a tag with an unsupported tag format.
+    #[error("Unsupported tag format")]
+    UnsupportedTagFormat,
 
     /// Represents an generic parse error.
     #[error("Incomplete parse error")]

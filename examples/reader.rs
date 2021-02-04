@@ -11,7 +11,7 @@ use std::io::Read;
 use std::str;
 use std::string::String;
 use triseratops::tag::format::id3::ID3Tag;
-use triseratops::tag::TagType;
+use triseratops::tag::TagFormat;
 
 fn read_str(reader: &mut dyn BufRead) -> Result<String, Error> {
     let mut value = vec![];
@@ -74,7 +74,7 @@ fn main() -> Result<(), triseratops::error::Error> {
                 let tag = triseratops::tag::Markers::parse_id3(&data)?;
                 let output = format!("{:#?}", tag);
                 println!("{}", textwrap::indent(&output, "    "));
-                container.parse_markers(&data, TagType::ID3)?;
+                container.parse_markers(&data, TagFormat::ID3)?;
             }
             triseratops::tag::Markers2::ID3_TAG => {
                 let tag = triseratops::tag::Markers2::parse_id3(&data)?;
