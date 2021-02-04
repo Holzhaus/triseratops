@@ -1,5 +1,6 @@
 # triseratops - The robust, in-depth Serato Parser & Serializer
 
+![Version](https://img.shields.io/crates/v/triseratops)
 ![License](https://img.shields.io/github/license/Holzhaus/triseratops)
 ![Build Status](https://img.shields.io/github/checks-status/Holzhaus/triseratops/main)
 
