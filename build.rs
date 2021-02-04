@@ -76,7 +76,7 @@ fn write_tag_test(test_file: &mut File, filepath: &Path, tag_name: &str) {
 
     write!(
         test_file,
-        include_str!("./tests/test_parse.rs.in"),
+        include_str!("./tests/test_tagdata.rs.in"),
         name = test_name,
         filepath = filepath.to_str().unwrap(),
         parser = parser,
