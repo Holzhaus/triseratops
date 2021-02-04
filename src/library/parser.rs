@@ -6,6 +6,11 @@ use std::io::{BufReader, Read};
 use std::ops::Add;
 use std::path::{Path, PathBuf};
 
+const DATABASE_FILENAME: &str = "database V2";
+const CRATE_EXTENSION: &str = ".crate";
+const SERATO_DIR: &str = "_Serato_";
+const SUBCRATE_DIR: &str = "Subcrates";
+
 #[derive(Clone, Debug)]
 pub struct Track {
     pub file_path: PathBuf,
@@ -109,11 +114,11 @@ impl Library {
     }
 
     fn serato_path(&self) -> PathBuf {
-        self.path.join("_Serato_")
+        self.path.join(SERATO_DIR)
     }
 
     pub fn reload(&mut self) -> Result<(), Error> {
-        let database_path = self.serato_path().join("database V2");
+        let database_path = self.serato_path().join(DATABASE_FILENAME);
         let mut file = BufReader::new(File::open(database_path)?);
         let mut data = vec![];
         file.read_to_end(&mut data)?;
@@ -140,7 +145,7 @@ impl Library {
     }
 
     pub fn subcrates(&self) -> Vec<String> {
-        let crates_path = self.serato_path().join("Subcrates");
+        let crates_path = self.serato_path().join(SUBCRATE_DIR);
         let mut crates = vec![];
         if let Ok(entries) = crates_path.read_dir() {
             for entry in entries {
@@ -157,7 +162,7 @@ impl Library {
                 }
 
                 if let Some(ext) = crate_path.extension() {
-                    if ext != "crate" {
+                    if ext != CRATE_EXTENSION {
                         continue;
                     }
                     if let Some(crate_name_osstr) = crate_path.file_stem() {
@@ -173,8 +178,8 @@ impl Library {
     }
 
     pub fn subcrate(&self, name: String) -> Result<Vec<&Track>, Error> {
-        let filename = name.add(".crate");
-        let crate_path = self.serato_path().join("Subcrates").join(filename);
+        let filename = name.add(CRATE_EXTENSION);
+        let crate_path = self.serato_path().join(SUBCRATE_DIR).join(filename);
         let mut file = BufReader::new(File::open(crate_path)?);
         let mut data = vec![];
         file.read_to_end(&mut data)?;
