@@ -1,6 +1,7 @@
 use super::database;
 use crate::error::Error;
 use std::collections::HashMap;
+use std::fs;
 use std::fs::File;
 use std::io::{BufReader, Read};
 use std::ops::Add;
@@ -105,7 +106,7 @@ pub struct Library {
 
 impl Library {
     pub fn read_from_path(path: impl AsRef<Path>) -> Result<Self, Error> {
-        let path = path.as_ref().to_path_buf();
+        let path = fs::canonicalize(path)?;
         let tracks = HashMap::new();
         let mut library = Library { path, tracks };
         library.reload()?;
