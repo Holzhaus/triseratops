@@ -64,11 +64,13 @@ fn main() -> Result<(), triseratops::error::Error> {
                 let tag = triseratops::tag::Autotags::parse_id3(&data)?;
                 let output = format!("{:#?}", tag);
                 println!("{}", textwrap::indent(&output, "    "));
+                container.parse_autotags(&data, TagFormat::ID3)?;
             }
             triseratops::tag::Beatgrid::ID3_TAG => {
                 let tag = triseratops::tag::Beatgrid::parse_id3(&data)?;
                 let output = format!("{:#?}", tag);
                 println!("{}", textwrap::indent(&output, "    "));
+                container.parse_beatgrid(&data, TagFormat::ID3)?;
             }
             triseratops::tag::Markers::ID3_TAG => {
                 let tag = triseratops::tag::Markers::parse_id3(&data)?;
@@ -80,11 +82,13 @@ fn main() -> Result<(), triseratops::error::Error> {
                 let tag = triseratops::tag::Markers2::parse_id3(&data)?;
                 let output = format!("{:#?}", tag);
                 println!("{}", textwrap::indent(&output, "    "));
+                container.parse_markers2(&data, TagFormat::ID3)?;
             }
             triseratops::tag::Overview::ID3_TAG => {
                 let tag = triseratops::tag::Overview::parse_id3(&data)?;
                 let output = format!("{:#?}", tag);
                 println!("{}", textwrap::indent(&output, "    "));
+                container.parse_overview(&data, TagFormat::ID3)?;
             }
             _ => (),
         }
