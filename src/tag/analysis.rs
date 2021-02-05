@@ -48,7 +48,7 @@ impl flac::FLACTag for Analysis {
     const FLAC_COMMENT: &'static str = "SERATO_ANALYSIS";
 }
 impl mp4::MP4Tag for Analysis {
-    const MP4_ATOM: &'static str = "----:com.serato.dj:analysisVersion";
+    const MP4_ATOM_FREEFORM_NAME: &'static str = "analysisVersion";
 }
 
 impl ogg::OggTag for Analysis {

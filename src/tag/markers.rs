@@ -118,7 +118,7 @@ impl Tag for Markers {
 impl id3::ID3Tag for Markers {}
 impl enveloped::EnvelopedTag for Markers {}
 impl mp4::MP4Tag for Markers {
-    const MP4_ATOM: &'static str = "----:com.serato.dj:markers";
+    const MP4_ATOM_FREEFORM_NAME: &'static str = "markers";
 
     fn parse_mp4(input: &[u8]) -> Result<Self, Error> {
         let (_, encoded) = nom::combinator::all_consuming(

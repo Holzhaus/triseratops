@@ -156,7 +156,7 @@ impl flac::FLACTag for Markers2 {
     const FLAC_COMMENT: &'static str = "SERATO_MARKERS_V2";
 }
 impl mp4::MP4Tag for Markers2 {
-    const MP4_ATOM: &'static str = "----:com.serato.dj:markersv2";
+    const MP4_ATOM_FREEFORM_NAME: &'static str = "markersv2";
 }
 impl ogg::OggTag for Markers2 {
     const OGG_COMMENT: &'static str = "serato_markers2";

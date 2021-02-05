@@ -52,7 +52,7 @@ impl flac::FLACTag for Overview {
     const FLAC_COMMENT: &'static str = "SERATO_OVERVIEW";
 }
 impl mp4::MP4Tag for Overview {
-    const MP4_ATOM: &'static str = "----:com.serato.dj:overview";
+    const MP4_ATOM_FREEFORM_NAME: &'static str = "overview";
 }
 
 /// Returns a 16-byte vector of data parsed from the input slice.

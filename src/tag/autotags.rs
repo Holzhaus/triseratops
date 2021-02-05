@@ -58,7 +58,7 @@ impl flac::FLACTag for Autotags {
     const FLAC_COMMENT: &'static str = "SERATO_AUTOGAIN";
 }
 impl mp4::MP4Tag for Autotags {
-    const MP4_ATOM: &'static str = "----:com.serato.dj:autgain";
+    const MP4_ATOM_FREEFORM_NAME: &'static str = "autgain";
 }
 
 /// Returns an `f64` parsed from zero-terminated ASCII chars the input slice.
