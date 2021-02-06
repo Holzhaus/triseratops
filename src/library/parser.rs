@@ -4,7 +4,6 @@ use std::collections::HashMap;
 use std::fs;
 use std::fs::File;
 use std::io::{BufReader, Read};
-use std::ops::Add;
 use std::path::{Path, PathBuf};
 
 const DATABASE_FILENAME: &str = "database V2";
@@ -178,8 +177,8 @@ impl Library {
         crates
     }
 
-    pub fn subcrate(&self, name: String) -> Result<Vec<&Track>, Error> {
-        let filename = name.add(CRATE_EXTENSION);
+    pub fn subcrate(&self, name: &str) -> Result<Vec<&Track>, Error> {
+        let filename = format!("{}{}", name, CRATE_EXTENSION);
         let crate_path = self.serato_path().join(SUBCRATE_DIR).join(filename);
         let mut file = BufReader::new(File::open(crate_path)?);
         let mut data = vec![];

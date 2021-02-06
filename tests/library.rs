@@ -8,9 +8,9 @@ fn test_library() {
     let tracks: Vec<&Track> = library.tracks().collect();
     assert_eq!(tracks.len(), 4);
 
-    let tracks = library.subcrate("80s Mashup".to_string()).unwrap();
+    let tracks = library.subcrate("80s Mashup").unwrap();
     assert_eq!(tracks.len(), 1);
 
-    let tracks = library.subcrate("French House".to_string()).unwrap();
+    let tracks = library.subcrate("French House").unwrap();
     assert_eq!(tracks.len(), 2);
 }
