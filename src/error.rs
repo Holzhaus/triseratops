@@ -40,6 +40,10 @@ pub enum Error {
     #[error("Envelope name mismatch")]
     EnvelopeNameMismatch { expected: String, actual: String },
 
+    /// Happens when trying to write tag data even though no data is available.
+    #[error("No tag data available")]
+    NoTagDataAvailable,
+
     /// Represents all other cases of `std::io::Error`.
     #[error(transparent)]
     IOError(#[from] std::io::Error),

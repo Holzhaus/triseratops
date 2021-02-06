@@ -5,6 +5,7 @@ use super::{
     generic, markers, Autotags, Beatgrid, Markers, Markers2, Overview,
 };
 use crate::error::Error;
+use std::io;
 
 /// Provides a streamlined interface for retrieving Serato tag data.
 ///
@@ -61,6 +62,24 @@ impl TagContainer {
         Ok(())
     }
 
+    /// Write the [`Serato Autotags`](Autotags) tag.
+    pub fn write_autotags(
+        &self,
+        writer: impl io::Write,
+        tag_format: TagFormat,
+    ) -> Result<usize, Error> {
+        let tag = match &self.autotags {
+            Some(x) => x,
+            None => return Err(Error::NoTagDataAvailable),
+        };
+        match tag_format {
+            TagFormat::ID3 => tag.write_id3(writer),
+            TagFormat::FLAC => tag.write_flac(writer),
+            TagFormat::MP4 => tag.write_mp4(writer),
+            _ => Err(Error::UnsupportedTagFormat),
+        }
+    }
+
     /// Parse the [`Serato BeatGrid`](Beatgrid) tag.
     pub fn parse_beatgrid(&mut self, input: &[u8], tag_format: TagFormat) -> Result<(), Error> {
         match tag_format {
@@ -78,6 +97,24 @@ impl TagContainer {
         Ok(())
     }
 
+    /// Write the [`Serato BeatGrid`](Beatgrid) tag.
+    pub fn write_beatgrid(
+        &self,
+        writer: impl io::Write,
+        tag_format: TagFormat,
+    ) -> Result<usize, Error> {
+        let tag = match &self.beatgrid {
+            Some(x) => x,
+            None => return Err(Error::NoTagDataAvailable),
+        };
+        match tag_format {
+            TagFormat::ID3 => tag.write_id3(writer),
+            TagFormat::FLAC => tag.write_flac(writer),
+            TagFormat::MP4 => tag.write_mp4(writer),
+            _ => Err(Error::UnsupportedTagFormat),
+        }
+    }
+
     /// Parse the [`Serato Markers_`](Markers) tag.
     pub fn parse_markers(&mut self, input: &[u8], tag_format: TagFormat) -> Result<(), Error> {
         match tag_format {
@@ -90,6 +127,23 @@ impl TagContainer {
             _ => return Err(Error::UnsupportedTagFormat),
         }
         Ok(())
+    }
+
+    /// Write the [`Serato Markers_`](Markers) tag.
+    pub fn write_markers(
+        &self,
+        writer: impl io::Write,
+        tag_format: TagFormat,
+    ) -> Result<usize, Error> {
+        let tag = match &self.markers {
+            Some(x) => x,
+            None => return Err(Error::NoTagDataAvailable),
+        };
+        match tag_format {
+            TagFormat::ID3 => tag.write_id3(writer),
+            TagFormat::MP4 => tag.write_mp4(writer),
+            _ => Err(Error::UnsupportedTagFormat),
+        }
     }
 
     /// Parse the [`Serato Markers2`](Markers2) tag.
@@ -111,6 +165,24 @@ impl TagContainer {
         Ok(())
     }
 
+    /// Write the [`Serato Markers2`](Markers2) tag.
+    pub fn write_markers2(
+        &self,
+        writer: impl io::Write,
+        tag_format: TagFormat,
+    ) -> Result<usize, Error> {
+        let tag = match &self.markers2 {
+            Some(x) => x,
+            None => return Err(Error::NoTagDataAvailable),
+        };
+        match tag_format {
+            TagFormat::ID3 => tag.write_id3(writer),
+            TagFormat::FLAC => tag.write_flac(writer),
+            TagFormat::MP4 => tag.write_mp4(writer),
+            _ => Err(Error::UnsupportedTagFormat),
+        }
+    }
+
     /// Parse the [`Serato Overview`](Overview) tag.
     pub fn parse_overview(&mut self, input: &[u8], tag_format: TagFormat) -> Result<(), Error> {
         match tag_format {
@@ -126,6 +198,24 @@ impl TagContainer {
             _ => return Err(Error::UnsupportedTagFormat),
         }
         Ok(())
+    }
+
+    /// Write the [`Serato Overview`](Overview) tag.
+    pub fn write_overview(
+        &self,
+        writer: impl io::Write,
+        tag_format: TagFormat,
+    ) -> Result<usize, Error> {
+        let tag = match &self.overview {
+            Some(x) => x,
+            None => return Err(Error::NoTagDataAvailable),
+        };
+        match tag_format {
+            TagFormat::ID3 => tag.write_id3(writer),
+            TagFormat::FLAC => tag.write_flac(writer),
+            TagFormat::MP4 => tag.write_mp4(writer),
+            _ => Err(Error::UnsupportedTagFormat),
+        }
     }
 
     /// Returns the [`auto_gain`](Autotags::auto_gain) value from the [`Serato Autotags`](Autotags) tag.
