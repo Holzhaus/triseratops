@@ -78,7 +78,7 @@ impl flac::FLACTag for Beatgrid {
     const FLAC_COMMENT: &'static str = "SERATO_BEATGRID";
 }
 impl mp4::MP4Tag for Beatgrid {
-    const MP4_ATOM: &'static str = "----:com.serato.dj:beatgrid";
+    const MP4_ATOM_FREEFORM_NAME: &'static str = "beatgrid";
 }
 
 /// Returns a `u32` parsed from the input slice, decremented by 1.

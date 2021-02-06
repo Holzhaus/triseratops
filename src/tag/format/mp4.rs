@@ -8,8 +8,11 @@ use crate::error::Error;
 use std::io;
 
 pub trait MP4Tag: EnvelopedTag {
-    /// Name of the `MP4_ATOM` that this data is stored in.
-    const MP4_ATOM: &'static str;
+    /// The mean part of the freeform `MP4_ATOM` that this data is stored in.
+    const MP4_ATOM_FREEFORM_MEAN: &'static str = "com.serato.dj";
+
+    /// The mean part of the freeform `MP4_ATOM` that this data is stored in.
+    const MP4_ATOM_FREEFORM_NAME: &'static str;
 
     fn parse_mp4(input: &[u8]) -> Result<Self, Error> {
         Self::parse_enveloped(&input)

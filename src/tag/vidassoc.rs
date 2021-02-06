@@ -52,7 +52,7 @@ impl flac::FLACTag for VidAssoc {
     const FLAC_COMMENT: &'static str = "SERATO_VIDASSOC";
 }
 impl mp4::MP4Tag for VidAssoc {
-    const MP4_ATOM: &'static str = "----:com.serato.dj:videoassociation";
+    const MP4_ATOM_FREEFORM_NAME: &'static str = "videoassociation";
 }
 
 fn take_vidassoc(input: &[u8]) -> Res<&[u8], VidAssoc> {

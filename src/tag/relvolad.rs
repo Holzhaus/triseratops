@@ -50,7 +50,7 @@ impl flac::FLACTag for RelVolAd {
     const FLAC_COMMENT: &'static str = "SERATO_RELVOL";
 }
 impl mp4::MP4Tag for RelVolAd {
-    const MP4_ATOM: &'static str = "----:com.serato.dj:relvol";
+    const MP4_ATOM_FREEFORM_NAME: &'static str = "relvol";
 }
 
 fn take_relvolad(input: &[u8]) -> Res<&[u8], RelVolAd> {
