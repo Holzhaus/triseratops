@@ -164,7 +164,7 @@
     <span class="kw">const</span> <span class="ident">FLAC_COMMENT</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;SERATO_OVERVIEW&quot;</span>;
 }
 <span class="kw">impl</span> <span class="ident">mp4</span>::<span class="ident">MP4Tag</span> <span class="kw">for</span> <span class="ident">Overview</span> {
-    <span class="kw">const</span> <span class="ident">MP4_ATOM</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;----:com.serato.dj:overview&quot;</span>;
+    <span class="kw">const</span> <span class="ident">MP4_ATOM_FREEFORM_NAME</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;overview&quot;</span>;
 }
 
 <span class="doccomment">/// Returns a 16-byte vector of data parsed from the input slice.</span>

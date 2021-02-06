@@ -564,7 +564,7 @@
 <span class="kw">impl</span> <span class="ident">id3</span>::<span class="ident">ID3Tag</span> <span class="kw">for</span> <span class="ident">Markers</span> {}
 <span class="kw">impl</span> <span class="ident">enveloped</span>::<span class="ident">EnvelopedTag</span> <span class="kw">for</span> <span class="ident">Markers</span> {}
 <span class="kw">impl</span> <span class="ident">mp4</span>::<span class="ident">MP4Tag</span> <span class="kw">for</span> <span class="ident">Markers</span> {
-    <span class="kw">const</span> <span class="ident">MP4_ATOM</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;----:com.serato.dj:markers&quot;</span>;
+    <span class="kw">const</span> <span class="ident">MP4_ATOM_FREEFORM_NAME</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;markers&quot;</span>;
 
     <span class="kw">fn</span> <span class="ident">parse_mp4</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> (<span class="kw">_</span>, <span class="ident">encoded</span>) <span class="op">=</span> <span class="ident">nom</span>::<span class="ident">combinator</span>::<span class="ident">all_consuming</span>(

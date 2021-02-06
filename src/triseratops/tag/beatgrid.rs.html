@@ -254,7 +254,7 @@
     <span class="kw">const</span> <span class="ident">FLAC_COMMENT</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;SERATO_BEATGRID&quot;</span>;
 }
 <span class="kw">impl</span> <span class="ident">mp4</span>::<span class="ident">MP4Tag</span> <span class="kw">for</span> <span class="ident">Beatgrid</span> {
-    <span class="kw">const</span> <span class="ident">MP4_ATOM</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;----:com.serato.dj:beatgrid&quot;</span>;
+    <span class="kw">const</span> <span class="ident">MP4_ATOM_FREEFORM_NAME</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;beatgrid&quot;</span>;
 }
 
 <span class="doccomment">/// Returns a `u32` parsed from the input slice, decremented by 1.</span>

@@ -798,7 +798,7 @@
     <span class="kw">const</span> <span class="ident">FLAC_COMMENT</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;SERATO_MARKERS_V2&quot;</span>;
 }
 <span class="kw">impl</span> <span class="ident">mp4</span>::<span class="ident">MP4Tag</span> <span class="kw">for</span> <span class="ident">Markers2</span> {
-    <span class="kw">const</span> <span class="ident">MP4_ATOM</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;----:com.serato.dj:markersv2&quot;</span>;
+    <span class="kw">const</span> <span class="ident">MP4_ATOM_FREEFORM_NAME</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;markersv2&quot;</span>;
 }
 <span class="kw">impl</span> <span class="ident">ogg</span>::<span class="ident">OggTag</span> <span class="kw">for</span> <span class="ident">Markers2</span> {
     <span class="kw">const</span> <span class="ident">OGG_COMMENT</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;serato_markers2&quot;</span>;
