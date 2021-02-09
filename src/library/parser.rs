@@ -3,11 +3,12 @@ use crate::error::Error;
 use std::collections::HashMap;
 use std::fs;
 use std::fs::File;
+use std::io;
 use std::io::{BufReader, Read};
 use std::path::{Path, PathBuf};
 
 const DATABASE_FILENAME: &str = "database V2";
-const CRATE_EXTENSION: &str = ".crate";
+const CRATE_EXTENSION: &str = "crate";
 const SERATO_DIR: &str = "_Serato_";
 const SUBCRATE_DIR: &str = "Subcrates";
 
@@ -144,41 +145,19 @@ impl Library {
         self.tracks.get(file_path)
     }
 
-    pub fn subcrates(&self) -> Vec<String> {
+    pub fn subcrates(&self) -> impl Iterator<Item = String> {
         let crates_path = self.serato_path().join(SUBCRATE_DIR);
-        let mut crates = vec![];
-        if let Ok(entries) = crates_path.read_dir() {
-            for entry in entries {
-                let entry = match entry.ok() {
-                    Some(x) => x,
-                    None => {
-                        continue;
-                    }
-                };
-
-                let crate_path = entry.path();
-                if !crate_path.is_file() {
-                    continue;
-                }
-
-                if let Some(ext) = crate_path.extension() {
-                    if ext != CRATE_EXTENSION {
-                        continue;
-                    }
-                    if let Some(crate_name_osstr) = crate_path.file_stem() {
-                        if let Some(crate_name) = crate_name_osstr.to_str() {
-                            crates.push(crate_name.to_string());
-                        }
-                    }
-                }
-            }
-        }
-
-        crates
+        crates_path
+            .read_dir()
+            .into_iter()
+            .flatten()
+            .filter_map(|x| x.ok())
+            .map(|x| x.path())
+            .filter_map(|x| crate_name_from_path(&x).ok())
     }
 
     pub fn subcrate(&self, name: &str) -> Result<Vec<&Track>, Error> {
-        let filename = format!("{}{}", name, CRATE_EXTENSION);
+        let filename = format!("{}.{}", name, CRATE_EXTENSION);
         let crate_path = self.serato_path().join(SUBCRATE_DIR).join(filename);
         let mut file = BufReader::new(File::open(crate_path)?);
         let mut data = vec![];
@@ -201,4 +180,32 @@ impl Library {
 
         Ok(tracks)
     }
+}
+
+fn crate_name_from_path(path: &PathBuf) -> Result<String, Error> {
+    if !path.is_file() {
+        return Err(Error::IOError(io::Error::new(
+            io::ErrorKind::Other,
+            "crate path is not a file",
+        )));
+    }
+
+    if let Some(ext) = path.extension() {
+        if ext != CRATE_EXTENSION {
+            return Err(Error::IOError(io::Error::new(
+                io::ErrorKind::Other,
+                "crate path has no .crate extension",
+            )));
+        }
+        if let Some(crate_name_osstr) = path.file_stem() {
+            if let Some(crate_name) = crate_name_osstr.to_str() {
+                return Ok(crate_name.to_string());
+            }
+        }
+    }
+
+    Err(Error::IOError(io::Error::new(
+        io::ErrorKind::Other,
+        "Failed to create crate name",
+    )))
 }
