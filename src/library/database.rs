@@ -2,6 +2,7 @@ extern crate nom;
 
 use crate::error::Error;
 use crate::util::Res;
+use std::path::PathBuf;
 
 pub type Path = String;
 
@@ -34,7 +35,7 @@ pub enum Field {
     },
     UnknownPathField {
         name: Vec<u8>,
-        path: String,
+        path: PathBuf,
     },
     UnknownU16Field {
         name: Vec<u8>,
@@ -58,7 +59,7 @@ pub enum Field {
     Composer(String),
     DateAdded(u32),
     DateAddedStr(String),
-    FilePath(Path),
+    FilePath(PathBuf),
     FileSize(String),
     FileTime(u32),
     FileType(String),
@@ -79,7 +80,7 @@ pub enum Field {
     ColumnTitle(Vec<Field>),
     ColumnName(String),
     ColumnWidth(String),
-    TrackPath(Path),
+    TrackPath(PathBuf),
 }
 
 fn take_field_type(input: &[u8]) -> Res<&[u8], u8> {
@@ -174,6 +175,7 @@ fn parse_field<'a, 'b>(input: &'a [u8], name: &'b [u8], field_type: u8) -> Res<&
         }
         FIELD_PATH => {
             let (input, path) = parse_u16_text(input)?;
+            let path = PathBuf::from(path);
             let field = match name {
                 b"fil" => Field::FilePath(path),
                 b"trk" => Field::TrackPath(path),

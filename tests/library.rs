@@ -1,31 +1,19 @@
 extern crate triseratops;
 
-use std::path::PathBuf;
-use triseratops::library::filesystem;
+use triseratops::library::{Library, Track};
 
 #[test]
-fn library_dir_detection() {
-    let music_dir = PathBuf::from("tests/data/library/usb_drive");
-    let info = filesystem::get_library(&music_dir).unwrap();
-    assert_eq!(
-        info,
-        filesystem::SeratoLibraryInfo {
-            path: PathBuf::from("tests/data/library/usb_drive"),
-            database_path: PathBuf::from("tests/data/library/usb_drive/_Serato_/database V2"),
-            crates: vec![
-                (
-                    String::from("80s Mashup"),
-                    PathBuf::from(
-                        "tests/data/library/usb_drive/_Serato_/Subcrates/80s Mashup.crate"
-                    )
-                ),
-                (
-                    String::from("French House"),
-                    PathBuf::from(
-                        "tests/data/library/usb_drive/_Serato_/Subcrates/French House.crate"
-                    )
-                ),
-            ],
-        }
-    );
+fn test_library() {
+    let library = Library::read_from_path("tests/data/library/usb_drive").unwrap();
+    let tracks: Vec<&Track> = library.tracks().collect();
+    assert_eq!(tracks.len(), 4);
+
+    let subcrates: Vec<String> = library.subcrates().collect();
+    assert_eq!(subcrates.len(), 2);
+
+    let tracks: Vec<&Track> = library.subcrate("80s Mashup").unwrap().collect();
+    assert_eq!(tracks.len(), 1);
+
+    let tracks: Vec<&Track> = library.subcrate("French House").unwrap().collect();
+    assert_eq!(tracks.len(), 2);
 }
