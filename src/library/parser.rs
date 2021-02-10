@@ -1,3 +1,18 @@
+//! High-level interface for parsing Serato libraries.
+//!
+//! ```
+//! use std::path::PathBuf;
+//! use triseratops::library::{Library, Track};
+//!
+//! fn read_library(music_dir: &PathBuf) {
+//!     let library = Library::read_from_path(music_dir).unwrap();
+//!     for subcrate_name in library.subcrates() {
+//!         let tracks: Vec<&Track> = library.subcrate(&subcrate_name).unwrap().collect();
+//!         println!("Subcrate '{}': {} tracks", subcrate_name, tracks.len());
+//!     }
+//! }
+//! ```
+
 use super::database;
 use crate::error::Error;
 use std::collections::HashMap;
