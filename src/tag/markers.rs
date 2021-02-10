@@ -327,12 +327,17 @@ fn take_marker_mp4(input: &[u8]) -> Res<&[u8], Marker> {
     let (input, marker_type) = nom::error::context("marker type", take_marker_type)(input)?;
     let (input, is_locked) = nom::error::context("marker locked state", take_bool)(input)?;
 
-    let start_position_millis = Some(start_position_millis_raw);
-    let end_position_millis = if marker_type == MarkerType::Loop {
+    let start_position_millis = if start_position_millis_raw != 0xFFFFFFFF {
+        Some(start_position_millis_raw)
+    } else {
+        None
+    };
+    let end_position_millis = if end_position_millis_raw != 0xFFFFFFFF && marker_type == MarkerType::Loop {
         Some(end_position_millis_raw)
     } else {
         None
     };
+
     Ok((
         input,
         Marker {
