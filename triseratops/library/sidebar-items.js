@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["database",""],["filesystem",""]]});
+initSidebarItems({"mod":[["database",""]],"struct":[["Library","DAO that reads Serato libraries from the file system."],["Track",""]]});

@@ -1,1 +1,0 @@
-initSidebarItems({"fn":[["get_library",""]],"struct":[["SeratoLibraryInfo",""]],"type":[["CrateInfo",""]]});

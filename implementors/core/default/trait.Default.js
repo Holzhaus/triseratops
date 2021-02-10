@@ -1,3 +1,3 @@
 (function() {var implementors = {};
-implementors["triseratops"] = [{"text":"impl Default for TagContainer","synthetic":false,"types":[]}];
+implementors["triseratops"] = [{"text":"impl Default for Track","synthetic":false,"types":[]},{"text":"impl Default for TagContainer","synthetic":false,"types":[]}];
 if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
