@@ -7,9 +7,13 @@ use std::io;
 use std::io::{BufReader, Read};
 use std::path::{Path, PathBuf};
 
+/// File name of the main database file
 const DATABASE_FILENAME: &str = "database V2";
+/// File extension of the crate database files
 const CRATE_EXTENSION: &str = "crate";
+/// Name of the Serato directory inside the library directory
 const SERATO_DIR: &str = "_Serato_";
+/// Name of the directory containing subcrates inside the Serato directory
 const SUBCRATE_DIR: &str = "Subcrates";
 
 #[derive(Clone, Debug)]
@@ -30,6 +34,7 @@ pub struct Track {
 }
 
 impl Track {
+    /// Creates a new, empty Track object.
     pub fn new() -> Self {
         Self {
             file_path: PathBuf::new(),
@@ -48,6 +53,7 @@ impl Track {
         }
     }
 
+    /// Creates a new Track object from a list of database fields.
     pub fn from_fields(fields: Vec<database::Field>) -> Result<Self, Error> {
         let mut track = Self::new();
         for field in fields {
@@ -99,12 +105,14 @@ impl Default for Track {
     }
 }
 
+/// DAO that reads Serato libraries from the file system.
 pub struct Library {
     path: PathBuf,
     tracks: HashMap<PathBuf, Track>,
 }
 
 impl Library {
+    /// Read the library in the given path.
     pub fn read_from_path(path: impl AsRef<Path>) -> Result<Self, Error> {
         let path = fs::canonicalize(path)?;
         let tracks = HashMap::new();
@@ -118,6 +126,7 @@ impl Library {
         self.path.join(SERATO_DIR)
     }
 
+    /// Reload the library database from the hard disk.
     pub fn reload(&mut self) -> Result<(), Error> {
         let database_path = self.serato_path().join(DATABASE_FILENAME);
         let mut file = BufReader::new(File::open(database_path)?);
@@ -137,14 +146,17 @@ impl Library {
         Ok(())
     }
 
+    /// Get all tracks in the library.
     pub fn tracks(&self) -> impl Iterator<Item = &Track> {
         self.tracks.values()
     }
 
+    /// Get the track struct for the given path.
     pub fn track(&self, file_path: &PathBuf) -> Option<&Track> {
         self.tracks.get(file_path)
     }
 
+    /// Get a list of subcrate names.
     pub fn subcrates(&self) -> impl Iterator<Item = String> {
         let crates_path = self.serato_path().join(SUBCRATE_DIR);
         crates_path
@@ -156,6 +168,7 @@ impl Library {
             .filter_map(|x| crate_name_from_path(&x).ok())
     }
 
+    /// Get a list of tracks from the subcrate with the given name.
     pub fn subcrate(&self, name: &str) -> Result<Vec<&Track>, Error> {
         let filename = format!("{}.{}", name, CRATE_EXTENSION);
         let crate_path = self.serato_path().join(SUBCRATE_DIR).join(filename);
