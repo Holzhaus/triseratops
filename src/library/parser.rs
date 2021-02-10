@@ -169,28 +169,25 @@ impl Library {
     }
 
     /// Get a list of tracks from the subcrate with the given name.
-    pub fn subcrate(&self, name: &str) -> Result<Vec<&Track>, Error> {
+    pub fn subcrate(&self, name: &str) -> Result<impl Iterator<Item = &Track>, Error> {
         let filename = format!("{}.{}", name, CRATE_EXTENSION);
         let crate_path = self.serato_path().join(SUBCRATE_DIR).join(filename);
         let mut file = BufReader::new(File::open(crate_path)?);
         let mut data = vec![];
         file.read_to_end(&mut data)?;
 
-        let mut tracks = vec![];
-
         let fields = database::parse(&data)?;
-        for field in fields {
+        let tracks = fields.into_iter().filter_map(move |field| {
             if let database::Field::Track(track_fields) = field {
                 for track_field in track_fields {
                     if let database::Field::TrackPath(path) = track_field {
-                        if let Some(track) = self.track(&path) {
-                            tracks.push(track);
-                        }
+                        return self.track(&path);
                     }
                 }
             }
-        }
 
+            None
+        });
         Ok(tracks)
     }
 }

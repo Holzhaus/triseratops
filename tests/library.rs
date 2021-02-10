@@ -11,9 +11,9 @@ fn test_library() {
     let subcrates: Vec<String> = library.subcrates().collect();
     assert_eq!(subcrates.len(), 2);
 
-    let tracks = library.subcrate("80s Mashup").unwrap();
+    let tracks: Vec<&Track> = library.subcrate("80s Mashup").unwrap().collect();
     assert_eq!(tracks.len(), 1);
 
-    let tracks = library.subcrate("French House").unwrap();
+    let tracks: Vec<&Track> = library.subcrate("French House").unwrap().collect();
     assert_eq!(tracks.len(), 2);
 }

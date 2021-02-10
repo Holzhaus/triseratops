@@ -17,7 +17,7 @@ fn main() -> Result<(), triseratops::error::Error> {
     println!("{:#?}", tracks);
     let subcrates = library.subcrates();
     for subcrate in subcrates {
-        let subcrate_tracks = library.subcrate(&subcrate)?;
+        let subcrate_tracks: Vec<&Track> = library.subcrate(&subcrate)?.collect();
         println!();
         print!("Subcrate: {} ({} tracks)", &subcrate, subcrate_tracks.len());
         println!("{:#?}", subcrate_tracks);
