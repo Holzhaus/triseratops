@@ -4,8 +4,9 @@
 //! This is redundant with some of the information from the `Serato Markers2` tag. Serato will
 //! prefer information from `Serato Markers_` if it's present.
 
+use super::color::Color;
 use super::format::{enveloped, id3, mp4, Tag};
-use super::generic::{Color, Version};
+use super::generic::Version;
 use super::serato32;
 use super::util::{take_color, take_version, write_color, write_version};
 use crate::error::Error;

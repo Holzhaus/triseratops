@@ -29,7 +29,7 @@
 //! | 3-byte plaintext | `   cc 88 00` | `     110 0110010 0010000 0000000`
 //! | `serato32` value | `06 32 10 00` | `00000110001100100001000000000000`
 
-use super::generic::Color;
+use super::color::Color;
 use crate::error::Error;
 use crate::util::Res;
 use nom::number::complete::u8;
@@ -104,7 +104,7 @@ pub fn write(mut writer: impl io::Write, data: (u8, u8, u8)) -> Result<usize, Er
 ///
 /// # Example
 /// ```
-/// use triseratops::tag::generic::Color;
+/// use triseratops::tag::color::Color;
 /// use triseratops::tag::serato32::take_color;
 /// use nom::Err;
 /// use nom::error::{Error, ErrorKind};

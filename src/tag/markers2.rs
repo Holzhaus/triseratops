@@ -6,10 +6,10 @@
 //!
 //! The minimum length of this tag seems to be 470 bytes, and shorter contents are padded with null bytes.
 
+use super::color::Color;
 use super::format::{enveloped, flac, id3, mp4, ogg, Tag};
 use super::generic::{
-    CensorFlipAction, Color, Cue, Flip, FlipAction, JumpFlipAction, Loop, UnknownFlipAction,
-    Version,
+    CensorFlipAction, Cue, Flip, FlipAction, JumpFlipAction, Loop, UnknownFlipAction, Version,
 };
 use super::util::{take_color, take_version, write_color, write_version};
 use crate::error::Error;

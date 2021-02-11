@@ -1,7 +1,7 @@
 //! Various helper utilities for simplify parsing.
 extern crate nom;
 
-use super::generic::Color;
+use super::color::Color;
 use super::generic::Version;
 use crate::error::Error;
 use crate::util::Res;

@@ -1,8 +1,8 @@
 //! Provides the [`TagContainer` struct](TagContainer), a simple interface to access data in
 //! Serato's tags.
 use super::{
-    beatgrid, format::flac::FLACTag, format::id3::ID3Tag, format::mp4::MP4Tag, format::ogg::OggTag,
-    generic, markers, Autotags, Beatgrid, Markers, Markers2, Overview,
+    beatgrid, color::Color, format::flac::FLACTag, format::id3::ID3Tag, format::mp4::MP4Tag,
+    format::ogg::OggTag, generic, markers, Autotags, Beatgrid, Markers, Markers2, Overview,
 };
 use crate::error::Error;
 use std::io;
@@ -398,7 +398,7 @@ impl TagContainer {
     /// one from `Serato Markers_`. This is what Serato does too (i.e. if `Serato Markers_` and
     /// `Serato Markers2` contradict each other, Serato will use the value from `Serato
     /// Markers_`).
-    pub fn track_color(&self) -> Option<generic::Color> {
+    pub fn track_color(&self) -> Option<Color> {
         let mut track_color = None;
 
         if let Some(m) = &self.markers2 {
