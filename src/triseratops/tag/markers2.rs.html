@@ -648,10 +648,10 @@
 <span class="doccomment">//!</span>
 <span class="doccomment">//! The minimum length of this tag seems to be 470 bytes, and shorter contents are padded with null bytes.</span>
 
+<span class="kw">use</span> <span class="kw">super</span>::<span class="ident">color</span>::<span class="ident">Color</span>;
 <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">format</span>::{<span class="ident">enveloped</span>, <span class="ident">flac</span>, <span class="ident">id3</span>, <span class="ident">mp4</span>, <span class="ident">ogg</span>, <span class="ident">Tag</span>};
 <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">generic</span>::{
-    <span class="ident">CensorFlipAction</span>, <span class="ident">Color</span>, <span class="ident">Cue</span>, <span class="ident">Flip</span>, <span class="ident">FlipAction</span>, <span class="ident">JumpFlipAction</span>, <span class="ident">Loop</span>, <span class="ident">UnknownFlipAction</span>,
-    <span class="ident">Version</span>,
+    <span class="ident">CensorFlipAction</span>, <span class="ident">Cue</span>, <span class="ident">Flip</span>, <span class="ident">FlipAction</span>, <span class="ident">JumpFlipAction</span>, <span class="ident">Loop</span>, <span class="ident">UnknownFlipAction</span>, <span class="ident">Version</span>,
 };
 <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">util</span>::{<span class="ident">take_color</span>, <span class="ident">take_version</span>, <span class="ident">write_color</span>, <span class="ident">write_version</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">error</span>::<span class="ident">Error</span>;

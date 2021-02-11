@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Color","Represents a 3-Byte RGB color value."]]});

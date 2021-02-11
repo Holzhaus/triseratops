@@ -434,8 +434,8 @@
 <span class="doccomment">//! Provides the [`TagContainer` struct](TagContainer), a simple interface to access data in</span>
 <span class="doccomment">//! Serato&#39;s tags.</span>
 <span class="kw">use</span> <span class="kw">super</span>::{
-    <span class="ident">beatgrid</span>, <span class="ident">format</span>::<span class="ident">flac</span>::<span class="ident">FLACTag</span>, <span class="ident">format</span>::<span class="ident">id3</span>::<span class="ident">ID3Tag</span>, <span class="ident">format</span>::<span class="ident">mp4</span>::<span class="ident">MP4Tag</span>, <span class="ident">format</span>::<span class="ident">ogg</span>::<span class="ident">OggTag</span>,
-    <span class="ident">generic</span>, <span class="ident">markers</span>, <span class="ident">Autotags</span>, <span class="ident">Beatgrid</span>, <span class="ident">Markers</span>, <span class="ident">Markers2</span>, <span class="ident">Overview</span>,
+    <span class="ident">beatgrid</span>, <span class="ident">color</span>::<span class="ident">Color</span>, <span class="ident">format</span>::<span class="ident">flac</span>::<span class="ident">FLACTag</span>, <span class="ident">format</span>::<span class="ident">id3</span>::<span class="ident">ID3Tag</span>, <span class="ident">format</span>::<span class="ident">mp4</span>::<span class="ident">MP4Tag</span>,
+    <span class="ident">format</span>::<span class="ident">ogg</span>::<span class="ident">OggTag</span>, <span class="ident">generic</span>, <span class="ident">markers</span>, <span class="ident">Autotags</span>, <span class="ident">Beatgrid</span>, <span class="ident">Markers</span>, <span class="ident">Markers2</span>, <span class="ident">Overview</span>,
 };
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">error</span>::<span class="ident">Error</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>;
@@ -831,7 +831,7 @@
     <span class="doccomment">/// one from `Serato Markers_`. This is what Serato does too (i.e. if `Serato Markers_` and</span>
     <span class="doccomment">/// `Serato Markers2` contradict each other, Serato will use the value from `Serato</span>
     <span class="doccomment">/// Markers_`).</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">track_color</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">generic</span>::<span class="ident">Color</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">track_color</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Color</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">track_color</span> <span class="op">=</span> <span class="prelude-val">None</span>;
 
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">m</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">markers2</span> {
