@@ -42,6 +42,47 @@
 //!
 //! Note that Serato DJ Lite only has 4 hotcues with predefined, unchangeable colors (the
 //! emphasized hotcue colors 1-4 in the table above).
+//!
+//! # Track Colors
+//!
+//! Serato DJ Pro displays different colors in the color picker and the actual column (see table
+//! below). Generally, the column value can be calculated by subtracting `0x666666` from the
+//! stored value. If the result is less than 0, `0x1000000` is also added. An alternative way to
+//! calculate is without using signed numbers: If the stored value is less than `0x666666` then add
+//! `0x99999A`, else subtract `0x666666`
+//!
+//! There are some exceptions though:
+//! - If the stored color is `0x999999`, `0x090909` will be displayed instead of `0x333333` (this
+//!   means that both `0x999999` and `0x6F6F6F` will result in the same color)
+//! - If the stored color is `0xFFFFFF`, `0x333333` will be displayed instead of `0x999999`
+//! - If the stored color is `0x000000`, `0x333333` will be displayed instead of `0X99999A`
+//!
+//! This means that both `0x999999` and `0X999999A` cannot be used in the track color library
+//! column.
+//!
+//! |  # | Color Picker / Stored in Tag                                                                                           | Shown in Library Column                                                                                                 |
+//! | -- | ---------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+//! |  1 | ![FF99FF](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_FF99FF.gif) `#FF99FF` | ![993399](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_993399.gif) `#993399` |
+//! |  2 | ![FF99DD](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_FF99DD.gif) `#FF99DD` | ![993377](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_993377.gif) `#993377` |
+//! |  3 | ![FF99BB](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_FF99BB.gif) `#FF99BB` | ![993355](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_993355.gif) `#993355` |
+//! |  4 | ![FF9999](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_FF9999.gif) `#FF9999` | ![993333](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_993333.gif) `#993333` |
+//! |  5 | ![FFBB99](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_FFBB99.gif) `#FFBB99` | ![995533](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_995533.gif) `#995533` |
+//! |  6 | ![FFDD99](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_FFDD99.gif) `#FFDD99` | ![997733](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_997733.gif) `#997733` |
+//! |  7 | ![FFFF99](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_FFFF99.gif) `#FFFF99` | ![999933](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_999933.gif) `#999933` |
+//! |  8 | ![DDFF99](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_DDFF99.gif) `#DDFF99` | ![779933](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_779933.gif) `#779933` |
+//! |  9 | ![BBFF99](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_BBFF99.gif) `#BBFF99` | ![559933](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_559933.gif) `#559933` |
+//! | 10 | ![99FF99](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_99FF99.gif) `#99FF99` | ![339933](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_339933.gif) `#339933` |
+//! | 11 | ![99FFBB](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_99FFBB.gif) `#99FFBB` | ![339955](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_339955.gif) `#339955` |
+//! | 12 | ![99FFDD](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_99FFDD.gif) `#99FFDD` | ![339977](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_339977.gif) `#339977` |
+//! | 13 | ![99FFFF](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_99FFFF.gif) `#99FFFF` | ![339999](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_339999.gif) `#339999` |
+//! | 14 | ![99DDFF](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_99DDFF.gif) `#99DDFF` | ![337799](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_337799.gif) `#337799` |
+//! | 15 | ![99BBFF](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_99BBFF.gif) `#99BBFF` | ![335599](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_335599.gif) `#335599` |
+//! | 16 | ![9999FF](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_9999FF.gif) `#9999FF` | ![333399](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_333399.gif) `#333399` |
+//! | 17 | ![BB99FF](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_BB99FF.gif) `#BB99FF` | ![553399](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_553399.gif) `#553399` |
+//! | 18 | ![DD99FF](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_DD99FF.gif) `#DD99FF` | ![773399](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_773399.gif) `#773399` |
+//! | 19 | ![FFFFFF](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_FFFFFF.gif) `#FFFFFF` | ![333333](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_333333.gif) `#333333` |
+//! | 20 | ![BBBBBB](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_BBBBBB.gif) `#BBBBBB` | ![555555](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_555555.gif) `#555555` |
+//! | 21 | ![999999](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_999999.gif) `#999999` | ![090909](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_090909.gif) `#090909` |
 
 /// Represents a 3-Byte RGB color value.
 #[derive(Debug, PartialEq, Copy, Clone)]
@@ -116,6 +157,100 @@ impl Color {
         }
 
         self
+    }
+
+    /// Return the displayed track color from the stored track color value.
+    ///
+    /// Serato stores Track colors differently from how they are displayed in
+    /// the library column. Instead of the color from the library view, the
+    /// value from the color picker is stored instead (which is different).
+    ///
+    /// ```
+    /// use triseratops::tag::color::Color;
+    ///
+    /// let stored_color = Color { red: 0xFF, green: 0x99, blue: 0xFF };
+    /// let displayed_color = stored_color.into_displayed_track_color();
+    /// assert_eq!(displayed_color, Some(Color {red: 0x99, green: 0x33, blue: 0x99 }));
+    ///
+    /// let stored_color = Color { red: 0xFF, green: 0xFF, blue: 0xFF };
+    /// let displayed_color = stored_color.into_displayed_track_color();
+    /// assert_eq!(displayed_color, None);
+    /// ```
+    pub fn into_displayed_track_color(self) -> Option<Self> {
+        match self {
+            Color {
+                red: 0xFF,
+                green: 0xFF,
+                blue: 0xFF,
+            } => None,
+            _ => Some(Color::from(stored_to_displayed_track_color_code(
+                self.into(),
+            ))),
+        }
+    }
+
+    /// Return the stored track color from the displayed track color value.
+    ///
+    /// Serato stores Track colors differently from how they are displayed in
+    /// the library column. Instead of the color from the library view, the
+    /// value from the color picker is stored instead (which is different).
+    ///
+    /// ```
+    /// use triseratops::tag::color::Color;
+    ///
+    /// let displayed_color = Color {red: 0x99, green: 0x33, blue: 0x99 };
+    /// let stored_color = Color::from_displayed_track_color(Some(displayed_color));
+    /// assert_eq!(stored_color, Color { red: 0xFF, green: 0x99, blue: 0xFF });
+    ///
+    /// let stored_color = Color::from_displayed_track_color(None);
+    /// assert_eq!(stored_color, Color { red: 0xFF, green: 0xFF, blue: 0xFF });
+    /// ```
+    pub fn from_displayed_track_color(color: Option<Self>) -> Self {
+        let code: u32 = match color {
+            Some(color) => color.into(),
+            None => {
+                return Color {
+                    red: 0xFF,
+                    green: 0xFF,
+                    blue: 0xFF,
+                };
+            }
+        };
+
+        Color::from(displayed_to_stored_track_color_code(code))
+    }
+}
+
+const fn displayed_to_stored_track_color_code(code: u32) -> u32 {
+    match code {
+        0x090909 => 0x999999,
+        0x333333 => 0x000000,
+        // Special case: 0x999999 and 0x99999A are not representable as Serato
+        // track color We'll just modify them a little, so that the look the
+        // same in Serato.
+        0x999999 => 0x999998,
+        0x99999A => 0x99999B,
+        _ => {
+            if code < 0x99999A {
+                code + 0x666666
+            } else {
+                code - 0x99999A
+            }
+        }
+    }
+}
+
+const fn stored_to_displayed_track_color_code(code: u32) -> u32 {
+    match code {
+        0x999999 => 0x090909,
+        0x000000 => 0x333333,
+        _ => {
+            if code < 0x666666 {
+                code + 0x99999A
+            } else {
+                code - 0x666666
+            }
+        }
     }
 }
 
