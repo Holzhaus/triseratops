@@ -332,11 +332,12 @@ fn take_marker_mp4(input: &[u8]) -> Res<&[u8], Marker> {
     } else {
         None
     };
-    let end_position_millis = if end_position_millis_raw != 0xFFFFFFFF && marker_type == MarkerType::Loop {
-        Some(end_position_millis_raw)
-    } else {
-        None
-    };
+    let end_position_millis =
+        if end_position_millis_raw != 0xFFFFFFFF && marker_type == MarkerType::Loop {
+            Some(end_position_millis_raw)
+        } else {
+            None
+        };
 
     Ok((
         input,
