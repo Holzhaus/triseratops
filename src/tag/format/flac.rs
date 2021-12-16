@@ -11,7 +11,7 @@ pub trait FLACTag: EnvelopedTag {
     const FLAC_COMMENT: &'static str;
 
     fn parse_flac(input: &[u8]) -> Result<Self, Error> {
-        Self::parse_enveloped(&input)
+        Self::parse_enveloped(input)
     }
 
     fn write_flac(&self, writer: impl io::Write) -> Result<usize, Error> {

@@ -112,7 +112,7 @@ impl Tag for Markers {
     }
 
     fn write(&self, writer: impl io::Write) -> Result<usize, Error> {
-        write_markers(writer, &self)
+        write_markers(writer, self)
     }
 }
 
@@ -132,7 +132,7 @@ impl mp4::MP4Tag for Markers {
 
     fn write_mp4(&self, writer: impl io::Write) -> Result<usize, Error> {
         let mut buffer = Cursor::new(vec![]);
-        write_markers_mp4(&mut buffer, &self)?;
+        write_markers_mp4(&mut buffer, self)?;
         let plain_data = &buffer.get_ref()[..];
         enveloped::envelope_encode_with_name(writer, plain_data, Self::NAME)
     }
@@ -303,7 +303,7 @@ fn take_marker(input: &[u8]) -> Res<&[u8], Marker> {
 
 /// Parses the data into a `Markers` struct, consuming the whole input slice.
 fn take_markers(input: &[u8]) -> Res<&[u8], Markers> {
-    let (input, version) = take_version(&input)?;
+    let (input, version) = take_version(input)?;
     let (input, entries) =
         nom::multi::length_count(nom::number::complete::be_u32, take_marker)(input)?;
     let (input, track_color) = nom::combinator::all_consuming(serato32::take_color)(input)?;
@@ -354,7 +354,7 @@ fn take_marker_mp4(input: &[u8]) -> Res<&[u8], Marker> {
 
 /// Parses the data into a `Markers` struct, consuming the whole input slice (MP4 version).
 fn take_markers_mp4(input: &[u8]) -> Res<&[u8], Markers> {
-    let (input, version) = take_version(&input)?;
+    let (input, version) = take_version(input)?;
     let (input, entries) =
         nom::multi::length_count(nom::number::complete::be_u32, take_marker_mp4)(input)?;
     let (input, _) = nom::bytes::complete::tag(b"\0")(input)?;
@@ -430,7 +430,7 @@ pub fn write_markers(mut writer: impl io::Write, markers: &Markers) -> Result<us
     let num_markers = markers.entries.len() as u32;
     bytes_written += writer.write(&num_markers.to_be_bytes())?;
     for marker in &markers.entries {
-        bytes_written += write_marker(&mut writer, &marker)?;
+        bytes_written += write_marker(&mut writer, marker)?;
     }
     bytes_written += serato32::write_color(writer, &markers.track_color)?;
     Ok(bytes_written)
@@ -441,7 +441,7 @@ pub fn write_markers_mp4(mut writer: impl io::Write, markers: &Markers) -> Resul
     let num_markers = markers.entries.len() as u32;
     bytes_written += writer.write(&num_markers.to_be_bytes())?;
     for marker in &markers.entries {
-        bytes_written += write_marker_mp4(&mut writer, &marker)?;
+        bytes_written += write_marker_mp4(&mut writer, marker)?;
     }
     bytes_written += writer.write(b"\x00")?;
     bytes_written += write_color(writer, &markers.track_color)?;

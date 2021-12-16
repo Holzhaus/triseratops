@@ -263,9 +263,10 @@ impl From<u32> for Color {
     }
 }
 
-impl Into<u32> for Color {
-    fn into(self) -> u32 {
-        (self.red as u32) << 16 | (self.green as u32) << 8 | self.blue as u32
+impl From<Color> for u32 {
+    fn from(color: Color) -> Self {
+        let Color { blue, green, red } = color;
+        u32::from(red) << 16 | u32::from(green) << 8 | u32::from(blue)
     }
 }
 

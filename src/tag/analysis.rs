@@ -38,7 +38,7 @@ impl Tag for Analysis {
     }
 
     fn write(&self, writer: impl io::Write) -> Result<usize, Error> {
-        write_analysis(writer, &self)
+        write_analysis(writer, self)
     }
 }
 
@@ -60,7 +60,7 @@ impl ogg::OggTag for Analysis {
     }
 
     fn write_ogg(&self, writer: impl io::Write) -> Result<usize, Error> {
-        write_analysis_ogg(writer, &self)
+        write_analysis_ogg(writer, self)
     }
 }
 

@@ -42,7 +42,7 @@ impl Tag for Overview {
     }
 
     fn write(&self, writer: impl io::Write) -> Result<usize, Error> {
-        write_overview(writer, &self)
+        write_overview(writer, self)
     }
 }
 
@@ -87,7 +87,7 @@ fn take_chunks(input: &[u8]) -> Res<&[u8], Vec<Vec<u8>>> {
 
 /// Returns an [`Overview` struct](Overview) parsed from the input slice.
 fn take_overview(input: &[u8]) -> Res<&[u8], Overview> {
-    let (input, version) = take_version(&input)?;
+    let (input, version) = take_version(input)?;
     let (input, data) = take_chunks(input)?;
 
     let overview = Overview { version, data };

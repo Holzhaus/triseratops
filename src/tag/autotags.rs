@@ -48,7 +48,7 @@ impl Tag for Autotags {
     }
 
     fn write(&self, writer: impl io::Write) -> Result<usize, Error> {
-        write_autotags(writer, &self)
+        write_autotags(writer, self)
     }
 }
 

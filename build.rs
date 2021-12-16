@@ -8,8 +8,8 @@ fn main() {
     let out_dir = env::var("OUT_DIR").unwrap();
     let out_dir = Path::new(&out_dir);
     println!("Writing tests to: {:?}", out_dir);
-    write_tag_tests(&out_dir);
-    write_database_tests(&out_dir);
+    write_tag_tests(out_dir);
+    write_database_tests(out_dir);
 }
 
 fn write_tag_tests(path: &Path) {
