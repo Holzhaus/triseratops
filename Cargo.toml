@@ -1,6 +1,6 @@
 [package]
 name = "triseratops"
-version = "0.0.1"
+version = "0.0.2"
 authors = ["Jan Holthuis <jan.holthuis@ruhr-uni-bochum.de>"]
 description = "The robust, in-depth Serato Parser & Serializer."
 readme = "README.md"
