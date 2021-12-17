@@ -1,3 +1,3 @@
 (function() {var implementors = {};
-implementors["triseratops"] = [{"text":"impl Copy for Color","synthetic":false,"types":[]}];
+implementors["triseratops"] = [{"text":"impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.57.0/core/marker/trait.Copy.html\" title=\"trait core::marker::Copy\">Copy</a> for <a class=\"struct\" href=\"triseratops/tag/color/struct.Color.html\" title=\"struct triseratops::tag::color::Color\">Color</a>","synthetic":false,"types":["triseratops::tag::color::Color"]}];
 if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

@@ -1,3 +1,3 @@
 (function() {var implementors = {};
-implementors["triseratops"] = [{"text":"impl Eq for Version","synthetic":false,"types":[]}];
+implementors["triseratops"] = [{"text":"impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.57.0/core/cmp/trait.Eq.html\" title=\"trait core::cmp::Eq\">Eq</a> for <a class=\"struct\" href=\"triseratops/tag/generic/struct.Version.html\" title=\"struct triseratops::tag::generic::Version\">Version</a>","synthetic":false,"types":["triseratops::tag::generic::Version"]}];
 if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

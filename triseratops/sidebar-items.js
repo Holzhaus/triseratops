@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["error","Error types and helper functions."],["library","Parsers for the Serato library database and crates"],["tag","Parsers for Serato's file tags"]]});
+initSidebarItems({"mod":[["error","Error types and helper functions."],["library","Parsers for the Serato library database and crates"],["tag","Parsers for Serato’s file tags"]]});

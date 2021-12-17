@@ -1,7 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/tag/analysis.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>analysis.rs - source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled ><script id="default-settings"></script><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../../favicon.svg">
-<link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png">
-<link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../triseratops/index.html'><div class='logo-container rust-logo'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><span class="help-button">?</span>
-                <a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src&#x2F;tag&#x2F;analysis.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>analysis.rs - source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled ><script id="default-settings" ></script><script src="../../../storage.js"></script><script src="../../../crates.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../../triseratops/index.html'><div class='logo-container rust-logo'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="18" height="18" alt="Pick another theme!" src="../../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../../settings.html" title="settings"><img width="18" height="18" alt="Change settings" src="../../../wheel.svg"></a></div></form></nav><section id="main" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -141,15 +138,14 @@
 <span id="138">138</span>
 <span id="139">139</span>
 <span id="140">140</span>
-</pre><div class="example-wrap"><pre class="rust ">
-<span class="doccomment">//! The `Serato Analysis` tag stores the analysis version.</span>
-<span class="kw">use</span> <span class="kw">super</span>::<span class="ident">format</span>::{<span class="ident">enveloped</span>, <span class="ident">flac</span>, <span class="ident">id3</span>, <span class="ident">mp4</span>, <span class="ident">ogg</span>, <span class="ident">Tag</span>};
-<span class="kw">use</span> <span class="kw">super</span>::<span class="ident">generic</span>::<span class="ident">Version</span>;
-<span class="kw">use</span> <span class="kw">super</span>::<span class="ident">util</span>::{<span class="ident">take_version</span>, <span class="ident">write_version</span>};
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">error</span>::<span class="ident">Error</span>;
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">util</span>::{<span class="ident">parse_utf8</span>, <span class="ident">Res</span>};
-<span class="kw">use</span> <span class="ident">nom</span>::<span class="ident">error</span>::<span class="ident">ParseError</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>;
+</pre><pre class="rust"><code><span class="doccomment">//! The `Serato Analysis` tag stores the analysis version.</span>
+<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::format</span>::{<span class="ident">enveloped</span>, <span class="ident">flac</span>, <span class="ident">id3</span>, <span class="ident">mp4</span>, <span class="ident">ogg</span>, <span class="ident">Tag</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::generic::Version</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::util</span>::{<span class="ident">take_version</span>, <span class="ident">write_version</span>};
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::error::Error</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::util</span>::{<span class="ident">parse_utf8</span>, <span class="ident">Res</span>};
+<span class="kw">use</span> <span class="ident">nom::error::ParseError</span>;
+<span class="kw">use</span> <span class="ident">std::io</span>;
 
 <span class="doccomment">/// Represents the  `Serato Analysis` tag.</span>
 <span class="doccomment">///</span>
@@ -176,90 +172,90 @@
 <span class="kw">impl</span> <span class="ident">Tag</span> <span class="kw">for</span> <span class="ident">Analysis</span> {
     <span class="kw">const</span> <span class="ident">NAME</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;Serato Analysis&quot;</span>;
 
-    <span class="kw">fn</span> <span class="ident">parse</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">parse</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">analysis</span> <span class="op">=</span> <span class="ident">parse_analysis</span>(<span class="ident">input</span>)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(<span class="ident">analysis</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">write</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">writer</span>: <span class="kw">impl</span> <span class="ident">io</span>::<span class="ident">Write</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="ident">write_analysis</span>(<span class="ident">writer</span>, <span class="kw-2">&amp;</span><span class="self">self</span>)
+    <span class="kw">fn</span> <span class="ident">write</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">writer</span>: <span class="kw">impl</span> <span class="ident">io::Write</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+        <span class="ident">write_analysis</span>(<span class="ident">writer</span>, <span class="self">self</span>)
     }
 }
 
-<span class="kw">impl</span> <span class="ident">id3</span>::<span class="ident">ID3Tag</span> <span class="kw">for</span> <span class="ident">Analysis</span> {}
-<span class="kw">impl</span> <span class="ident">enveloped</span>::<span class="ident">EnvelopedTag</span> <span class="kw">for</span> <span class="ident">Analysis</span> {}
-<span class="kw">impl</span> <span class="ident">flac</span>::<span class="ident">FLACTag</span> <span class="kw">for</span> <span class="ident">Analysis</span> {
+<span class="kw">impl</span> <span class="ident">id3::ID3Tag</span> <span class="kw">for</span> <span class="ident">Analysis</span> {}
+<span class="kw">impl</span> <span class="ident">enveloped::EnvelopedTag</span> <span class="kw">for</span> <span class="ident">Analysis</span> {}
+<span class="kw">impl</span> <span class="ident">flac::FLACTag</span> <span class="kw">for</span> <span class="ident">Analysis</span> {
     <span class="kw">const</span> <span class="ident">FLAC_COMMENT</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;SERATO_ANALYSIS&quot;</span>;
 }
-<span class="kw">impl</span> <span class="ident">mp4</span>::<span class="ident">MP4Tag</span> <span class="kw">for</span> <span class="ident">Analysis</span> {
+<span class="kw">impl</span> <span class="ident">mp4::MP4Tag</span> <span class="kw">for</span> <span class="ident">Analysis</span> {
     <span class="kw">const</span> <span class="ident">MP4_ATOM_FREEFORM_NAME</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;analysisVersion&quot;</span>;
 }
 
-<span class="kw">impl</span> <span class="ident">ogg</span>::<span class="ident">OggTag</span> <span class="kw">for</span> <span class="ident">Analysis</span> {
+<span class="kw">impl</span> <span class="ident">ogg::OggTag</span> <span class="kw">for</span> <span class="ident">Analysis</span> {
     <span class="kw">const</span> <span class="ident">OGG_COMMENT</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;serato_analysis_ver&quot;</span>;
 
-    <span class="kw">fn</span> <span class="ident">parse_ogg</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">parse_ogg</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">analysis</span> <span class="op">=</span> <span class="ident">parse_analysis_ogg</span>(<span class="ident">input</span>)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(<span class="ident">analysis</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">write_ogg</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">writer</span>: <span class="kw">impl</span> <span class="ident">io</span>::<span class="ident">Write</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="ident">write_analysis_ogg</span>(<span class="ident">writer</span>, <span class="kw-2">&amp;</span><span class="self">self</span>)
+    <span class="kw">fn</span> <span class="ident">write_ogg</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">writer</span>: <span class="kw">impl</span> <span class="ident">io::Write</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+        <span class="ident">write_analysis_ogg</span>(<span class="ident">writer</span>, <span class="self">self</span>)
     }
 }
 
 <span class="doccomment">/// Returns an `u8` parsed from ASCII char the input slice.</span>
-<span class="kw">fn</span> <span class="ident">take_ascii_u8</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Res</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">u8</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">ascii_number</span>) <span class="op">=</span> <span class="ident">nom</span>::<span class="ident">error</span>::<span class="ident">context</span>(
+<span class="kw">fn</span> <span class="ident">take_ascii_u8</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) -&gt; <span class="ident">Res</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">u8</span><span class="op">&gt;</span> {
+    <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">ascii_number</span>) <span class="op">=</span> <span class="ident">nom::error::context</span>(
         <span class="string">&quot;take ascii integer&quot;</span>,
-        <span class="ident">nom</span>::<span class="ident">bytes</span>::<span class="ident">complete</span>::<span class="ident">take_while</span>(<span class="op">|</span><span class="ident">b</span>: <span class="ident">u8</span><span class="op">|</span> <span class="ident">b</span>.<span class="ident">is_ascii_digit</span>()),
+        <span class="ident">nom::bytes::complete::take_while</span>(<span class="op">|</span><span class="ident">b</span>: <span class="ident">u8</span><span class="op">|</span> <span class="ident">b</span>.<span class="ident">is_ascii_digit</span>()),
     )(<span class="ident">input</span>)<span class="question-mark">?</span>;
     <span class="kw">let</span> (<span class="kw">_</span>, <span class="ident">ascii_number</span>) <span class="op">=</span> <span class="ident">parse_utf8</span>(<span class="ident">ascii_number</span>)<span class="question-mark">?</span>;
     <span class="kw">match</span> <span class="ident">ascii_number</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>() {
-        <span class="prelude-val">Ok</span>(<span class="ident">number</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>((<span class="ident">input</span>, <span class="ident">number</span>)),
-        <span class="prelude-val">Err</span>(<span class="ident">std</span>::<span class="ident">num</span>::<span class="ident">ParseIntError</span> { .. }) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">nom</span>::<span class="prelude-val">Err</span>::<span class="ident">Error</span>(
-            <span class="ident">nom</span>::<span class="ident">error</span>::<span class="ident">VerboseError</span>::<span class="ident">from_error_kind</span>(<span class="ident">input</span>, <span class="ident">nom</span>::<span class="ident">error</span>::<span class="ident">ErrorKind</span>::<span class="ident">Digit</span>),
+        <span class="prelude-val">Ok</span>(<span class="ident">number</span>) =&gt; <span class="prelude-val">Ok</span>((<span class="ident">input</span>, <span class="ident">number</span>)),
+        <span class="prelude-val">Err</span>(<span class="ident">std::num::ParseIntError</span> { .. }) =&gt; <span class="prelude-val">Err</span>(<span class="ident">nom::Err::Error</span>(
+            <span class="ident">nom::error::VerboseError::from_error_kind</span>(<span class="ident">input</span>, <span class="ident">nom::error::ErrorKind::Digit</span>),
         )),
     }
 }
 
 <span class="doccomment">/// Returns an [`Analysis` struct](Analysis) parsed from the input slice.</span>
-<span class="kw">fn</span> <span class="ident">take_analysis</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Res</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">Analysis</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">version</span>) <span class="op">=</span> <span class="ident">nom</span>::<span class="ident">error</span>::<span class="ident">context</span>(<span class="string">&quot;take version&quot;</span>, <span class="ident">take_version</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
+<span class="kw">fn</span> <span class="ident">take_analysis</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) -&gt; <span class="ident">Res</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">Analysis</span><span class="op">&gt;</span> {
+    <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">version</span>) <span class="op">=</span> <span class="ident">nom::error::context</span>(<span class="string">&quot;take version&quot;</span>, <span class="ident">take_version</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
     <span class="kw">let</span> <span class="ident">analysis</span> <span class="op">=</span> <span class="ident">Analysis</span> { <span class="ident">version</span> };
 
     <span class="prelude-val">Ok</span>((<span class="ident">input</span>, <span class="ident">analysis</span>))
 }
 
 <span class="doccomment">/// Returns an [`Analysis` struct](Analysis) parsed from the input slice ([MP4](mp4) version).</span>
-<span class="kw">fn</span> <span class="ident">take_analysis_ogg</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Res</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">Analysis</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">major</span>) <span class="op">=</span> <span class="ident">nom</span>::<span class="ident">error</span>::<span class="ident">context</span>(<span class="string">&quot;take major version&quot;</span>, <span class="ident">take_ascii_u8</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
+<span class="kw">fn</span> <span class="ident">take_analysis_ogg</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) -&gt; <span class="ident">Res</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">Analysis</span><span class="op">&gt;</span> {
+    <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">major</span>) <span class="op">=</span> <span class="ident">nom::error::context</span>(<span class="string">&quot;take major version&quot;</span>, <span class="ident">take_ascii_u8</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
     <span class="kw">let</span> (<span class="ident">input</span>, <span class="kw">_</span>) <span class="op">=</span>
-        <span class="ident">nom</span>::<span class="ident">error</span>::<span class="ident">context</span>(<span class="string">&quot;take version separator&quot;</span>, <span class="ident">nom</span>::<span class="ident">bytes</span>::<span class="ident">complete</span>::<span class="ident">tag</span>(<span class="string">b&quot;.&quot;</span>))(<span class="ident">input</span>)<span class="question-mark">?</span>;
-    <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">minor</span>) <span class="op">=</span> <span class="ident">nom</span>::<span class="ident">error</span>::<span class="ident">context</span>(<span class="string">&quot;take major version&quot;</span>, <span class="ident">take_ascii_u8</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
+        <span class="ident">nom::error::context</span>(<span class="string">&quot;take version separator&quot;</span>, <span class="ident">nom::bytes::complete::tag</span>(<span class="string">b&quot;.&quot;</span>))(<span class="ident">input</span>)<span class="question-mark">?</span>;
+    <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">minor</span>) <span class="op">=</span> <span class="ident">nom::error::context</span>(<span class="string">&quot;take major version&quot;</span>, <span class="ident">take_ascii_u8</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
     <span class="kw">let</span> <span class="ident">version</span> <span class="op">=</span> <span class="ident">Version</span> { <span class="ident">major</span>, <span class="ident">minor</span> };
 
     <span class="kw">let</span> <span class="ident">analysis</span> <span class="op">=</span> <span class="ident">Analysis</span> { <span class="ident">version</span> };
     <span class="prelude-val">Ok</span>((<span class="ident">input</span>, <span class="ident">analysis</span>))
 }
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_analysis</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Analysis</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> (<span class="kw">_</span>, <span class="ident">analysis</span>) <span class="op">=</span> <span class="ident">nom</span>::<span class="ident">combinator</span>::<span class="ident">all_consuming</span>(<span class="ident">take_analysis</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_analysis</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Analysis</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">let</span> (<span class="kw">_</span>, <span class="ident">analysis</span>) <span class="op">=</span> <span class="ident">nom::combinator::all_consuming</span>(<span class="ident">take_analysis</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
     <span class="prelude-val">Ok</span>(<span class="ident">analysis</span>)
 }
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_analysis_ogg</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Analysis</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> (<span class="kw">_</span>, <span class="ident">analysis</span>) <span class="op">=</span> <span class="ident">nom</span>::<span class="ident">combinator</span>::<span class="ident">all_consuming</span>(<span class="ident">take_analysis_ogg</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_analysis_ogg</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Analysis</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">let</span> (<span class="kw">_</span>, <span class="ident">analysis</span>) <span class="op">=</span> <span class="ident">nom::combinator::all_consuming</span>(<span class="ident">take_analysis_ogg</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
     <span class="prelude-val">Ok</span>(<span class="ident">analysis</span>)
 }
 
 <span class="doccomment">/// Serialize [`Analysis` struct](Analysis) to bytes.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">write_analysis</span>(<span class="ident">writer</span>: <span class="kw">impl</span> <span class="ident">io</span>::<span class="ident">Write</span>, <span class="ident">analysis</span>: <span class="kw-2">&amp;</span><span class="ident">Analysis</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">write_analysis</span>(<span class="ident">writer</span>: <span class="kw">impl</span> <span class="ident">io::Write</span>, <span class="ident">analysis</span>: <span class="kw-2">&amp;</span><span class="ident">Analysis</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
     <span class="ident">write_version</span>(<span class="ident">writer</span>, <span class="kw-2">&amp;</span><span class="ident">analysis</span>.<span class="ident">version</span>)
 }
 
 <span class="doccomment">/// Serialize [`Analysis` struct](Analysis) to bytes ([Ogg](super::format::ogg) version).</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">write_analysis_ogg</span>(<span class="kw-2">mut</span> <span class="ident">writer</span>: <span class="kw">impl</span> <span class="ident">io</span>::<span class="ident">Write</span>, <span class="ident">analysis</span>: <span class="kw-2">&amp;</span><span class="ident">Analysis</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">write_analysis_ogg</span>(<span class="kw-2">mut</span> <span class="ident">writer</span>: <span class="kw">impl</span> <span class="ident">io::Write</span>, <span class="ident">analysis</span>: <span class="kw-2">&amp;</span><span class="ident">Analysis</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
     <span class="prelude-val">Ok</span>(<span class="ident">writer</span>.<span class="ident">write</span>(<span class="kw-2">&amp;</span>[
         <span class="ident">analysis</span>.<span class="ident">version</span>.<span class="ident">major</span> <span class="op">+</span> <span class="number">0x30</span>,
         <span class="string">b&#39;.&#39;</span>,
@@ -269,9 +265,9 @@
 
 <span class="attribute">#[<span class="ident">test</span>]</span>
 <span class="kw">fn</span> <span class="ident">test_write_analysis</span>() {
-    <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>::<span class="ident">Cursor</span>;
+    <span class="kw">use</span> <span class="ident">std::io::Cursor</span>;
 
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">writer</span> <span class="op">=</span> <span class="ident">Cursor</span>::<span class="ident">new</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="number">0</span>; <span class="number">15</span>]);
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">writer</span> <span class="op">=</span> <span class="ident">Cursor::new</span>(<span class="macro">vec!</span>[<span class="number">0</span>; <span class="number">15</span>]);
     <span class="kw">let</span> <span class="ident">bytes_written</span> <span class="op">=</span> <span class="ident">write_analysis</span>(
         <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">writer</span>,
         <span class="kw-2">&amp;</span><span class="ident">Analysis</span> {
@@ -279,8 +275,10 @@
         },
     )
     .<span class="ident">unwrap</span>();
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">bytes_written</span>, <span class="number">2</span>);
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="kw-2">&amp;</span><span class="ident">writer</span>.<span class="ident">get_ref</span>()[..<span class="number">2</span>], <span class="kw-2">&amp;</span>[<span class="number">2</span>, <span class="number">4</span>]);
+    <span class="macro">assert_eq!</span>(<span class="ident">bytes_written</span>, <span class="number">2</span>);
+    <span class="macro">assert_eq!</span>(<span class="kw-2">&amp;</span><span class="ident">writer</span>.<span class="ident">get_ref</span>()[..<span class="number">2</span>], <span class="kw-2">&amp;</span>[<span class="number">2</span>, <span class="number">4</span>]);
 }
-</pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../../";window.currentCrate = "triseratops";</script><script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script><script defer src="../../../search-index.js"></script></body></html>
+</code></pre></div>
+</section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="triseratops" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
+    <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script>
+</body></html>
