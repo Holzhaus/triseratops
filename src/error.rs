@@ -49,22 +49,20 @@ pub enum Error {
     IOError(#[from] std::io::Error),
 }
 
-fn convert_err(
-    item: &(&[u8], nom::error::VerboseErrorKind),
-) -> (Vec<u8>, nom::error::VerboseErrorKind) {
+fn map_err(item: (&[u8], nom::error::VerboseErrorKind)) -> (Vec<u8>, nom::error::VerboseErrorKind) {
     let (data, kind) = item;
-    (data.to_vec(), kind.to_owned())
+    (data.to_vec(), kind)
 }
 
 impl From<nom::Err<nom::error::VerboseError<&[u8]>>> for Error {
     fn from(e: nom::Err<nom::error::VerboseError<&[u8]>>) -> Self {
         match e {
             nom::Err::Error(err) => {
-                let errors = err.errors.iter().map(convert_err).collect();
+                let errors = err.errors.into_iter().map(map_err).collect();
                 Error::VerboseParseError { errors }
             }
             nom::Err::Failure(err) => {
-                let errors = err.errors.iter().map(convert_err).collect();
+                let errors = err.errors.into_iter().map(map_err).collect();
                 Error::VerboseParseError { errors }
             }
             nom::Err::Incomplete(_needed) => Error::ParseError,
