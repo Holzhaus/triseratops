@@ -5,7 +5,7 @@ use nom::bytes::complete::take_until;
 
 pub type Res<T, U> = nom::IResult<T, U, nom::error::VerboseError<T>>;
 
-const NULL: &[u8] = &[0x00];
+pub(crate) const NULL: &[u8] = &[0x00];
 
 /// Returns the input slice until the first occurrence of a null byte.
 pub fn take_until_nullbyte(input: &[u8]) -> Res<&[u8], &[u8]> {

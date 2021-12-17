@@ -10,7 +10,7 @@ use super::generic::{Position, Version};
 use super::serato32;
 use super::util::{take_color, take_version, write_color, write_version};
 use crate::error::Error;
-use crate::util::Res;
+use crate::util::{Res, NULL};
 use nom::error::ParseError;
 use std::io;
 use std::io::Cursor;
@@ -374,7 +374,7 @@ fn take_markers_mp4(input: &[u8]) -> Res<&[u8], Markers> {
 fn write_position(writer: &mut impl io::Write, position: Option<Position>) -> Result<usize, Error> {
     match position {
         Some(Position { millis }) => {
-            let mut bytes_written = writer.write(b"\x00")?;
+            let mut bytes_written = writer.write(NULL)?;
             bytes_written += serato32::write_u32(writer, millis)?;
             Ok(bytes_written)
         }
@@ -468,7 +468,7 @@ pub fn write_markers_mp4(writer: &mut impl io::Write, markers: &Markers) -> Resu
     for marker in &markers.entries {
         bytes_written += write_marker_mp4(writer, marker)?;
     }
-    bytes_written += writer.write(b"\x00")?;
+    bytes_written += writer.write(NULL)?;
     bytes_written += write_color(writer, markers.track_color)?;
     Ok(bytes_written)
 }

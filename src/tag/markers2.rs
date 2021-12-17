@@ -14,7 +14,7 @@ use super::generic::{
 };
 use super::util::{take_color, take_version, write_color, write_version};
 use crate::error::Error;
-use crate::util::{take_utf8, Res};
+use crate::util::{take_utf8, Res, NULL};
 use nom::error::ParseError;
 use std::io;
 use std::io::Cursor;
@@ -191,7 +191,7 @@ impl ogg::OggTag for Markers2 {
         let mut bytes_written = enveloped::base64_encode(writer, plain_data)?;
         if self.size > bytes_written {
             for _ in 0..(self.size - bytes_written) {
-                bytes_written += writer.write(b"\x00")?;
+                bytes_written += writer.write(NULL)?;
             }
         }
         Ok(bytes_written)
@@ -317,7 +317,7 @@ fn take_bpmlock_marker(input: &[u8]) -> Res<&[u8], Marker> {
 }
 
 fn take_color_marker(input: &[u8]) -> Res<&[u8], Marker> {
-    let (input, _) = nom::bytes::complete::tag(b"\x00")(input)?;
+    let (input, _) = nom::bytes::complete::tag(NULL)(input)?;
     let (input, color) = take_color(input)?;
     let marker = TrackColorMarker { color };
     Ok((input, Marker::Color(marker)))
@@ -331,10 +331,10 @@ fn take_position(input: &[u8]) -> Res<&[u8], Position> {
 }
 
 fn take_cue_marker(input: &[u8]) -> Res<&[u8], Marker> {
-    let (input, _) = nom::bytes::complete::tag(b"\x00")(input)?;
+    let (input, _) = nom::bytes::complete::tag(NULL)(input)?;
     let (input, index) = nom::number::complete::u8(input)?;
     let (input, position) = take_position(input)?;
-    let (input, _) = nom::bytes::complete::tag(b"\x00")(input)?;
+    let (input, _) = nom::bytes::complete::tag(NULL)(input)?;
     let (input, color) = take_color(input)?;
     let (input, _) = nom::bytes::complete::tag(b"\x00\x00")(input)?;
     let (input, label) = take_utf8(input)?;
@@ -348,7 +348,7 @@ fn take_cue_marker(input: &[u8]) -> Res<&[u8], Marker> {
 }
 
 fn take_loop_marker(input: &[u8]) -> Res<&[u8], Marker> {
-    let (input, _) = nom::bytes::complete::tag(b"\x00")(input)?;
+    let (input, _) = nom::bytes::complete::tag(NULL)(input)?;
     let (input, index) = nom::number::complete::u8(input)?;
     let (input, start_position_millis) = nom::number::complete::be_u32(input)?;
     let start_position = super::generic::Position {
@@ -359,9 +359,9 @@ fn take_loop_marker(input: &[u8]) -> Res<&[u8], Marker> {
         millis: end_position_millis,
     };
     let (input, _) = nom::bytes::complete::tag(b"\xff\xff\xff\xff")(input)?;
-    let (input, _) = nom::bytes::complete::tag(b"\x00")(input)?;
+    let (input, _) = nom::bytes::complete::tag(NULL)(input)?;
     let (input, color) = take_color(input)?;
-    let (input, _) = nom::bytes::complete::tag(b"\x00")(input)?;
+    let (input, _) = nom::bytes::complete::tag(NULL)(input)?;
     let (input, is_locked) = take_bool(input)?;
     let (input, label) = take_utf8(input)?;
     let marker = Loop {
@@ -376,7 +376,7 @@ fn take_loop_marker(input: &[u8]) -> Res<&[u8], Marker> {
 }
 
 fn take_flip_marker(input: &[u8]) -> Res<&[u8], Marker> {
-    let (input, _) = nom::bytes::complete::tag(b"\x00")(input)?;
+    let (input, _) = nom::bytes::complete::tag(NULL)(input)?;
     let (input, index) = nom::number::complete::u8(input)?;
     let (input, is_enabled) = take_bool(input)?;
     let (input, label) = take_utf8(input)?;
@@ -488,7 +488,7 @@ fn write_markers2(writer: &mut impl io::Write, markers2: &Markers2) -> Result<us
     bytes_written += enveloped::base64_encode(writer, plain_data)?;
     if markers2.size > bytes_written {
         for _ in 0..(markers2.size - bytes_written) {
-            bytes_written += writer.write(b"\x00")?;
+            bytes_written += writer.write(NULL)?;
         }
     }
     Ok(bytes_written)
@@ -633,7 +633,7 @@ fn write_flip_marker_action(
 ) -> Result<usize, Error> {
     match action {
         FlipAction::Jump(act) => {
-            let mut bytes_written = writer.write(b"\x00")?;
+            let mut bytes_written = writer.write(NULL)?;
             let size = 16u32;
             bytes_written += writer.write(&size.to_be_bytes())?;
             bytes_written += write_flip_marker_action_jump(writer, act)?;
