@@ -15,7 +15,7 @@ pub trait EnvelopedTag: Tag {
         Self::parse(&content)
     }
 
-    fn write_enveloped(&self, writer: impl io::Write) -> Result<usize, Error> {
+    fn write_enveloped(&self, writer: &mut impl io::Write) -> Result<usize, Error> {
         let mut buffer = Cursor::new(vec![]);
         self.write(&mut buffer)?;
         let plain_data = &buffer.get_ref()[..];
@@ -55,7 +55,7 @@ pub fn base64_decode(input: &[u8]) -> Result<Vec<u8>, Error> {
     }
 }
 
-pub fn base64_encode(mut writer: impl io::Write, input: &[u8]) -> Result<usize, Error> {
+pub fn base64_encode(writer: &mut impl io::Write, input: &[u8]) -> Result<usize, Error> {
     let mut bytes_written = 0;
     let chunks = input.chunks(54);
     let last_chunk_index = chunks.len() - 1;
@@ -93,7 +93,7 @@ pub fn envelope_decode_with_name(input: &[u8], expected_name: &str) -> Result<Ve
 }
 
 pub fn envelope_encode_with_name(
-    writer: impl io::Write,
+    writer: &mut impl io::Write,
     input: &[u8],
     name: &str,
 ) -> Result<usize, Error> {

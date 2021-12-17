@@ -12,7 +12,7 @@ pub trait ID3Tag: Tag {
         Self::parse(input)
     }
 
-    fn write_id3(&self, writer: impl io::Write) -> Result<usize, Error> {
+    fn write_id3(&self, writer: &mut impl io::Write) -> Result<usize, Error> {
         self.write(writer)
     }
 }

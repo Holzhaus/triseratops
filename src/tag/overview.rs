@@ -41,7 +41,7 @@ impl Tag for Overview {
         Ok(overview)
     }
 
-    fn write(&self, writer: impl io::Write) -> Result<usize, Error> {
+    fn write(&self, writer: &mut impl io::Write) -> Result<usize, Error> {
         write_overview(writer, self)
     }
 }
@@ -93,15 +93,15 @@ fn take_overview(input: &[u8]) -> Res<&[u8], Overview> {
     Ok((input, overview))
 }
 
-fn write_chunk(mut writer: impl io::Write, chunk: &[u8]) -> Result<usize, Error> {
+fn write_chunk(writer: &mut impl io::Write, chunk: &[u8]) -> Result<usize, Error> {
     // TODO: Handle chunks with invalid size
     Ok(writer.write(chunk)?)
 }
 
-pub fn write_overview(mut writer: impl io::Write, overview: &Overview) -> Result<usize, Error> {
-    let mut bytes_written = write_version(&mut writer, &overview.version)?;
+pub fn write_overview(writer: &mut impl io::Write, overview: &Overview) -> Result<usize, Error> {
+    let mut bytes_written = write_version(writer, overview.version)?;
     for chunk in &overview.data {
-        bytes_written += write_chunk(&mut writer, chunk.as_slice())?;
+        bytes_written += write_chunk(writer, chunk.as_slice())?;
     }
     Ok(bytes_written)
 }

@@ -2,17 +2,25 @@
 use super::color::Color;
 
 /// Represents 2-Byte version value.
-#[derive(Debug, Eq, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Version {
     pub major: u8,
     pub minor: u8,
+}
+
+/// Time-based position
+///
+/// Measured in milliseconds from the beginning of the track.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord)]
+pub struct Position {
+    pub millis: u32,
 }
 
 /// A [cue point](https://support.serato.com/hc/en-us/articles/360000067696-Cue-Points).
 #[derive(Debug, Clone)]
 pub struct Cue {
     pub index: u8,
-    pub position_millis: u32,
+    pub position: Position,
     pub color: Color,
     pub label: String,
 }
@@ -21,8 +29,8 @@ pub struct Cue {
 #[derive(Debug, Clone)]
 pub struct Loop {
     pub index: u8,
-    pub start_position_millis: u32,
-    pub end_position_millis: u32,
+    pub start_position: Position,
+    pub end_position: Position,
     pub color: Color,
     pub is_locked: bool,
     pub label: String,

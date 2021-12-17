@@ -42,7 +42,7 @@ impl Tag for VidAssoc {
         Ok(vidassoc)
     }
 
-    fn write(&self, writer: impl io::Write) -> Result<usize, Error> {
+    fn write(&self, writer: &mut impl io::Write) -> Result<usize, Error> {
         write_vidassoc(writer, self)
     }
 }
@@ -64,8 +64,8 @@ fn take_vidassoc(input: &[u8]) -> Res<&[u8], VidAssoc> {
     Ok((input, vidassoc))
 }
 
-fn write_vidassoc(mut writer: impl io::Write, vidassoc: &VidAssoc) -> Result<usize, Error> {
-    let mut bytes_written = write_version(&mut writer, &vidassoc.version)?;
+fn write_vidassoc(writer: &mut impl io::Write, vidassoc: &VidAssoc) -> Result<usize, Error> {
+    let mut bytes_written = write_version(writer, vidassoc.version)?;
     bytes_written += writer.write(vidassoc.data.as_slice())?;
     Ok(bytes_written)
 }

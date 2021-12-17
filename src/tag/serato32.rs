@@ -94,7 +94,7 @@ pub fn take(input: &[u8]) -> Res<&[u8], (u8, u8, u8)> {
     Ok((input, value))
 }
 
-pub fn write(mut writer: impl io::Write, data: (u8, u8, u8)) -> Result<usize, Error> {
+pub fn write(writer: &mut impl io::Write, data: (u8, u8, u8)) -> Result<usize, Error> {
     let (in1, in2, in3) = data;
     let (byte1, byte2, byte3, byte4) = encode(in1, in2, in3);
     Ok(writer.write(&[byte1, byte2, byte3, byte4])?)
@@ -119,7 +119,7 @@ pub fn take_color(input: &[u8]) -> Res<&[u8], Color> {
     Ok((input, color))
 }
 
-pub fn write_color(writer: impl io::Write, color: &Color) -> Result<usize, Error> {
+pub fn write_color(writer: &mut impl io::Write, color: Color) -> Result<usize, Error> {
     write(writer, (color.red, color.green, color.blue))
 }
 
@@ -143,7 +143,7 @@ pub fn take_u32(input: &[u8]) -> Res<&[u8], u32> {
     Ok((input, value))
 }
 
-pub fn write_u32(writer: impl io::Write, value: u32) -> Result<usize, Error> {
+pub fn write_u32(writer: &mut impl io::Write, value: u32) -> Result<usize, Error> {
     let byte1 = ((value >> 16) & 0xFF) as u8;
     let byte2 = ((value >> 8) & 0xFF) as u8;
     let byte3 = (value & 0xFF) as u8;

@@ -6,7 +6,7 @@
 
 use super::color::Color;
 use super::format::{enveloped, id3, mp4, Tag};
-use super::generic::Version;
+use super::generic::{Position, Version};
 use super::serato32;
 use super::util::{take_color, take_version, write_color, write_version};
 use crate::error::Error;
@@ -19,10 +19,10 @@ use std::io::Cursor;
 #[derive(Debug)]
 pub struct Marker {
     /// The position of the loop or cue.
-    pub start_position_millis: Option<u32>,
+    pub start_position: Option<Position>,
 
     /// If this is a loop, this field stores the end position.
-    pub end_position_millis: Option<u32>,
+    pub end_position: Option<Position>,
 
     /// The color of the cue.
     ///
@@ -111,7 +111,7 @@ impl Tag for Markers {
         Ok(autotags)
     }
 
-    fn write(&self, writer: impl io::Write) -> Result<usize, Error> {
+    fn write(&self, writer: &mut impl io::Write) -> Result<usize, Error> {
         write_markers(writer, self)
     }
 }
@@ -130,7 +130,7 @@ impl mp4::MP4Tag for Markers {
         Ok(markers)
     }
 
-    fn write_mp4(&self, writer: impl io::Write) -> Result<usize, Error> {
+    fn write_mp4(&self, writer: &mut impl io::Write) -> Result<usize, Error> {
         let mut buffer = Cursor::new(vec![]);
         write_markers_mp4(&mut buffer, self)?;
         let plain_data = &buffer.get_ref()[..];
@@ -139,7 +139,7 @@ impl mp4::MP4Tag for Markers {
 }
 
 /// Type of a Marker.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum MarkerType {
     /// Used for unset cues.
     ///
@@ -216,11 +216,11 @@ fn test_take_has_position() {
     assert!(take_has_position(&[]).is_err());
 }
 
-/// Returns an `Option<u32>` which contains the position parsed from the next 5 input bytes.
+/// Returns an `Option<Position>` which contains the position parsed from the next 5 input bytes.
 ///
 /// Uses `take_has_position` internally to determine if the position is set, then either returns
 /// the position as `Some` or ensures the that "no position" constant is used and returns `None`.
-pub fn take_position(input: &[u8]) -> Res<&[u8], Option<u32>> {
+pub fn take_position(input: &[u8]) -> Res<&[u8], Option<Position>> {
     if input.len() < 5 {
         return Err(nom::Err::Error(nom::error::VerboseError::from_error_kind(
             input,
@@ -229,8 +229,9 @@ pub fn take_position(input: &[u8]) -> Res<&[u8], Option<u32>> {
     }
     let (input, has_position) = nom::error::context("take has_position", take_has_position)(input)?;
     if has_position {
-        let (input, data) = serato32::take_u32(input)?;
-        Ok((input, Some(data)))
+        let (input, millis) = serato32::take_u32(input)?;
+        let position = Position { millis };
+        Ok((input, Some(position)))
     } else {
         let (input, _) = nom::bytes::complete::tag(b"\x7f\x7f\x7f\x7f")(input)?;
         Ok((input, None))
@@ -241,7 +242,7 @@ pub fn take_position(input: &[u8]) -> Res<&[u8], Option<u32>> {
 fn test_take_position() {
     assert_eq!(
         take_position(&[0x00, 0x00, 0x00, 0x00, 0x00]),
-        Ok((&[][..], Some(0)))
+        Ok((&[][..], Some(Default::default())))
     );
     assert_eq!(
         take_position(&[0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x00]),
@@ -278,10 +279,9 @@ fn test_take_marker_type() {
 
 /// Returns a `Marker` parsed from the input slice.
 fn take_marker(input: &[u8]) -> Res<&[u8], Marker> {
-    let (input, start_position_millis) =
+    let (input, start_position) =
         nom::error::context("marker start position", take_position)(input)?;
-    let (input, end_position_millis) =
-        nom::error::context("marker end position", take_position)(input)?;
+    let (input, end_position) = nom::error::context("marker end position", take_position)(input)?;
     let (input, _) = nom::error::context(
         "marker unknown bytes",
         nom::bytes::complete::tag(b"\x00\x7F\x7F\x7F\x7F\x7F"),
@@ -292,8 +292,8 @@ fn take_marker(input: &[u8]) -> Res<&[u8], Marker> {
     Ok((
         input,
         Marker {
-            start_position_millis,
-            end_position_millis,
+            start_position,
+            end_position,
             color,
             marker_type,
             is_locked,
@@ -318,9 +318,9 @@ fn take_markers(input: &[u8]) -> Res<&[u8], Markers> {
 
 /// Returns a `Marker` parsed from the input slice (MP4 version).
 fn take_marker_mp4(input: &[u8]) -> Res<&[u8], Marker> {
-    let (input, start_position_millis_raw) =
+    let (input, start_position_raw) =
         nom::error::context("marker start position", nom::number::complete::be_u32)(input)?;
-    let (input, end_position_millis_raw) =
+    let (input, end_position_raw) =
         nom::error::context("marker end position", nom::number::complete::be_u32)(input)?;
     let (input, _) =
         nom::error::context("marker unknown bytes", nom::bytes::complete::take(6usize))(input)?;
@@ -328,23 +328,26 @@ fn take_marker_mp4(input: &[u8]) -> Res<&[u8], Marker> {
     let (input, marker_type) = nom::error::context("marker type", take_marker_type)(input)?;
     let (input, is_locked) = nom::error::context("marker locked state", take_bool)(input)?;
 
-    let start_position_millis = if start_position_millis_raw != 0xFFFFFFFF {
-        Some(start_position_millis_raw)
+    let start_position = if start_position_raw != 0xFFFFFFFF {
+        Some(Position {
+            millis: start_position_raw,
+        })
     } else {
         None
     };
-    let end_position_millis =
-        if end_position_millis_raw != 0xFFFFFFFF && marker_type == MarkerType::Loop {
-            Some(end_position_millis_raw)
-        } else {
-            None
-        };
+    let end_position = if end_position_raw != 0xFFFFFFFF && marker_type == MarkerType::Loop {
+        Some(Position {
+            millis: end_position_raw,
+        })
+    } else {
+        None
+    };
 
     Ok((
         input,
         Marker {
-            start_position_millis,
-            end_position_millis,
+            start_position,
+            end_position,
             color,
             marker_type,
             is_locked,
@@ -368,27 +371,30 @@ fn take_markers_mp4(input: &[u8]) -> Res<&[u8], Markers> {
     Ok((input, markers))
 }
 
-fn write_position(mut writer: impl io::Write, position: &Option<u32>) -> Result<usize, Error> {
+fn write_position(writer: &mut impl io::Write, position: Option<Position>) -> Result<usize, Error> {
     match position {
-        Some(value) => {
+        Some(Position { millis }) => {
             let mut bytes_written = writer.write(b"\x00")?;
-            bytes_written += serato32::write_u32(writer, *value)?;
+            bytes_written += serato32::write_u32(writer, millis)?;
             Ok(bytes_written)
         }
         None => Ok(writer.write(b"\x7F\x7F\x7F\x7F\x7F")?),
     }
 }
 
-fn write_position_mp4(mut writer: impl io::Write, position: &Option<u32>) -> Result<usize, Error> {
+fn write_position_mp4(
+    writer: &mut impl io::Write,
+    position: Option<Position>,
+) -> Result<usize, Error> {
     // TODO: Implement this
     let data = match position {
-        Some(millis) => millis.to_be_bytes(),
+        Some(Position { millis }) => millis.to_be_bytes(),
         None => *b"\xFF\xFF\xFF\xFF",
     };
     Ok(writer.write(&data)?)
 }
 
-fn write_marker_type(mut writer: impl io::Write, marker_type: &MarkerType) -> Result<usize, Error> {
+fn write_marker_type(writer: &mut impl io::Write, marker_type: MarkerType) -> Result<usize, Error> {
     let byte: u8 = match marker_type {
         MarkerType::Invalid => 0x00,
         MarkerType::Cue => 0x01,
@@ -397,7 +403,7 @@ fn write_marker_type(mut writer: impl io::Write, marker_type: &MarkerType) -> Re
     Ok(writer.write(&[byte])?)
 }
 
-fn write_bool(mut writer: impl io::Write, value: bool) -> Result<usize, Error> {
+fn write_bool(writer: &mut impl io::Write, value: bool) -> Result<usize, Error> {
     let byte: u8 = match value {
         true => 0x01,
         false => 0x00,
@@ -405,45 +411,64 @@ fn write_bool(mut writer: impl io::Write, value: bool) -> Result<usize, Error> {
     Ok(writer.write(&[byte])?)
 }
 
-fn write_marker(mut writer: impl io::Write, marker: &Marker) -> Result<usize, Error> {
-    let mut bytes_written = write_position(&mut writer, &marker.start_position_millis)?;
-    bytes_written += write_position(&mut writer, &marker.end_position_millis)?;
+fn write_marker(writer: &mut impl io::Write, marker: &Marker) -> Result<usize, Error> {
+    let &Marker {
+        start_position,
+        end_position,
+        color,
+        marker_type,
+        is_locked,
+    } = marker;
+    let mut bytes_written = write_position(writer, start_position)?;
+    bytes_written += write_position(writer, end_position)?;
     bytes_written += writer.write(b"\x00\x7F\x7F\x7F\x7F\x7F")?;
-    bytes_written += serato32::write_color(&mut writer, &marker.color)?;
-    bytes_written += write_marker_type(&mut writer, &marker.marker_type)?;
-    bytes_written += write_bool(&mut writer, marker.is_locked)?;
+    bytes_written += serato32::write_color(writer, color)?;
+    bytes_written += write_marker_type(writer, marker_type)?;
+    bytes_written += write_bool(writer, is_locked)?;
     Ok(bytes_written)
 }
 
-fn write_marker_mp4(mut writer: impl io::Write, marker: &Marker) -> Result<usize, Error> {
-    let mut bytes_written = write_position_mp4(&mut writer, &marker.start_position_millis)?;
-    bytes_written += write_position_mp4(&mut writer, &marker.end_position_millis)?;
+fn write_marker_mp4(writer: &mut impl io::Write, marker: &Marker) -> Result<usize, Error> {
+    let &Marker {
+        start_position,
+        end_position,
+        color,
+        marker_type,
+        is_locked,
+    } = marker;
+    let mut bytes_written = write_position_mp4(writer, start_position)?;
+    bytes_written += write_position_mp4(writer, end_position)?;
     bytes_written += writer.write(b"\x00\xFF\xFF\xFF\xFF\x00")?;
-    bytes_written += write_color(&mut writer, &marker.color)?;
-    bytes_written += write_marker_type(&mut writer, &marker.marker_type)?;
-    bytes_written += write_bool(&mut writer, marker.is_locked)?;
+    bytes_written += write_color(writer, color)?;
+    bytes_written += write_marker_type(writer, marker_type)?;
+    bytes_written += write_bool(writer, is_locked)?;
     Ok(bytes_written)
 }
 
-pub fn write_markers(mut writer: impl io::Write, markers: &Markers) -> Result<usize, Error> {
-    let mut bytes_written = write_version(&mut writer, &markers.version)?;
+pub fn write_markers(writer: &mut impl io::Write, markers: &Markers) -> Result<usize, Error> {
+    let Markers {
+        version,
+        entries,
+        track_color,
+    } = markers;
+    let mut bytes_written = write_version(writer, *version)?;
     let num_markers = markers.entries.len() as u32;
     bytes_written += writer.write(&num_markers.to_be_bytes())?;
-    for marker in &markers.entries {
-        bytes_written += write_marker(&mut writer, marker)?;
+    for marker in entries {
+        bytes_written += write_marker(writer, marker)?;
     }
-    bytes_written += serato32::write_color(writer, &markers.track_color)?;
+    bytes_written += serato32::write_color(writer, *track_color)?;
     Ok(bytes_written)
 }
 
-pub fn write_markers_mp4(mut writer: impl io::Write, markers: &Markers) -> Result<usize, Error> {
-    let mut bytes_written = write_version(&mut writer, &markers.version)?;
+pub fn write_markers_mp4(writer: &mut impl io::Write, markers: &Markers) -> Result<usize, Error> {
+    let mut bytes_written = write_version(writer, markers.version)?;
     let num_markers = markers.entries.len() as u32;
     bytes_written += writer.write(&num_markers.to_be_bytes())?;
     for marker in &markers.entries {
-        bytes_written += write_marker_mp4(&mut writer, marker)?;
+        bytes_written += write_marker_mp4(writer, marker)?;
     }
     bytes_written += writer.write(b"\x00")?;
-    bytes_written += write_color(writer, &markers.track_color)?;
+    bytes_written += write_color(writer, markers.track_color)?;
     Ok(bytes_written)
 }

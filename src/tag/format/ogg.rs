@@ -9,5 +9,5 @@ pub trait OggTag: Tag {
     const OGG_COMMENT: &'static str;
 
     fn parse_ogg(input: &[u8]) -> Result<Self, Error>;
-    fn write_ogg(&self, writer: impl io::Write) -> Result<usize, Error>;
+    fn write_ogg(&self, writer: &mut impl io::Write) -> Result<usize, Error>;
 }

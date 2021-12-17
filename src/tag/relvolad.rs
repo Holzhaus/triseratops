@@ -40,7 +40,7 @@ impl Tag for RelVolAd {
         Ok(overview)
     }
 
-    fn write(&self, writer: impl io::Write) -> Result<usize, Error> {
+    fn write(&self, writer: &mut impl io::Write) -> Result<usize, Error> {
         write_relvolad(writer, self)
     }
 }
@@ -62,8 +62,8 @@ fn take_relvolad(input: &[u8]) -> Res<&[u8], RelVolAd> {
     Ok((input, relvolad))
 }
 
-fn write_relvolad(mut writer: impl io::Write, relvolad: &RelVolAd) -> Result<usize, Error> {
-    let mut bytes_written = write_version(&mut writer, &relvolad.version)?;
+fn write_relvolad(writer: &mut impl io::Write, relvolad: &RelVolAd) -> Result<usize, Error> {
+    let mut bytes_written = write_version(writer, relvolad.version)?;
     bytes_written += writer.write(relvolad.data.as_slice())?;
     Ok(bytes_written)
 }

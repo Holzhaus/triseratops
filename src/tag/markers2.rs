@@ -9,7 +9,8 @@
 use super::color::Color;
 use super::format::{enveloped, flac, id3, mp4, ogg, Tag};
 use super::generic::{
-    CensorFlipAction, Cue, Flip, FlipAction, JumpFlipAction, Loop, UnknownFlipAction, Version,
+    CensorFlipAction, Cue, Flip, FlipAction, JumpFlipAction, Loop, Position, UnknownFlipAction,
+    Version,
 };
 use super::util::{take_color, take_version, write_color, write_version};
 use crate::error::Error;
@@ -150,7 +151,7 @@ impl Tag for Markers2 {
         Ok(autotags)
     }
 
-    fn write(&self, writer: impl io::Write) -> Result<usize, Error> {
+    fn write(&self, writer: &mut impl io::Write) -> Result<usize, Error> {
         write_markers2(writer, self)
     }
 }
@@ -183,11 +184,11 @@ impl ogg::OggTag for Markers2 {
         }
     }
 
-    fn write_ogg(&self, mut writer: impl io::Write) -> Result<usize, Error> {
+    fn write_ogg(&self, writer: &mut impl io::Write) -> Result<usize, Error> {
         let mut buffer = Cursor::new(vec![]);
         write_markers2_content(&mut buffer, &self.content)?;
         let plain_data = &buffer.get_ref()[..];
-        let mut bytes_written = enveloped::base64_encode(&mut writer, plain_data)?;
+        let mut bytes_written = enveloped::base64_encode(writer, plain_data)?;
         if self.size > bytes_written {
             for _ in 0..(self.size - bytes_written) {
                 bytes_written += writer.write(b"\x00")?;
@@ -322,17 +323,24 @@ fn take_color_marker(input: &[u8]) -> Res<&[u8], Marker> {
     Ok((input, Marker::Color(marker)))
 }
 
+/// Returns a `Position` struct parsed from the first 4 input bytes.
+fn take_position(input: &[u8]) -> Res<&[u8], Position> {
+    let (input, millis) = nom::number::complete::be_u32(input)?;
+    let position = Position { millis };
+    Ok((input, position))
+}
+
 fn take_cue_marker(input: &[u8]) -> Res<&[u8], Marker> {
     let (input, _) = nom::bytes::complete::tag(b"\x00")(input)?;
     let (input, index) = nom::number::complete::u8(input)?;
-    let (input, position_millis) = nom::number::complete::be_u32(input)?;
+    let (input, position) = take_position(input)?;
     let (input, _) = nom::bytes::complete::tag(b"\x00")(input)?;
     let (input, color) = take_color(input)?;
     let (input, _) = nom::bytes::complete::tag(b"\x00\x00")(input)?;
     let (input, label) = take_utf8(input)?;
     let marker = Cue {
         index,
-        position_millis,
+        position,
         color,
         label: label.to_owned(),
     };
@@ -343,7 +351,13 @@ fn take_loop_marker(input: &[u8]) -> Res<&[u8], Marker> {
     let (input, _) = nom::bytes::complete::tag(b"\x00")(input)?;
     let (input, index) = nom::number::complete::u8(input)?;
     let (input, start_position_millis) = nom::number::complete::be_u32(input)?;
+    let start_position = super::generic::Position {
+        millis: start_position_millis,
+    };
     let (input, end_position_millis) = nom::number::complete::be_u32(input)?;
+    let end_position = super::generic::Position {
+        millis: end_position_millis,
+    };
     let (input, _) = nom::bytes::complete::tag(b"\xff\xff\xff\xff")(input)?;
     let (input, _) = nom::bytes::complete::tag(b"\x00")(input)?;
     let (input, color) = take_color(input)?;
@@ -352,8 +366,8 @@ fn take_loop_marker(input: &[u8]) -> Res<&[u8], Marker> {
     let (input, label) = take_utf8(input)?;
     let marker = Loop {
         index,
-        start_position_millis,
-        end_position_millis,
+        start_position,
+        end_position,
         color,
         is_locked,
         label: label.to_owned(),
@@ -456,18 +470,22 @@ fn take_markers2(input: &[u8]) -> Res<&[u8], Markers2> {
     Ok((input, markers2))
 }
 
-fn write_markers2(mut writer: impl io::Write, markers2: &Markers2) -> Result<usize, Error> {
-    let version = match &markers2.version {
+fn write_position(writer: &mut impl io::Write, position: Position) -> Result<usize, Error> {
+    let Position { millis } = position;
+    Ok(writer.write(&millis.to_be_bytes())?)
+}
+fn write_markers2(writer: &mut impl io::Write, markers2: &Markers2) -> Result<usize, Error> {
+    let version = match markers2.version {
         Some(version) => version,
         None => {
             return Err(Error::ParseError);
         }
     };
-    let mut bytes_written = write_version(&mut writer, version)?;
+    let mut bytes_written = write_version(writer, version)?;
     let mut buffer = Cursor::new(vec![]);
     write_markers2_content(&mut buffer, &markers2.content)?;
     let plain_data = &buffer.get_ref()[..];
-    bytes_written += enveloped::base64_encode(&mut writer, plain_data)?;
+    bytes_written += enveloped::base64_encode(writer, plain_data)?;
     if markers2.size > bytes_written {
         for _ in 0..(markers2.size - bytes_written) {
             bytes_written += writer.write(b"\x00")?;
@@ -477,17 +495,17 @@ fn write_markers2(mut writer: impl io::Write, markers2: &Markers2) -> Result<usi
 }
 
 fn write_markers2_content(
-    mut writer: impl io::Write,
+    writer: &mut impl io::Write,
     content: &Markers2Content,
 ) -> Result<usize, Error> {
-    let mut bytes_written = write_version(&mut writer, &content.version)?;
+    let mut bytes_written = write_version(writer, content.version)?;
     for marker in &content.markers {
-        bytes_written += write_marker(&mut writer, marker)?;
+        bytes_written += write_marker(writer, marker)?;
     }
     Ok(bytes_written)
 }
 
-fn write_marker(mut writer: impl io::Write, marker: &Marker) -> Result<usize, Error> {
+fn write_marker(writer: &mut impl io::Write, marker: &Marker) -> Result<usize, Error> {
     match marker {
         Marker::Unknown(marker) => {
             let mut bytes_written = writer.write(marker.name.as_bytes())?;
@@ -505,7 +523,7 @@ fn write_marker(mut writer: impl io::Write, marker: &Marker) -> Result<usize, Er
     }
 }
 
-fn write_bool(mut writer: impl io::Write, value: bool) -> Result<usize, Error> {
+fn write_bool(writer: &mut impl io::Write, value: bool) -> Result<usize, Error> {
     let byte: u8 = match value {
         true => 1,
         false => 0,
@@ -514,7 +532,7 @@ fn write_bool(mut writer: impl io::Write, value: bool) -> Result<usize, Error> {
 }
 
 fn write_bpmlock_marker(
-    mut writer: impl io::Write,
+    writer: &mut impl io::Write,
     marker: &BPMLockMarker,
 ) -> Result<usize, Error> {
     let mut bytes_written = writer.write(b"BPMLOCK\0")?;
@@ -525,50 +543,65 @@ fn write_bpmlock_marker(
 }
 
 fn write_color_marker(
-    mut writer: impl io::Write,
+    writer: &mut impl io::Write,
     marker: &TrackColorMarker,
 ) -> Result<usize, Error> {
+    let &TrackColorMarker { color } = marker;
     let mut bytes_written = writer.write(b"COLOR\0")?;
     let size: u32 = 4;
     bytes_written += writer.write(&size.to_be_bytes())?;
     bytes_written += writer.write(b"\0")?;
-    bytes_written += write_color(writer, &marker.color)?;
+    bytes_written += write_color(writer, color)?;
     Ok(bytes_written)
 }
 
-fn write_cue_marker(mut writer: impl io::Write, marker: &Cue) -> Result<usize, Error> {
+fn write_cue_marker(writer: &mut impl io::Write, marker: &Cue) -> Result<usize, Error> {
+    let Cue {
+        color,
+        index,
+        label,
+        position,
+    } = marker;
     let mut bytes_written = writer.write(b"CUE\0")?;
-    let size: u32 = 13 + marker.label.as_bytes().len() as u32;
+    let size: u32 = 13 + label.as_bytes().len() as u32;
     bytes_written += writer.write(&size.to_be_bytes())?;
     bytes_written += writer.write(b"\0")?;
-    bytes_written += writer.write(&[marker.index])?;
-    bytes_written += writer.write(&marker.position_millis.to_be_bytes())?;
+    bytes_written += writer.write(&[*index])?;
+    bytes_written += write_position(writer, *position)?;
     bytes_written += writer.write(b"\0")?;
-    bytes_written += write_color(&mut writer, &marker.color)?;
+    bytes_written += write_color(writer, *color)?;
     bytes_written += writer.write(b"\0\0")?;
-    bytes_written += writer.write(marker.label.as_bytes())?;
+    bytes_written += writer.write(label.as_bytes())?;
     bytes_written += writer.write(b"\0")?;
     Ok(bytes_written)
 }
 
-fn write_loop_marker(mut writer: impl io::Write, marker: &Loop) -> Result<usize, Error> {
+fn write_loop_marker(writer: &mut impl io::Write, marker: &Loop) -> Result<usize, Error> {
+    let Loop {
+        label,
+        index,
+        start_position,
+        end_position,
+        color,
+        is_locked,
+    } = marker;
     let mut bytes_written = writer.write(b"LOOP\0")?;
     let size: u32 = 21 + marker.label.as_bytes().len() as u32;
     bytes_written += writer.write(&size.to_be_bytes())?;
     bytes_written += writer.write(b"\0")?;
-    bytes_written += writer.write(&[marker.index])?;
-    bytes_written += writer.write(&marker.start_position_millis.to_be_bytes())?;
-    bytes_written += writer.write(&marker.end_position_millis.to_be_bytes())?;
+    bytes_written += writer.write(&[*index])?;
+    bytes_written += write_position(writer, *start_position)?;
+    bytes_written += write_position(writer, *end_position)?;
     bytes_written += writer.write(b"\xFF\xFF\xFF\xFF\0")?;
-    bytes_written += write_color(&mut writer, &marker.color)?;
+    bytes_written += write_color(writer, *color)?;
     bytes_written += writer.write(b"\0")?;
-    bytes_written += write_bool(&mut writer, marker.is_locked)?;
-    bytes_written += writer.write(marker.label.as_bytes())?;
+    bytes_written += write_bool(writer, *is_locked)?;
+    bytes_written += writer.write(label.as_bytes())?;
     bytes_written += writer.write(b"\0")?;
     Ok(bytes_written)
 }
 
-fn write_flip_marker(mut writer: impl io::Write, marker: &Flip) -> Result<usize, Error> {
+fn write_flip_marker(writer: &mut impl io::Write, marker: &Flip) -> Result<usize, Error> {
     let mut bytes_written = writer.write(b"FLIP\0")?;
     let mut size: u32 = 9 + marker.label.as_bytes().len() as u32;
     for action in &marker.actions {
@@ -582,20 +615,20 @@ fn write_flip_marker(mut writer: impl io::Write, marker: &Flip) -> Result<usize,
     bytes_written += writer.write(&size.to_be_bytes())?;
     bytes_written += writer.write(b"\0")?;
     bytes_written += writer.write(&[marker.index])?;
-    bytes_written += write_bool(&mut writer, marker.is_enabled)?;
+    bytes_written += write_bool(writer, marker.is_enabled)?;
     bytes_written += writer.write(marker.label.as_bytes())?;
     bytes_written += writer.write(b"\0")?;
-    bytes_written += write_bool(&mut writer, marker.is_loop)?;
+    bytes_written += write_bool(writer, marker.is_loop)?;
     let num_actions = marker.actions.len() as u32;
     bytes_written += writer.write(&num_actions.to_be_bytes())?;
     for action in &marker.actions {
-        bytes_written = write_flip_marker_action(&mut writer, action)?;
+        bytes_written = write_flip_marker_action(writer, action)?;
     }
     Ok(bytes_written)
 }
 
 fn write_flip_marker_action(
-    mut writer: impl io::Write,
+    writer: &mut impl io::Write,
     action: &FlipAction,
 ) -> Result<usize, Error> {
     match action {
@@ -603,14 +636,14 @@ fn write_flip_marker_action(
             let mut bytes_written = writer.write(b"\x00")?;
             let size = 16u32;
             bytes_written += writer.write(&size.to_be_bytes())?;
-            bytes_written += write_flip_marker_action_jump(&mut writer, act)?;
+            bytes_written += write_flip_marker_action_jump(writer, act)?;
             Ok(bytes_written)
         }
         FlipAction::Censor(act) => {
             let mut bytes_written = writer.write(b"\x01")?;
             let size = 24u32;
             bytes_written += writer.write(&size.to_be_bytes())?;
-            bytes_written += write_flip_marker_action_censor(&mut writer, act)?;
+            bytes_written += write_flip_marker_action_censor(writer, act)?;
             Ok(bytes_written)
         }
         FlipAction::Unknown(act) => {
@@ -624,7 +657,7 @@ fn write_flip_marker_action(
 }
 
 fn write_flip_marker_action_jump(
-    mut writer: impl io::Write,
+    writer: &mut impl io::Write,
     action: &JumpFlipAction,
 ) -> Result<usize, Error> {
     let mut bytes_written = writer.write(&action.source_position_seconds.to_be_bytes())?;
@@ -633,7 +666,7 @@ fn write_flip_marker_action_jump(
 }
 
 fn write_flip_marker_action_censor(
-    mut writer: impl io::Write,
+    writer: &mut impl io::Write,
     action: &CensorFlipAction,
 ) -> Result<usize, Error> {
     let mut bytes_written = writer.write(&action.start_position_seconds.to_be_bytes())?;

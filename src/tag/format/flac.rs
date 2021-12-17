@@ -14,7 +14,7 @@ pub trait FLACTag: EnvelopedTag {
         Self::parse_enveloped(input)
     }
 
-    fn write_flac(&self, writer: impl io::Write) -> Result<usize, Error> {
+    fn write_flac(&self, writer: &mut impl io::Write) -> Result<usize, Error> {
         self.write_enveloped(writer)
     }
 }

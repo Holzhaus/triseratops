@@ -47,7 +47,7 @@ impl Tag for Autotags {
         Ok(autotags)
     }
 
-    fn write(&self, writer: impl io::Write) -> Result<usize, Error> {
+    fn write(&self, writer: &mut impl io::Write) -> Result<usize, Error> {
         write_autotags(writer, self)
     }
 }
@@ -100,7 +100,7 @@ fn take_autotags(input: &[u8]) -> Res<&[u8], Autotags> {
 }
 
 pub fn write_double_str(
-    mut writer: impl io::Write,
+    writer: &mut impl io::Write,
     number: f64,
     width: usize,
 ) -> Result<usize, Error> {
@@ -108,10 +108,10 @@ pub fn write_double_str(
     Ok(writer.write(number_str.as_bytes())?)
 }
 
-pub fn write_autotags(mut writer: impl io::Write, autotags: &Autotags) -> Result<usize, Error> {
-    let mut bytes_written = write_version(&mut writer, &autotags.version)?;
-    bytes_written += write_double_str(&mut writer, autotags.bpm, 2)?;
-    bytes_written += write_double_str(&mut writer, autotags.auto_gain, 3)?;
-    bytes_written += write_double_str(&mut writer, autotags.gain_db, 3)?;
+pub fn write_autotags(writer: &mut impl io::Write, autotags: &Autotags) -> Result<usize, Error> {
+    let mut bytes_written = write_version(writer, autotags.version)?;
+    bytes_written += write_double_str(writer, autotags.bpm, 2)?;
+    bytes_written += write_double_str(writer, autotags.auto_gain, 3)?;
+    bytes_written += write_double_str(writer, autotags.gain_db, 3)?;
     Ok(bytes_written)
 }

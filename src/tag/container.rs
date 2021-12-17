@@ -65,7 +65,7 @@ impl TagContainer {
     /// Write the [`Serato Autotags`](Autotags) tag.
     pub fn write_autotags(
         &self,
-        writer: impl io::Write,
+        writer: &mut impl io::Write,
         tag_format: TagFormat,
     ) -> Result<usize, Error> {
         let tag = match &self.autotags {
@@ -100,7 +100,7 @@ impl TagContainer {
     /// Write the [`Serato BeatGrid`](Beatgrid) tag.
     pub fn write_beatgrid(
         &self,
-        writer: impl io::Write,
+        writer: &mut impl io::Write,
         tag_format: TagFormat,
     ) -> Result<usize, Error> {
         let tag = match &self.beatgrid {
@@ -132,7 +132,7 @@ impl TagContainer {
     /// Write the [`Serato Markers_`](Markers) tag.
     pub fn write_markers(
         &self,
-        writer: impl io::Write,
+        writer: &mut impl io::Write,
         tag_format: TagFormat,
     ) -> Result<usize, Error> {
         let tag = match &self.markers {
@@ -168,7 +168,7 @@ impl TagContainer {
     /// Write the [`Serato Markers2`](Markers2) tag.
     pub fn write_markers2(
         &self,
-        writer: impl io::Write,
+        writer: &mut impl io::Write,
         tag_format: TagFormat,
     ) -> Result<usize, Error> {
         let tag = match &self.markers2 {
@@ -203,7 +203,7 @@ impl TagContainer {
     /// Write the [`Serato Overview`](Overview) tag.
     pub fn write_overview(
         &self,
-        writer: impl io::Write,
+        writer: &mut impl io::Write,
         tag_format: TagFormat,
     ) -> Result<usize, Error> {
         let tag = match &self.overview {
@@ -282,7 +282,7 @@ impl TagContainer {
                         continue;
                     }
                     markers::MarkerType::Cue => {
-                        if marker.start_position_millis == None {
+                        if marker.start_position == None {
                             // This shouldn't be possible if the `Serato Markers_` data is valid.
                             // Ideally, this should be checked during the parsing state.
                             // FIXME: Throw error here?
@@ -290,7 +290,7 @@ impl TagContainer {
                             continue;
                         }
 
-                        let position_millis = marker.start_position_millis.unwrap();
+                        let position = marker.start_position.unwrap();
 
                         // If the cue is set in both `Serato Markers2` and `Serato Markers_`, use
                         // the version from `Serato Markers_`, but keep the label from `Serato
@@ -305,7 +305,7 @@ impl TagContainer {
                             index,
                             generic::Cue {
                                 index,
-                                position_millis,
+                                position,
                                 color: marker.color,
                                 label,
                             },
@@ -345,15 +345,15 @@ impl TagContainer {
                     continue;
                 }
 
-                if marker.start_position_millis == None || marker.end_position_millis == None {
+                if marker.start_position == None || marker.end_position == None {
                     // This may happen even for valid data, because unset loops lack the start/end
                     // position.
                     map.remove(&index);
                     continue;
                 }
 
-                let start_position_millis = marker.start_position_millis.unwrap();
-                let end_position_millis = marker.end_position_millis.unwrap();
+                let start_position = marker.start_position.unwrap();
+                let end_position = marker.end_position.unwrap();
 
                 // If the loop is set in both `Serato Markers2` and `Serato Markers_`, use
                 // the version from `Serato Markers_`, but keep the label from `Serato
@@ -368,8 +368,8 @@ impl TagContainer {
                     index,
                     generic::Loop {
                         index,
-                        start_position_millis,
-                        end_position_millis,
+                        start_position,
+                        end_position,
                         color: marker.color,
                         label,
                         is_locked: marker.is_locked,
