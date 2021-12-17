@@ -126,7 +126,7 @@ impl mp4::MP4Tag for Markers {
             super::format::enveloped::take_base64_with_newline,
         )(input)?;
         let content = super::format::enveloped::envelope_decode_with_name(encoded, Self::NAME)?;
-        let (_, markers) = nom::combinator::all_consuming(take_markers_mp4)(content.as_slice())?;
+        let (_, markers) = nom::combinator::all_consuming(take_markers_mp4)(&content)?;
         Ok(markers)
     }
 

@@ -58,7 +58,7 @@ impl mp4::MP4Tag for VidAssoc {
 fn take_vidassoc(input: &[u8]) -> Res<&[u8], VidAssoc> {
     let (input, version) = take_version(input)?;
     let (input, data) = nom::combinator::rest(input)?;
-    let data = data.to_vec();
+    let data = data.to_owned();
 
     let vidassoc = VidAssoc { version, data };
     Ok((input, vidassoc))

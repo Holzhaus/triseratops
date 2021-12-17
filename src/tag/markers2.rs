@@ -97,43 +97,48 @@ impl Markers2 {
         None
     }
 
-    pub fn cues(&self) -> Vec<Cue> {
-        let mut cues: Vec<Cue> = Vec::new();
-        for marker in &self.content.markers {
+    pub fn cues(&self) -> impl Iterator<Item = &Cue> {
+        self.content.markers.iter().filter_map(|marker| {
             if let Marker::Cue(m) = marker {
-                cues.push(m.clone());
+                Some(m)
+            } else {
+                None
             }
-        }
-        cues
+        })
     }
 
-    pub fn loops(&self) -> Vec<Loop> {
-        let mut loops: Vec<Loop> = Vec::new();
-        for marker in &self.content.markers {
+    pub fn loops(&self) -> impl Iterator<Item = &Loop> {
+        self.content.markers.iter().filter_map(|marker| {
             if let Marker::Loop(m) = marker {
-                loops.push(m.clone());
+                Some(m)
+            } else {
+                None
             }
-        }
-        loops
+        })
     }
 
-    pub fn flips(&self) -> Vec<Flip> {
-        let mut flips: Vec<Flip> = Vec::new();
-        for marker in &self.content.markers {
+    pub fn flips(&self) -> impl Iterator<Item = &Flip> {
+        self.content.markers.iter().filter_map(|marker| {
             if let Marker::Flip(m) = marker {
-                flips.push(m.clone());
+                Some(m)
+            } else {
+                None
             }
-        }
-        flips
+        })
     }
 
     pub fn track_color(&self) -> Option<Color> {
-        for marker in &self.content.markers {
-            if let Marker::Color(m) = marker {
-                return Some(m.color);
-            }
-        }
-        None
+        self.content
+            .markers
+            .iter()
+            .filter_map(|marker| {
+                if let Marker::Color(m) = marker {
+                    Some(m.color)
+                } else {
+                    None
+                }
+            })
+            .next()
     }
 }
 
@@ -265,7 +270,7 @@ fn decode_base64_chunks(
     Ok(decoded_data)
 }
 
-fn take_marker_name(input: &[u8]) -> Res<&[u8], String> {
+fn take_marker_name(input: &[u8]) -> Res<&[u8], &str> {
     let (input, _) = nom::combinator::not(nom::bytes::complete::tag(b"\0"))(input)?;
     let (input, name) = take_utf8(input)?;
     if name.is_empty() {
@@ -279,7 +284,7 @@ fn take_marker(input: &[u8]) -> Res<&[u8], Marker> {
     let (input, name) = take_marker_name(input)?;
     let (input, data) = nom::multi::length_data(nom::number::complete::be_u32)(input)?;
 
-    let (_, marker) = match name.as_str() {
+    let (_, marker) = match name {
         "BPMLOCK" => nom::combinator::all_consuming(take_bpmlock_marker)(data)?,
         "COLOR" => nom::combinator::all_consuming(take_color_marker)(data)?,
         "CUE" => nom::combinator::all_consuming(take_cue_marker)(data)?,
@@ -288,8 +293,8 @@ fn take_marker(input: &[u8]) -> Res<&[u8], Marker> {
         _ => (
             input,
             Marker::Unknown(UnknownMarker {
-                name,
-                data: data.to_vec(),
+                name: name.to_owned(),
+                data: data.to_owned(),
             }),
         ),
     };
@@ -329,7 +334,7 @@ fn take_cue_marker(input: &[u8]) -> Res<&[u8], Marker> {
         index,
         position_millis,
         color,
-        label,
+        label: label.to_owned(),
     };
     Ok((input, Marker::Cue(marker)))
 }
@@ -351,7 +356,7 @@ fn take_loop_marker(input: &[u8]) -> Res<&[u8], Marker> {
         end_position_millis,
         color,
         is_locked,
-        label,
+        label: label.to_owned(),
     };
     Ok((input, Marker::Loop(marker)))
 }
@@ -367,7 +372,7 @@ fn take_flip_marker(input: &[u8]) -> Res<&[u8], Marker> {
     let marker = Flip {
         index,
         is_enabled,
-        label,
+        label: label.to_owned(),
         is_loop,
         actions,
     };
@@ -387,7 +392,7 @@ fn take_flip_marker_action(input: &[u8]) -> Res<&[u8], FlipAction> {
             input,
             FlipAction::Unknown(UnknownFlipAction {
                 id,
-                data: data.to_vec(),
+                data: data.to_owned(),
             }),
         ),
     };

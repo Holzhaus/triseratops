@@ -58,7 +58,7 @@ impl mp4::MP4Tag for Overview {
 /// Returns a 16-byte vector of data parsed from the input slice.
 fn take_chunk(input: &[u8]) -> Res<&[u8], Vec<u8>> {
     let (input, chunkdata) = nom::bytes::complete::take(16usize)(input)?;
-    Ok((input, chunkdata.to_vec()))
+    Ok((input, chunkdata.to_owned()))
 }
 
 #[test]
@@ -70,11 +70,10 @@ fn test_take_chunk() {
         ]),
         Ok((
             &[0x10u8][..],
-            [
+            vec![
                 0x00u8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c,
                 0x0d, 0x0e, 0x0f
             ]
-            .to_vec()
         ))
     );
     assert!(take_chunk(&[0xAB, 0x01]).is_err());

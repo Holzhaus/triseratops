@@ -51,7 +51,7 @@ pub enum Error {
 
 fn map_err(item: (&[u8], nom::error::VerboseErrorKind)) -> (Vec<u8>, nom::error::VerboseErrorKind) {
     let (data, kind) = item;
-    (data.to_vec(), kind)
+    (data.to_owned(), kind)
 }
 
 impl From<nom::Err<nom::error::VerboseError<&[u8]>>> for Error {

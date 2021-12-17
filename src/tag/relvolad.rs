@@ -56,7 +56,7 @@ impl mp4::MP4Tag for RelVolAd {
 fn take_relvolad(input: &[u8]) -> Res<&[u8], RelVolAd> {
     let (input, version) = take_version(input)?;
     let (input, data) = nom::combinator::rest(input)?;
-    let data = data.to_vec();
+    let data = data.to_owned();
 
     let relvolad = RelVolAd { version, data };
     Ok((input, relvolad))

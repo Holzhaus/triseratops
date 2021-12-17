@@ -23,10 +23,10 @@ pub trait EnvelopedTag: Tag {
     }
 }
 
-pub fn parse_envelope(input: &[u8]) -> Result<(String, Vec<u8>), Error> {
+pub fn parse_envelope(input: &[u8]) -> Result<(&str, &[u8]), Error> {
     let (input, _) = nom::bytes::complete::tag(b"application/octet-stream\x00\x00")(input)?;
     let (input, name) = take_utf8(input)?;
-    Ok((name, input.to_vec()))
+    Ok((name, input))
 }
 
 pub fn is_base64(byte: u8) -> bool {
@@ -78,7 +78,7 @@ pub fn base64_encode(mut writer: impl io::Write, input: &[u8]) -> Result<usize, 
 
 pub fn envelope_decode(input: &[u8]) -> Result<(String, Vec<u8>), Error> {
     let data = base64_decode(input)?;
-    parse_envelope(data.as_slice())
+    parse_envelope(&data).map(|(s, b)| (s.to_owned(), b.to_owned()))
 }
 
 pub fn envelope_decode_with_name(input: &[u8], expected_name: &str) -> Result<Vec<u8>, Error> {

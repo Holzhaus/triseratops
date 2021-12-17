@@ -25,23 +25,18 @@ fn test_take_until_nullbyte() {
     assert!(take_until_nullbyte(&[0xAB, 0xCD]).is_err());
 }
 
-pub fn parse_utf8(input: &[u8]) -> Res<&[u8], String> {
-    let res = std::str::from_utf8(input);
-    match res {
-        Ok(s) => Ok((b"", s.to_owned())),
-        Err(_) => Err(nom::Err::Incomplete(nom::Needed::Unknown)),
-    }
+pub fn parse_utf8(input: &[u8]) -> Res<&[u8], &str> {
+    std::str::from_utf8(input)
+        .map(|s| (&b""[..], s))
+        .map_err(|_| nom::Err::Incomplete(nom::Needed::Unknown))
 }
 
 #[test]
 fn test_parse_utf8() {
-    assert_eq!(
-        parse_utf8(&[0x41, 0x42]),
-        Ok((&b""[..], String::from("AB")))
-    );
+    assert_eq!(parse_utf8(&[0x41, 0x42]), Ok((&b""[..], "AB")));
 }
 
-pub fn take_utf8(input: &[u8]) -> Res<&[u8], String> {
+pub fn take_utf8(input: &[u8]) -> Res<&[u8], &str> {
     let (input, data) = take_until_nullbyte(input)?;
     let (_, value) = parse_utf8(data)?;
     let (input, _) = nom::bytes::complete::take(1usize)(input)?;
@@ -50,8 +45,5 @@ pub fn take_utf8(input: &[u8]) -> Res<&[u8], String> {
 
 #[test]
 fn test_take_utf8() {
-    assert_eq!(
-        take_utf8(&[0x41, 0x42, 0x00]),
-        Ok((&b""[..], String::from("AB")))
-    );
+    assert_eq!(take_utf8(&[0x41, 0x42, 0x00]), Ok((&b""[..], "AB")));
 }

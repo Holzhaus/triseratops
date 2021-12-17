@@ -267,7 +267,7 @@ impl TagContainer {
         // First, insert all cue from the `Serato Markers2` tag into the map.
         if let Some(m) = &self.markers2 {
             for cue in m.cues() {
-                map.insert(cue.index, cue);
+                map.insert(cue.index, cue.to_owned());
             }
         }
 
@@ -317,7 +317,7 @@ impl TagContainer {
         }
 
         // Return the sorted list of cues.
-        map.values().cloned().collect()
+        map.into_values().collect()
     }
 
     /// Returns loops from the [`Serato Markers_`](Markers) and [`Serato Markers2`](Markers2) tags.
@@ -331,7 +331,7 @@ impl TagContainer {
         // First, insert all cue from the `Serato Markers2` tag into the map.
         if let Some(m) = &self.markers2 {
             for saved_loop in m.loops() {
-                map.insert(saved_loop.index, saved_loop);
+                map.insert(saved_loop.index, saved_loop.to_owned());
             }
         }
 
@@ -379,46 +379,31 @@ impl TagContainer {
         }
 
         // Return the sorted list of cues.
-        map.values().cloned().collect()
+        map.into_values().collect()
     }
 
     /// Returns [flips](https://serato.com/dj/pro/expansions/flip) from the [`Serato Markers2`](Markers2) tag.
-    pub fn flips(&self) -> Vec<generic::Flip> {
-        if let Some(m) = &self.markers2 {
-            return m.flips();
-        }
-
-        vec![]
+    pub fn flips(&self) -> Option<impl Iterator<Item = &generic::Flip>> {
+        self.markers2.as_ref().map(Markers2::flips)
     }
 
     /// Returns the track color from the [`Serato Markers_`](Markers) and [`Serato
     /// Markers2`](Markers2) tags.
     ///
-    /// This retrieves the `Serato Markers2` track color first, then overwrites the value with the
-    /// one from `Serato Markers_`. This is what Serato does too (i.e. if `Serato Markers_` and
-    /// `Serato Markers2` contradict each other, Serato will use the value from `Serato
-    /// Markers_`).
+    /// If present the color in `Serato Markers_` takes precedence over that in
+    /// `Serato Markers2`. This is what Serato does too, i.e. if `Serato Markers_`
+    /// and `Serato Markers2` contradict each other, Serato will use the value
+    /// from `Serato Markers_`.
     pub fn track_color(&self) -> Option<Color> {
-        let mut track_color = None;
-
-        if let Some(m) = &self.markers2 {
-            track_color = m.track_color();
-        }
-
-        if let Some(m) = &self.markers {
-            track_color = Some(m.track_color());
-        }
-
-        track_color
+        self.markers
+            .as_ref()
+            .map(Markers::track_color)
+            .or_else(|| self.markers2.as_ref().and_then(Markers2::track_color))
     }
 
     /// Returns the waveform overview data color from the [`Serato Overview`](Overview) tag.
-    pub fn overview(&self) -> Option<&Vec<Vec<u8>>> {
-        if let Some(tag) = &self.overview {
-            return Some(&tag.data);
-        }
-
-        None
+    pub fn overview_data(&self) -> Option<&[Vec<u8>]> {
+        self.overview.as_ref().map(|overview| &overview.data[..])
     }
 }
 
