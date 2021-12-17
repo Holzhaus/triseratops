@@ -65,7 +65,7 @@ impl TagContainer {
     /// Write the [`Serato Autotags`](Autotags) tag.
     pub fn write_autotags(
         &self,
-        writer: impl io::Write,
+        writer: &mut impl io::Write,
         tag_format: TagFormat,
     ) -> Result<usize, Error> {
         let tag = match &self.autotags {
@@ -100,7 +100,7 @@ impl TagContainer {
     /// Write the [`Serato BeatGrid`](Beatgrid) tag.
     pub fn write_beatgrid(
         &self,
-        writer: impl io::Write,
+        writer: &mut impl io::Write,
         tag_format: TagFormat,
     ) -> Result<usize, Error> {
         let tag = match &self.beatgrid {
@@ -132,7 +132,7 @@ impl TagContainer {
     /// Write the [`Serato Markers_`](Markers) tag.
     pub fn write_markers(
         &self,
-        writer: impl io::Write,
+        writer: &mut impl io::Write,
         tag_format: TagFormat,
     ) -> Result<usize, Error> {
         let tag = match &self.markers {
@@ -168,7 +168,7 @@ impl TagContainer {
     /// Write the [`Serato Markers2`](Markers2) tag.
     pub fn write_markers2(
         &self,
-        writer: impl io::Write,
+        writer: &mut impl io::Write,
         tag_format: TagFormat,
     ) -> Result<usize, Error> {
         let tag = match &self.markers2 {
@@ -203,7 +203,7 @@ impl TagContainer {
     /// Write the [`Serato Overview`](Overview) tag.
     pub fn write_overview(
         &self,
-        writer: impl io::Write,
+        writer: &mut impl io::Write,
         tag_format: TagFormat,
     ) -> Result<usize, Error> {
         let tag = match &self.overview {
@@ -267,7 +267,7 @@ impl TagContainer {
         // First, insert all cue from the `Serato Markers2` tag into the map.
         if let Some(m) = &self.markers2 {
             for cue in m.cues() {
-                map.insert(cue.index, cue);
+                map.insert(cue.index, cue.to_owned());
             }
         }
 
@@ -282,7 +282,7 @@ impl TagContainer {
                         continue;
                     }
                     markers::MarkerType::Cue => {
-                        if marker.start_position_millis == None {
+                        if marker.start_position == None {
                             // This shouldn't be possible if the `Serato Markers_` data is valid.
                             // Ideally, this should be checked during the parsing state.
                             // FIXME: Throw error here?
@@ -290,7 +290,7 @@ impl TagContainer {
                             continue;
                         }
 
-                        let position_millis = marker.start_position_millis.unwrap();
+                        let position = marker.start_position.unwrap();
 
                         // If the cue is set in both `Serato Markers2` and `Serato Markers_`, use
                         // the version from `Serato Markers_`, but keep the label from `Serato
@@ -305,7 +305,7 @@ impl TagContainer {
                             index,
                             generic::Cue {
                                 index,
-                                position_millis,
+                                position,
                                 color: marker.color,
                                 label,
                             },
@@ -317,7 +317,7 @@ impl TagContainer {
         }
 
         // Return the sorted list of cues.
-        map.values().cloned().collect()
+        map.into_values().collect()
     }
 
     /// Returns loops from the [`Serato Markers_`](Markers) and [`Serato Markers2`](Markers2) tags.
@@ -331,7 +331,7 @@ impl TagContainer {
         // First, insert all cue from the `Serato Markers2` tag into the map.
         if let Some(m) = &self.markers2 {
             for saved_loop in m.loops() {
-                map.insert(saved_loop.index, saved_loop);
+                map.insert(saved_loop.index, saved_loop.to_owned());
             }
         }
 
@@ -345,15 +345,15 @@ impl TagContainer {
                     continue;
                 }
 
-                if marker.start_position_millis == None || marker.end_position_millis == None {
+                if marker.start_position == None || marker.end_position == None {
                     // This may happen even for valid data, because unset loops lack the start/end
                     // position.
                     map.remove(&index);
                     continue;
                 }
 
-                let start_position_millis = marker.start_position_millis.unwrap();
-                let end_position_millis = marker.end_position_millis.unwrap();
+                let start_position = marker.start_position.unwrap();
+                let end_position = marker.end_position.unwrap();
 
                 // If the loop is set in both `Serato Markers2` and `Serato Markers_`, use
                 // the version from `Serato Markers_`, but keep the label from `Serato
@@ -368,8 +368,8 @@ impl TagContainer {
                     index,
                     generic::Loop {
                         index,
-                        start_position_millis,
-                        end_position_millis,
+                        start_position,
+                        end_position,
                         color: marker.color,
                         label,
                         is_locked: marker.is_locked,
@@ -379,46 +379,31 @@ impl TagContainer {
         }
 
         // Return the sorted list of cues.
-        map.values().cloned().collect()
+        map.into_values().collect()
     }
 
     /// Returns [flips](https://serato.com/dj/pro/expansions/flip) from the [`Serato Markers2`](Markers2) tag.
-    pub fn flips(&self) -> Vec<generic::Flip> {
-        if let Some(m) = &self.markers2 {
-            return m.flips();
-        }
-
-        vec![]
+    pub fn flips(&self) -> Option<impl Iterator<Item = &generic::Flip>> {
+        self.markers2.as_ref().map(Markers2::flips)
     }
 
     /// Returns the track color from the [`Serato Markers_`](Markers) and [`Serato
     /// Markers2`](Markers2) tags.
     ///
-    /// This retrieves the `Serato Markers2` track color first, then overwrites the value with the
-    /// one from `Serato Markers_`. This is what Serato does too (i.e. if `Serato Markers_` and
-    /// `Serato Markers2` contradict each other, Serato will use the value from `Serato
-    /// Markers_`).
+    /// If present the color in `Serato Markers_` takes precedence over that in
+    /// `Serato Markers2`. This is what Serato does too, i.e. if `Serato Markers_`
+    /// and `Serato Markers2` contradict each other, Serato will use the value
+    /// from `Serato Markers_`.
     pub fn track_color(&self) -> Option<Color> {
-        let mut track_color = None;
-
-        if let Some(m) = &self.markers2 {
-            track_color = m.track_color();
-        }
-
-        if let Some(m) = &self.markers {
-            track_color = Some(m.track_color());
-        }
-
-        track_color
+        self.markers
+            .as_ref()
+            .map(Markers::track_color)
+            .or_else(|| self.markers2.as_ref().and_then(Markers2::track_color))
     }
 
     /// Returns the waveform overview data color from the [`Serato Overview`](Overview) tag.
-    pub fn overview(&self) -> Option<&Vec<Vec<u8>>> {
-        if let Some(tag) = &self.overview {
-            return Some(&tag.data);
-        }
-
-        None
+    pub fn overview_data(&self) -> Option<&[Vec<u8>]> {
+        self.overview.as_ref().map(|overview| &overview.data[..])
     }
 }
 

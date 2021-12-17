@@ -109,7 +109,7 @@ fn take_u16_bytes(input: &[u8]) -> Res<&[u8], Vec<u16>> {
 
 fn parse_u16_text(input: &[u8]) -> Res<&[u8], String> {
     let (input, bytes) = nom::combinator::all_consuming(take_u16_bytes)(input)?;
-    let text = std::char::decode_utf16(bytes.iter().cloned())
+    let text = std::char::decode_utf16(bytes.into_iter())
         .map(|r| r.unwrap_or(std::char::REPLACEMENT_CHARACTER))
         .collect::<String>();
     Ok((input, text))
@@ -140,7 +140,7 @@ fn parse_field<'a, 'b>(input: &'a [u8], name: &'b [u8], field_type: u8) -> Res<&
                 //b"wlb" => ???
                 //b"wll" => ???
                 _ => Field::UnknownBoolean {
-                    name: name.to_vec(),
+                    name: name.to_owned(),
                     value,
                 },
             };
@@ -150,7 +150,7 @@ fn parse_field<'a, 'b>(input: &'a [u8], name: &'b [u8], field_type: u8) -> Res<&
             let (input, value) =
                 nom::combinator::all_consuming(nom::number::complete::be_u16)(input)?;
             let field = Field::UnknownU16Field {
-                name: name.to_vec(),
+                name: name.to_owned(),
                 value,
             };
             //b"bav" => ???
@@ -167,7 +167,7 @@ fn parse_field<'a, 'b>(input: &'a [u8], name: &'b [u8], field_type: u8) -> Res<&
                 //b"tkn" => ???
                 //b"dsc" => ???
                 _ => Field::UnknownU32Field {
-                    name: name.to_vec(),
+                    name: name.to_owned(),
                     value,
                 },
             };
@@ -180,7 +180,7 @@ fn parse_field<'a, 'b>(input: &'a [u8], name: &'b [u8], field_type: u8) -> Res<&
                 b"fil" => Field::FilePath(path),
                 b"trk" => Field::TrackPath(path),
                 _ => Field::UnknownPathField {
-                    name: name.to_vec(),
+                    name: name.to_owned(),
                     path,
                 },
             };
@@ -210,7 +210,7 @@ fn parse_field<'a, 'b>(input: &'a [u8], name: &'b [u8], field_type: u8) -> Res<&
                 b"vcw" => Field::ColumnWidth(text),
                 b"vrsn" => Field::Version(text),
                 _ => Field::UnknownTextField {
-                    name: name.to_vec(),
+                    name: name.to_owned(),
                     text,
                 },
             };
@@ -223,7 +223,7 @@ fn parse_field<'a, 'b>(input: &'a [u8], name: &'b [u8], field_type: u8) -> Res<&
                 b"trk" => Field::Track(fields),
                 b"vct" => Field::ColumnTitle(fields),
                 _ => Field::UnknownContainerField {
-                    name: name.to_vec(),
+                    name: name.to_owned(),
                     fields,
                 },
             };
@@ -232,14 +232,14 @@ fn parse_field<'a, 'b>(input: &'a [u8], name: &'b [u8], field_type: u8) -> Res<&
         FIELD_CONTAINER_R => {
             let (input, fields) = nom::combinator::all_consuming(take_fields)(input)?;
             let field = Field::UnknownContainerRField {
-                name: name.to_vec(),
+                name: name.to_owned(),
                 fields,
             };
             Ok((input, field))
         }
         _ => {
-            let name = name.to_vec();
-            let content = input.to_vec();
+            let name = name.to_owned();
+            let content = input.to_owned();
             Ok((
                 b"",
                 Field::Unknown {

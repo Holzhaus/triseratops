@@ -12,5 +12,5 @@ use std::io;
 pub trait Tag: Sized {
     const NAME: &'static str;
     fn parse(input: &[u8]) -> Result<Self, Error>;
-    fn write(&self, writer: impl io::Write) -> Result<usize, Error>;
+    fn write(&self, writer: &mut impl io::Write) -> Result<usize, Error>;
 }

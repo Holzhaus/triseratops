@@ -18,7 +18,7 @@ pub trait MP4Tag: EnvelopedTag {
         Self::parse_enveloped(input)
     }
 
-    fn write_mp4(&self, writer: impl io::Write) -> Result<usize, Error> {
+    fn write_mp4(&self, writer: &mut impl io::Write) -> Result<usize, Error> {
         self.write_enveloped(writer)
     }
 }

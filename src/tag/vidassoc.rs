@@ -42,7 +42,7 @@ impl Tag for VidAssoc {
         Ok(vidassoc)
     }
 
-    fn write(&self, writer: impl io::Write) -> Result<usize, Error> {
+    fn write(&self, writer: &mut impl io::Write) -> Result<usize, Error> {
         write_vidassoc(writer, self)
     }
 }
@@ -58,14 +58,14 @@ impl mp4::MP4Tag for VidAssoc {
 fn take_vidassoc(input: &[u8]) -> Res<&[u8], VidAssoc> {
     let (input, version) = take_version(input)?;
     let (input, data) = nom::combinator::rest(input)?;
-    let data = data.to_vec();
+    let data = data.to_owned();
 
     let vidassoc = VidAssoc { version, data };
     Ok((input, vidassoc))
 }
 
-fn write_vidassoc(mut writer: impl io::Write, vidassoc: &VidAssoc) -> Result<usize, Error> {
-    let mut bytes_written = write_version(&mut writer, &vidassoc.version)?;
+fn write_vidassoc(writer: &mut impl io::Write, vidassoc: &VidAssoc) -> Result<usize, Error> {
+    let mut bytes_written = write_version(writer, vidassoc.version)?;
     bytes_written += writer.write(vidassoc.data.as_slice())?;
     Ok(bytes_written)
 }

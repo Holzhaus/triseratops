@@ -37,7 +37,7 @@ impl Tag for Analysis {
         Ok(analysis)
     }
 
-    fn write(&self, writer: impl io::Write) -> Result<usize, Error> {
+    fn write(&self, writer: &mut impl io::Write) -> Result<usize, Error> {
         write_analysis(writer, self)
     }
 }
@@ -59,7 +59,7 @@ impl ogg::OggTag for Analysis {
         Ok(analysis)
     }
 
-    fn write_ogg(&self, writer: impl io::Write) -> Result<usize, Error> {
+    fn write_ogg(&self, writer: &mut impl io::Write) -> Result<usize, Error> {
         write_analysis_ogg(writer, self)
     }
 }
@@ -110,12 +110,15 @@ pub fn parse_analysis_ogg(input: &[u8]) -> Result<Analysis, Error> {
 }
 
 /// Serialize [`Analysis` struct](Analysis) to bytes.
-pub fn write_analysis(writer: impl io::Write, analysis: &Analysis) -> Result<usize, Error> {
-    write_version(writer, &analysis.version)
+pub fn write_analysis(writer: &mut impl io::Write, analysis: &Analysis) -> Result<usize, Error> {
+    write_version(writer, analysis.version)
 }
 
 /// Serialize [`Analysis` struct](Analysis) to bytes ([Ogg](super::format::ogg) version).
-pub fn write_analysis_ogg(mut writer: impl io::Write, analysis: &Analysis) -> Result<usize, Error> {
+pub fn write_analysis_ogg(
+    writer: &mut impl io::Write,
+    analysis: &Analysis,
+) -> Result<usize, Error> {
     Ok(writer.write(&[
         analysis.version.major + 0x30,
         b'.',

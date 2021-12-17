@@ -67,7 +67,7 @@ impl Tag for Beatgrid {
         Ok(autotags)
     }
 
-    fn write(&self, writer: impl io::Write) -> Result<usize, Error> {
+    fn write(&self, writer: &mut impl io::Write) -> Result<usize, Error> {
         write_beatgrid(writer, self)
     }
 }
@@ -142,7 +142,7 @@ fn take_beatgrid(input: &[u8]) -> Res<&[u8], Beatgrid> {
 }
 
 pub fn write_non_terminal_marker(
-    mut writer: impl io::Write,
+    writer: &mut impl io::Write,
     marker: &NonTerminalMarker,
 ) -> Result<usize, Error> {
     let mut bytes_written = writer.write(&marker.position.to_be_bytes())?;
@@ -151,7 +151,7 @@ pub fn write_non_terminal_marker(
 }
 
 pub fn write_terminal_marker(
-    mut writer: impl io::Write,
+    writer: &mut impl io::Write,
     marker: &TerminalMarker,
 ) -> Result<usize, Error> {
     let mut bytes_written = writer.write(&marker.position.to_be_bytes())?;
@@ -159,14 +159,14 @@ pub fn write_terminal_marker(
     Ok(bytes_written)
 }
 
-pub fn write_beatgrid(mut writer: impl io::Write, beatgrid: &Beatgrid) -> Result<usize, Error> {
-    let mut bytes_written = write_version(&mut writer, &beatgrid.version)?;
+pub fn write_beatgrid(writer: &mut impl io::Write, beatgrid: &Beatgrid) -> Result<usize, Error> {
+    let mut bytes_written = write_version(writer, beatgrid.version)?;
     let num_markers = beatgrid.non_terminal_markers.len() as u32 + 1;
     bytes_written += writer.write(&num_markers.to_be_bytes())?;
     for marker in &beatgrid.non_terminal_markers {
-        bytes_written += write_non_terminal_marker(&mut writer, marker)?;
+        bytes_written += write_non_terminal_marker(writer, marker)?;
     }
-    bytes_written += write_terminal_marker(&mut writer, &beatgrid.terminal_marker)?;
+    bytes_written += write_terminal_marker(writer, &beatgrid.terminal_marker)?;
     bytes_written += writer.write(&[beatgrid.footer])?;
     Ok(bytes_written)
 }

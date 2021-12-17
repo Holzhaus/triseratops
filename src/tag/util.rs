@@ -44,8 +44,9 @@ fn test_take_color() {
     assert!(take_color(&[0xAB, 0xCD]).is_err());
 }
 
-pub fn write_color(mut writer: impl io::Write, color: &Color) -> Result<usize, Error> {
-    Ok(writer.write(&[color.red, color.green, color.blue])?)
+pub fn write_color(writer: &mut impl io::Write, color: Color) -> Result<usize, Error> {
+    let Color { blue, green, red } = color;
+    Ok(writer.write(&[red, green, blue])?)
 }
 
 /// Returns a `Version` struct parsed from the first 2 input bytes.
@@ -73,6 +74,7 @@ fn test_take_version() {
     assert!(take_version(&[0x0A]).is_err());
 }
 
-pub fn write_version(mut writer: impl io::Write, version: &Version) -> Result<usize, Error> {
-    Ok(writer.write(&[version.major, version.minor])?)
+pub fn write_version(writer: &mut impl io::Write, version: Version) -> Result<usize, Error> {
+    let Version { major, minor } = version;
+    Ok(writer.write(&[major, minor])?)
 }

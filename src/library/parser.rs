@@ -33,7 +33,6 @@ const SUBCRATE_DIR: &str = "Subcrates";
 
 #[derive(Clone, Debug)]
 pub struct Track {
-    pub file_path: PathBuf,
     pub file_type: Option<String>,
     pub title: Option<String>,
     pub artist: Option<String>,
@@ -52,7 +51,6 @@ impl Track {
     /// Creates a new, empty Track object.
     pub fn new() -> Self {
         Self {
-            file_path: PathBuf::new(),
             file_type: None,
             title: None,
             artist: None,
@@ -69,12 +67,13 @@ impl Track {
     }
 
     /// Creates a new Track object from a list of database fields.
-    pub fn from_fields(fields: Vec<database::Field>) -> Result<Self, Error> {
+    pub fn from_fields(fields: Vec<database::Field>) -> Result<(PathBuf, Self), Error> {
+        let mut file_path = PathBuf::new();
         let mut track = Self::new();
         for field in fields {
             match field {
-                database::Field::FilePath(file_path) => {
-                    track.file_path = file_path;
+                database::Field::FilePath(db_file_path) => {
+                    file_path = db_file_path;
                 }
                 database::Field::FileType(file_type) => {
                     track.file_type = Some(file_type);
@@ -110,7 +109,7 @@ impl Track {
             }
         }
 
-        Ok(track)
+        Ok((file_path, track))
     }
 }
 
@@ -148,15 +147,19 @@ impl Library {
         let mut data = vec![];
         file.read_to_end(&mut data)?;
 
-        let mut tracks = HashMap::new();
         let fields = database::parse(&data)?;
-        for field in fields {
-            if let database::Field::Track(t) = field {
-                let track = Track::from_fields(t)?;
-                tracks.insert(track.file_path.clone(), track);
-            }
-        }
-        self.tracks = tracks;
+        let tracks: Result<HashMap<_, _>, Error> = fields
+            .into_iter()
+            .filter_map(|field| {
+                if let database::Field::Track(t) = field {
+                    Some(t)
+                } else {
+                    None
+                }
+            })
+            .map(Track::from_fields)
+            .collect();
+        self.tracks = tracks?;
 
         Ok(())
     }

@@ -41,7 +41,7 @@ impl Tag for Overview {
         Ok(overview)
     }
 
-    fn write(&self, writer: impl io::Write) -> Result<usize, Error> {
+    fn write(&self, writer: &mut impl io::Write) -> Result<usize, Error> {
         write_overview(writer, self)
     }
 }
@@ -58,7 +58,7 @@ impl mp4::MP4Tag for Overview {
 /// Returns a 16-byte vector of data parsed from the input slice.
 fn take_chunk(input: &[u8]) -> Res<&[u8], Vec<u8>> {
     let (input, chunkdata) = nom::bytes::complete::take(16usize)(input)?;
-    Ok((input, chunkdata.to_vec()))
+    Ok((input, chunkdata.to_owned()))
 }
 
 #[test]
@@ -70,11 +70,10 @@ fn test_take_chunk() {
         ]),
         Ok((
             &[0x10u8][..],
-            [
+            vec![
                 0x00u8, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c,
                 0x0d, 0x0e, 0x0f
             ]
-            .to_vec()
         ))
     );
     assert!(take_chunk(&[0xAB, 0x01]).is_err());
@@ -94,15 +93,15 @@ fn take_overview(input: &[u8]) -> Res<&[u8], Overview> {
     Ok((input, overview))
 }
 
-fn write_chunk(mut writer: impl io::Write, chunk: &[u8]) -> Result<usize, Error> {
+fn write_chunk(writer: &mut impl io::Write, chunk: &[u8]) -> Result<usize, Error> {
     // TODO: Handle chunks with invalid size
     Ok(writer.write(chunk)?)
 }
 
-pub fn write_overview(mut writer: impl io::Write, overview: &Overview) -> Result<usize, Error> {
-    let mut bytes_written = write_version(&mut writer, &overview.version)?;
+pub fn write_overview(writer: &mut impl io::Write, overview: &Overview) -> Result<usize, Error> {
+    let mut bytes_written = write_version(writer, overview.version)?;
     for chunk in &overview.data {
-        bytes_written += write_chunk(&mut writer, chunk.as_slice())?;
+        bytes_written += write_chunk(writer, chunk.as_slice())?;
     }
     Ok(bytes_written)
 }

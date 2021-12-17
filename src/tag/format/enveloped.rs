@@ -15,7 +15,7 @@ pub trait EnvelopedTag: Tag {
         Self::parse(&content)
     }
 
-    fn write_enveloped(&self, writer: impl io::Write) -> Result<usize, Error> {
+    fn write_enveloped(&self, writer: &mut impl io::Write) -> Result<usize, Error> {
         let mut buffer = Cursor::new(vec![]);
         self.write(&mut buffer)?;
         let plain_data = &buffer.get_ref()[..];
@@ -23,10 +23,10 @@ pub trait EnvelopedTag: Tag {
     }
 }
 
-pub fn parse_envelope(input: &[u8]) -> Result<(String, Vec<u8>), Error> {
+pub fn parse_envelope(input: &[u8]) -> Result<(&str, &[u8]), Error> {
     let (input, _) = nom::bytes::complete::tag(b"application/octet-stream\x00\x00")(input)?;
     let (input, name) = take_utf8(input)?;
-    Ok((name, input.to_vec()))
+    Ok((name, input))
 }
 
 pub fn is_base64(byte: u8) -> bool {
@@ -55,7 +55,7 @@ pub fn base64_decode(input: &[u8]) -> Result<Vec<u8>, Error> {
     }
 }
 
-pub fn base64_encode(mut writer: impl io::Write, input: &[u8]) -> Result<usize, Error> {
+pub fn base64_encode(writer: &mut impl io::Write, input: &[u8]) -> Result<usize, Error> {
     let mut bytes_written = 0;
     let chunks = input.chunks(54);
     let last_chunk_index = chunks.len() - 1;
@@ -78,7 +78,7 @@ pub fn base64_encode(mut writer: impl io::Write, input: &[u8]) -> Result<usize, 
 
 pub fn envelope_decode(input: &[u8]) -> Result<(String, Vec<u8>), Error> {
     let data = base64_decode(input)?;
-    parse_envelope(data.as_slice())
+    parse_envelope(&data).map(|(s, b)| (s.to_owned(), b.to_owned()))
 }
 
 pub fn envelope_decode_with_name(input: &[u8], expected_name: &str) -> Result<Vec<u8>, Error> {
@@ -93,7 +93,7 @@ pub fn envelope_decode_with_name(input: &[u8], expected_name: &str) -> Result<Ve
 }
 
 pub fn envelope_encode_with_name(
-    writer: impl io::Write,
+    writer: &mut impl io::Write,
     input: &[u8],
     name: &str,
 ) -> Result<usize, Error> {
