@@ -88,21 +88,37 @@
 <span id="88">88</span>
 <span id="89">89</span>
 <span id="90">90</span>
+<span id="91">91</span>
+<span id="92">92</span>
+<span id="93">93</span>
+<span id="94">94</span>
+<span id="95">95</span>
+<span id="96">96</span>
+<span id="97">97</span>
+<span id="98">98</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Generic structs</span>
 <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::color::Color</span>;
 
 <span class="doccomment">/// Represents 2-Byte version value.</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">PartialOrd</span>, <span class="ident">Ord</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Version</span> {
     <span class="kw">pub</span> <span class="ident">major</span>: <span class="ident">u8</span>,
     <span class="kw">pub</span> <span class="ident">minor</span>: <span class="ident">u8</span>,
+}
+
+<span class="doccomment">/// Time-based position</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// Measured in milliseconds from the beginning of the track.</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">Default</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">PartialOrd</span>, <span class="ident">Ord</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Position</span> {
+    <span class="kw">pub</span> <span class="ident">millis</span>: <span class="ident">u32</span>,
 }
 
 <span class="doccomment">/// A [cue point](https://support.serato.com/hc/en-us/articles/360000067696-Cue-Points).</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Cue</span> {
     <span class="kw">pub</span> <span class="ident">index</span>: <span class="ident">u8</span>,
-    <span class="kw">pub</span> <span class="ident">position_millis</span>: <span class="ident">u32</span>,
+    <span class="kw">pub</span> <span class="ident">position</span>: <span class="ident">Position</span>,
     <span class="kw">pub</span> <span class="ident">color</span>: <span class="ident">Color</span>,
     <span class="kw">pub</span> <span class="ident">label</span>: <span class="ident">String</span>,
 }
@@ -111,8 +127,8 @@
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Loop</span> {
     <span class="kw">pub</span> <span class="ident">index</span>: <span class="ident">u8</span>,
-    <span class="kw">pub</span> <span class="ident">start_position_millis</span>: <span class="ident">u32</span>,
-    <span class="kw">pub</span> <span class="ident">end_position_millis</span>: <span class="ident">u32</span>,
+    <span class="kw">pub</span> <span class="ident">start_position</span>: <span class="ident">Position</span>,
+    <span class="kw">pub</span> <span class="ident">end_position</span>: <span class="ident">Position</span>,
     <span class="kw">pub</span> <span class="ident">color</span>: <span class="ident">Color</span>,
     <span class="kw">pub</span> <span class="ident">is_locked</span>: <span class="ident">bool</span>,
     <span class="kw">pub</span> <span class="ident">label</span>: <span class="ident">String</span>,

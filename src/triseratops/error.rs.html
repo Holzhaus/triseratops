@@ -69,8 +69,6 @@
 <span id="69">69</span>
 <span id="70">70</span>
 <span id="71">71</span>
-<span id="72">72</span>
-<span id="73">73</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Error types and helper functions.</span>
 
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">base64</span>;
@@ -122,22 +120,20 @@
     <span class="ident">IOError</span>(<span class="attribute">#[<span class="ident">from</span>]</span> <span class="ident">std::io::Error</span>),
 }
 
-<span class="kw">fn</span> <span class="ident">convert_err</span>(
-    <span class="ident">item</span>: <span class="kw-2">&amp;</span>(<span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">nom::error::VerboseErrorKind</span>),
-) -&gt; (<span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">nom::error::VerboseErrorKind</span>) {
+<span class="kw">fn</span> <span class="ident">map_err</span>(<span class="ident">item</span>: (<span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">nom::error::VerboseErrorKind</span>)) -&gt; (<span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">nom::error::VerboseErrorKind</span>) {
     <span class="kw">let</span> (<span class="ident">data</span>, <span class="ident">kind</span>) <span class="op">=</span> <span class="ident">item</span>;
-    (<span class="ident">data</span>.<span class="ident">to_vec</span>(), <span class="ident">kind</span>.<span class="ident">to_owned</span>())
+    (<span class="ident">data</span>.<span class="ident">to_owned</span>(), <span class="ident">kind</span>)
 }
 
 <span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">nom::Err</span><span class="op">&lt;</span><span class="ident">nom::error::VerboseError</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>]<span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Error</span> {
     <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">e</span>: <span class="ident">nom::Err</span><span class="op">&lt;</span><span class="ident">nom::error::VerboseError</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>]<span class="op">&gt;</span><span class="op">&gt;</span>) -&gt; <span class="self">Self</span> {
         <span class="kw">match</span> <span class="ident">e</span> {
             <span class="ident">nom::Err::Error</span>(<span class="ident">err</span>) =&gt; {
-                <span class="kw">let</span> <span class="ident">errors</span> <span class="op">=</span> <span class="ident">err</span>.<span class="ident">errors</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="ident">convert_err</span>).<span class="ident">collect</span>();
+                <span class="kw">let</span> <span class="ident">errors</span> <span class="op">=</span> <span class="ident">err</span>.<span class="ident">errors</span>.<span class="ident">into_iter</span>().<span class="ident">map</span>(<span class="ident">map_err</span>).<span class="ident">collect</span>();
                 <span class="ident">Error::VerboseParseError</span> { <span class="ident">errors</span> }
             }
             <span class="ident">nom::Err::Failure</span>(<span class="ident">err</span>) =&gt; {
-                <span class="kw">let</span> <span class="ident">errors</span> <span class="op">=</span> <span class="ident">err</span>.<span class="ident">errors</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="ident">convert_err</span>).<span class="ident">collect</span>();
+                <span class="kw">let</span> <span class="ident">errors</span> <span class="op">=</span> <span class="ident">err</span>.<span class="ident">errors</span>.<span class="ident">into_iter</span>().<span class="ident">map</span>(<span class="ident">map_err</span>).<span class="ident">collect</span>();
                 <span class="ident">Error::VerboseParseError</span> { <span class="ident">errors</span> }
             }
             <span class="ident">nom::Err::Incomplete</span>(<span class="ident">_needed</span>) =&gt; <span class="ident">Error::ParseError</span>,

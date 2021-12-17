@@ -412,21 +412,6 @@
 <span id="412">412</span>
 <span id="413">413</span>
 <span id="414">414</span>
-<span id="415">415</span>
-<span id="416">416</span>
-<span id="417">417</span>
-<span id="418">418</span>
-<span id="419">419</span>
-<span id="420">420</span>
-<span id="421">421</span>
-<span id="422">422</span>
-<span id="423">423</span>
-<span id="424">424</span>
-<span id="425">425</span>
-<span id="426">426</span>
-<span id="427">427</span>
-<span id="428">428</span>
-<span id="429">429</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Provides the [`TagContainer` struct](TagContainer), a simple interface to access data in</span>
 <span class="doccomment">//! Serato&#39;s tags.</span>
 <span class="kw">use</span> <span class="kw">super</span>::{
@@ -494,7 +479,7 @@
     <span class="doccomment">/// Write the [`Serato Autotags`](Autotags) tag.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">write_autotags</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        <span class="ident">writer</span>: <span class="kw">impl</span> <span class="ident">io::Write</span>,
+        <span class="ident">writer</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw">impl</span> <span class="ident">io::Write</span>,
         <span class="ident">tag_format</span>: <span class="ident">TagFormat</span>,
     ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">tag</span> <span class="op">=</span> <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">autotags</span> {
@@ -529,7 +514,7 @@
     <span class="doccomment">/// Write the [`Serato BeatGrid`](Beatgrid) tag.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">write_beatgrid</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        <span class="ident">writer</span>: <span class="kw">impl</span> <span class="ident">io::Write</span>,
+        <span class="ident">writer</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw">impl</span> <span class="ident">io::Write</span>,
         <span class="ident">tag_format</span>: <span class="ident">TagFormat</span>,
     ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">tag</span> <span class="op">=</span> <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">beatgrid</span> {
@@ -561,7 +546,7 @@
     <span class="doccomment">/// Write the [`Serato Markers_`](Markers) tag.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">write_markers</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        <span class="ident">writer</span>: <span class="kw">impl</span> <span class="ident">io::Write</span>,
+        <span class="ident">writer</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw">impl</span> <span class="ident">io::Write</span>,
         <span class="ident">tag_format</span>: <span class="ident">TagFormat</span>,
     ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">tag</span> <span class="op">=</span> <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">markers</span> {
@@ -597,7 +582,7 @@
     <span class="doccomment">/// Write the [`Serato Markers2`](Markers2) tag.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">write_markers2</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        <span class="ident">writer</span>: <span class="kw">impl</span> <span class="ident">io::Write</span>,
+        <span class="ident">writer</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw">impl</span> <span class="ident">io::Write</span>,
         <span class="ident">tag_format</span>: <span class="ident">TagFormat</span>,
     ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">tag</span> <span class="op">=</span> <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">markers2</span> {
@@ -632,7 +617,7 @@
     <span class="doccomment">/// Write the [`Serato Overview`](Overview) tag.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">write_overview</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        <span class="ident">writer</span>: <span class="kw">impl</span> <span class="ident">io::Write</span>,
+        <span class="ident">writer</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw">impl</span> <span class="ident">io::Write</span>,
         <span class="ident">tag_format</span>: <span class="ident">TagFormat</span>,
     ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">tag</span> <span class="op">=</span> <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">overview</span> {
@@ -696,7 +681,7 @@
         <span class="comment">// First, insert all cue from the `Serato Markers2` tag into the map.</span>
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">m</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">markers2</span> {
             <span class="kw">for</span> <span class="ident">cue</span> <span class="kw">in</span> <span class="ident">m</span>.<span class="ident">cues</span>() {
-                <span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">cue</span>.<span class="ident">index</span>, <span class="ident">cue</span>);
+                <span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">cue</span>.<span class="ident">index</span>, <span class="ident">cue</span>.<span class="ident">to_owned</span>());
             }
         }
 
@@ -711,7 +696,7 @@
                         <span class="kw">continue</span>;
                     }
                     <span class="ident">markers::MarkerType::Cue</span> =&gt; {
-                        <span class="kw">if</span> <span class="ident">marker</span>.<span class="ident">start_position_millis</span> <span class="op">==</span> <span class="prelude-val">None</span> {
+                        <span class="kw">if</span> <span class="ident">marker</span>.<span class="ident">start_position</span> <span class="op">==</span> <span class="prelude-val">None</span> {
                             <span class="comment">// This shouldn&#39;t be possible if the `Serato Markers_` data is valid.</span>
                             <span class="comment">// Ideally, this should be checked during the parsing state.</span>
                             <span class="comment">// FIXME: Throw error here?</span>
@@ -719,7 +704,7 @@
                             <span class="kw">continue</span>;
                         }
 
-                        <span class="kw">let</span> <span class="ident">position_millis</span> <span class="op">=</span> <span class="ident">marker</span>.<span class="ident">start_position_millis</span>.<span class="ident">unwrap</span>();
+                        <span class="kw">let</span> <span class="ident">position</span> <span class="op">=</span> <span class="ident">marker</span>.<span class="ident">start_position</span>.<span class="ident">unwrap</span>();
 
                         <span class="comment">// If the cue is set in both `Serato Markers2` and `Serato Markers_`, use</span>
                         <span class="comment">// the version from `Serato Markers_`, but keep the label from `Serato</span>
@@ -734,7 +719,7 @@
                             <span class="ident">index</span>,
                             <span class="ident">generic::Cue</span> {
                                 <span class="ident">index</span>,
-                                <span class="ident">position_millis</span>,
+                                <span class="ident">position</span>,
                                 <span class="ident">color</span>: <span class="ident">marker</span>.<span class="ident">color</span>,
                                 <span class="ident">label</span>,
                             },
@@ -746,7 +731,7 @@
         }
 
         <span class="comment">// Return the sorted list of cues.</span>
-        <span class="ident">map</span>.<span class="ident">values</span>().<span class="ident">cloned</span>().<span class="ident">collect</span>()
+        <span class="ident">map</span>.<span class="ident">into_values</span>().<span class="ident">collect</span>()
     }
 
     <span class="doccomment">/// Returns loops from the [`Serato Markers_`](Markers) and [`Serato Markers2`](Markers2) tags.</span>
@@ -760,7 +745,7 @@
         <span class="comment">// First, insert all cue from the `Serato Markers2` tag into the map.</span>
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">m</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">markers2</span> {
             <span class="kw">for</span> <span class="ident">saved_loop</span> <span class="kw">in</span> <span class="ident">m</span>.<span class="ident">loops</span>() {
-                <span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">saved_loop</span>.<span class="ident">index</span>, <span class="ident">saved_loop</span>);
+                <span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">saved_loop</span>.<span class="ident">index</span>, <span class="ident">saved_loop</span>.<span class="ident">to_owned</span>());
             }
         }
 
@@ -774,15 +759,15 @@
                     <span class="kw">continue</span>;
                 }
 
-                <span class="kw">if</span> <span class="ident">marker</span>.<span class="ident">start_position_millis</span> <span class="op">==</span> <span class="prelude-val">None</span> <span class="op">|</span><span class="op">|</span> <span class="ident">marker</span>.<span class="ident">end_position_millis</span> <span class="op">==</span> <span class="prelude-val">None</span> {
+                <span class="kw">if</span> <span class="ident">marker</span>.<span class="ident">start_position</span> <span class="op">==</span> <span class="prelude-val">None</span> <span class="op">|</span><span class="op">|</span> <span class="ident">marker</span>.<span class="ident">end_position</span> <span class="op">==</span> <span class="prelude-val">None</span> {
                     <span class="comment">// This may happen even for valid data, because unset loops lack the start/end</span>
                     <span class="comment">// position.</span>
                     <span class="ident">map</span>.<span class="ident">remove</span>(<span class="kw-2">&amp;</span><span class="ident">index</span>);
                     <span class="kw">continue</span>;
                 }
 
-                <span class="kw">let</span> <span class="ident">start_position_millis</span> <span class="op">=</span> <span class="ident">marker</span>.<span class="ident">start_position_millis</span>.<span class="ident">unwrap</span>();
-                <span class="kw">let</span> <span class="ident">end_position_millis</span> <span class="op">=</span> <span class="ident">marker</span>.<span class="ident">end_position_millis</span>.<span class="ident">unwrap</span>();
+                <span class="kw">let</span> <span class="ident">start_position</span> <span class="op">=</span> <span class="ident">marker</span>.<span class="ident">start_position</span>.<span class="ident">unwrap</span>();
+                <span class="kw">let</span> <span class="ident">end_position</span> <span class="op">=</span> <span class="ident">marker</span>.<span class="ident">end_position</span>.<span class="ident">unwrap</span>();
 
                 <span class="comment">// If the loop is set in both `Serato Markers2` and `Serato Markers_`, use</span>
                 <span class="comment">// the version from `Serato Markers_`, but keep the label from `Serato</span>
@@ -797,8 +782,8 @@
                     <span class="ident">index</span>,
                     <span class="ident">generic::Loop</span> {
                         <span class="ident">index</span>,
-                        <span class="ident">start_position_millis</span>,
-                        <span class="ident">end_position_millis</span>,
+                        <span class="ident">start_position</span>,
+                        <span class="ident">end_position</span>,
                         <span class="ident">color</span>: <span class="ident">marker</span>.<span class="ident">color</span>,
                         <span class="ident">label</span>,
                         <span class="ident">is_locked</span>: <span class="ident">marker</span>.<span class="ident">is_locked</span>,
@@ -808,46 +793,31 @@
         }
 
         <span class="comment">// Return the sorted list of cues.</span>
-        <span class="ident">map</span>.<span class="ident">values</span>().<span class="ident">cloned</span>().<span class="ident">collect</span>()
+        <span class="ident">map</span>.<span class="ident">into_values</span>().<span class="ident">collect</span>()
     }
 
     <span class="doccomment">/// Returns [flips](https://serato.com/dj/pro/expansions/flip) from the [`Serato Markers2`](Markers2) tag.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">flips</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">generic::Flip</span><span class="op">&gt;</span> {
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">m</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">markers2</span> {
-            <span class="kw">return</span> <span class="ident">m</span>.<span class="ident">flips</span>();
-        }
-
-        <span class="macro">vec!</span>[]
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">flips</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw">impl</span> <span class="ident">Iterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">generic::Flip</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">markers2</span>.<span class="ident">as_ref</span>().<span class="ident">map</span>(<span class="ident">Markers2::flips</span>)
     }
 
     <span class="doccomment">/// Returns the track color from the [`Serato Markers_`](Markers) and [`Serato</span>
     <span class="doccomment">/// Markers2`](Markers2) tags.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// This retrieves the `Serato Markers2` track color first, then overwrites the value with the</span>
-    <span class="doccomment">/// one from `Serato Markers_`. This is what Serato does too (i.e. if `Serato Markers_` and</span>
-    <span class="doccomment">/// `Serato Markers2` contradict each other, Serato will use the value from `Serato</span>
-    <span class="doccomment">/// Markers_`).</span>
+    <span class="doccomment">/// If present the color in `Serato Markers_` takes precedence over that in</span>
+    <span class="doccomment">/// `Serato Markers2`. This is what Serato does too, i.e. if `Serato Markers_`</span>
+    <span class="doccomment">/// and `Serato Markers2` contradict each other, Serato will use the value</span>
+    <span class="doccomment">/// from `Serato Markers_`.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">track_color</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Color</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">track_color</span> <span class="op">=</span> <span class="prelude-val">None</span>;
-
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">m</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">markers2</span> {
-            <span class="ident">track_color</span> <span class="op">=</span> <span class="ident">m</span>.<span class="ident">track_color</span>();
-        }
-
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">m</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">markers</span> {
-            <span class="ident">track_color</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">m</span>.<span class="ident">track_color</span>());
-        }
-
-        <span class="ident">track_color</span>
+        <span class="self">self</span>.<span class="ident">markers</span>
+            .<span class="ident">as_ref</span>()
+            .<span class="ident">map</span>(<span class="ident">Markers::track_color</span>)
+            .<span class="ident">or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">markers2</span>.<span class="ident">as_ref</span>().<span class="ident">and_then</span>(<span class="ident">Markers2::track_color</span>))
     }
 
     <span class="doccomment">/// Returns the waveform overview data color from the [`Serato Overview`](Overview) tag.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">overview</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span> {
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">tag</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">overview</span> {
-            <span class="kw">return</span> <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="ident">tag</span>.<span class="ident">data</span>);
-        }
-
-        <span class="prelude-val">None</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">overview_data</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>]<span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">overview</span>.<span class="ident">as_ref</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">overview</span><span class="op">|</span> <span class="kw-2">&amp;</span><span class="ident">overview</span>.<span class="ident">data</span>[..])
     }
 }
 
