@@ -1,13 +1,13 @@
 //! High-level interface for parsing Serato libraries.
 //!
 //! ```
-//! use std::path::PathBuf;
-//! use triseratops::library::{Library, Track};
+//! use std::path::Path;
+//! use triseratops::library::Library;
 //!
-//! fn read_library(music_dir: &PathBuf) {
+//! fn read_library(music_dir: &Path) {
 //!     let library = Library::read_from_path(music_dir).unwrap();
 //!     for subcrate_name in library.subcrates() {
-//!         let tracks: Vec<&Track> = library.subcrate(&subcrate_name).unwrap().collect();
+//!         let tracks: Vec<_> = library.subcrate(&subcrate_name).unwrap().collect();
 //!         println!("Subcrate '{}': {} tracks", subcrate_name, tracks.len());
 //!     }
 //! }
@@ -167,7 +167,7 @@ impl Library {
     }
 
     /// Get the track struct for the given path.
-    pub fn track(&self, file_path: &PathBuf) -> Option<&Track> {
+    pub fn track(&self, file_path: &Path) -> Option<&Track> {
         self.tracks.get(file_path)
     }
 
@@ -207,7 +207,7 @@ impl Library {
     }
 }
 
-fn crate_name_from_path(path: &PathBuf) -> Result<String, Error> {
+fn crate_name_from_path(path: &Path) -> Result<String, Error> {
     if !path.is_file() {
         return Err(Error::IOError(io::Error::new(
             io::ErrorKind::Other,

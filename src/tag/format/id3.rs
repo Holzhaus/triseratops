@@ -9,7 +9,7 @@ pub trait ID3Tag: Tag {
     const ID3_TAG: &'static str = Self::NAME;
 
     fn parse_id3(input: &[u8]) -> Result<Self, Error> {
-        Self::parse(&input)
+        Self::parse(input)
     }
 
     fn write_id3(&self, writer: impl io::Write) -> Result<usize, Error> {

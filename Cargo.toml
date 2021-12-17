@@ -8,13 +8,13 @@ repository = "https://github.com/Holzhaus/triseratops"
 license = "AGPL-3.0-or-later"
 keywords = ["serato", "dj", "tag", "database", "parser"]
 categories = ["parser-implementations"]
-edition = "2018"
+edition = "2021"
 
 [dependencies]
-nom = "6"
+nom = "7"
 base64 = "0.13"
-thiserror = "1.0"
+thiserror = "1"
 
 [dev-dependencies]
 id3 = "0.6"
-textwrap = "0.13"
+textwrap = "0.14"

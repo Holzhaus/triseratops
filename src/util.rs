@@ -26,7 +26,7 @@ fn test_take_until_nullbyte() {
 }
 
 pub fn parse_utf8(input: &[u8]) -> Res<&[u8], String> {
-    let res = std::str::from_utf8(&input);
+    let res = std::str::from_utf8(input);
     match res {
         Ok(s) => Ok((b"", s.to_owned())),
         Err(_) => Err(nom::Err::Incomplete(nom::Needed::Unknown)),
@@ -42,8 +42,8 @@ fn test_parse_utf8() {
 }
 
 pub fn take_utf8(input: &[u8]) -> Res<&[u8], String> {
-    let (input, data) = take_until_nullbyte(&input)?;
-    let (_, value) = parse_utf8(&data)?;
+    let (input, data) = take_until_nullbyte(input)?;
+    let (_, value) = parse_utf8(data)?;
     let (input, _) = nom::bytes::complete::take(1usize)(input)?;
     Ok((input, value))
 }

@@ -146,7 +146,7 @@ impl Tag for Markers2 {
     }
 
     fn write(&self, writer: impl io::Write) -> Result<usize, Error> {
-        write_markers2(writer, &self)
+        write_markers2(writer, self)
     }
 }
 
@@ -242,19 +242,19 @@ fn decode_base64_chunks(
     encoded_chunks: Vec<&[u8]>,
 ) -> Result<Vec<u8>, nom::Err<nom::error::VerboseError<&[u8]>>> {
     let mut decoded_data = Vec::new();
-    for chunk in &encoded_chunks {
+    for &chunk in &encoded_chunks {
         if chunk.len() > 72 {
             return Err(nom::Err::Error(nom::error::VerboseError::from_error_kind(
-                *chunk,
+                chunk,
                 nom::error::ErrorKind::LengthValue,
             )));
         }
         let mut buf = [0; 54];
         // TODO: Add proper error handling here
-        let mut res = base64::decode_config_slice(&chunk, base64::STANDARD, &mut buf);
+        let mut res = base64::decode_config_slice(chunk, base64::STANDARD, &mut buf);
         if let Err(base64::DecodeError::InvalidLength) = res {
             let mut v = Vec::new();
-            v.extend_from_slice(&chunk);
+            v.extend_from_slice(chunk);
             v.push(b'A');
             res = base64::decode_config_slice(v.as_slice(), base64::STANDARD, &mut buf);
         }
@@ -418,8 +418,8 @@ fn take_flip_marker_action_censor(input: &[u8]) -> Res<&[u8], FlipAction> {
 }
 
 fn parse_markers2_content(input: &[u8]) -> Res<&[u8], Markers2Content> {
-    let (input, version) = take_version(&input)?;
-    let (input, markers) = nom::multi::many0(take_marker)(&input)?;
+    let (input, version) = take_version(input)?;
+    let (input, markers) = nom::multi::many0(take_marker)(input)?;
 
     Ok((input, Markers2Content { version, markers }))
 }
@@ -433,10 +433,10 @@ fn take_nullbytes(input: &[u8]) -> Res<&[u8], &[u8]> {
 
 fn take_markers2(input: &[u8]) -> Res<&[u8], Markers2> {
     let size = input.len();
-    let (input, version) = take_version(&input)?;
+    let (input, version) = take_version(input)?;
     let version = Some(version);
-    let (input, base64_chunks) = take_base64_chunks(&input)?;
-    let (input, _) = take_nullbytes(&input)?;
+    let (input, base64_chunks) = take_base64_chunks(input)?;
+    let (input, _) = take_nullbytes(input)?;
     let base64_decoded = decode_base64_chunks(base64_chunks)?;
     let markers2_result = parse_markers2_content(&base64_decoded);
     if markers2_result.is_err() {
@@ -458,7 +458,7 @@ fn write_markers2(mut writer: impl io::Write, markers2: &Markers2) -> Result<usi
             return Err(Error::ParseError);
         }
     };
-    let mut bytes_written = write_version(&mut writer, &version)?;
+    let mut bytes_written = write_version(&mut writer, version)?;
     let mut buffer = Cursor::new(vec![]);
     write_markers2_content(&mut buffer, &markers2.content)?;
     let plain_data = &buffer.get_ref()[..];
@@ -477,7 +477,7 @@ fn write_markers2_content(
 ) -> Result<usize, Error> {
     let mut bytes_written = write_version(&mut writer, &content.version)?;
     for marker in &content.markers {
-        bytes_written += write_marker(&mut writer, &marker)?;
+        bytes_written += write_marker(&mut writer, marker)?;
     }
     Ok(bytes_written)
 }
@@ -541,7 +541,7 @@ fn write_cue_marker(mut writer: impl io::Write, marker: &Cue) -> Result<usize, E
     bytes_written += writer.write(b"\0")?;
     bytes_written += write_color(&mut writer, &marker.color)?;
     bytes_written += writer.write(b"\0\0")?;
-    bytes_written += writer.write(&marker.label.as_bytes())?;
+    bytes_written += writer.write(marker.label.as_bytes())?;
     bytes_written += writer.write(b"\0")?;
     Ok(bytes_written)
 }
@@ -558,7 +558,7 @@ fn write_loop_marker(mut writer: impl io::Write, marker: &Loop) -> Result<usize,
     bytes_written += write_color(&mut writer, &marker.color)?;
     bytes_written += writer.write(b"\0")?;
     bytes_written += write_bool(&mut writer, marker.is_locked)?;
-    bytes_written += writer.write(&marker.label.as_bytes())?;
+    bytes_written += writer.write(marker.label.as_bytes())?;
     bytes_written += writer.write(b"\0")?;
     Ok(bytes_written)
 }
@@ -578,13 +578,13 @@ fn write_flip_marker(mut writer: impl io::Write, marker: &Flip) -> Result<usize,
     bytes_written += writer.write(b"\0")?;
     bytes_written += writer.write(&[marker.index])?;
     bytes_written += write_bool(&mut writer, marker.is_enabled)?;
-    bytes_written += writer.write(&marker.label.as_bytes())?;
+    bytes_written += writer.write(marker.label.as_bytes())?;
     bytes_written += writer.write(b"\0")?;
     bytes_written += write_bool(&mut writer, marker.is_loop)?;
     let num_actions = marker.actions.len() as u32;
     bytes_written += writer.write(&num_actions.to_be_bytes())?;
     for action in &marker.actions {
-        bytes_written = write_flip_marker_action(&mut writer, &action)?;
+        bytes_written = write_flip_marker_action(&mut writer, action)?;
     }
     Ok(bytes_written)
 }
@@ -598,14 +598,14 @@ fn write_flip_marker_action(
             let mut bytes_written = writer.write(b"\x00")?;
             let size = 16u32;
             bytes_written += writer.write(&size.to_be_bytes())?;
-            bytes_written += write_flip_marker_action_jump(&mut writer, &act)?;
+            bytes_written += write_flip_marker_action_jump(&mut writer, act)?;
             Ok(bytes_written)
         }
         FlipAction::Censor(act) => {
             let mut bytes_written = writer.write(b"\x01")?;
             let size = 24u32;
             bytes_written += writer.write(&size.to_be_bytes())?;
-            bytes_written += write_flip_marker_action_censor(&mut writer, &act)?;
+            bytes_written += write_flip_marker_action_censor(&mut writer, act)?;
             Ok(bytes_written)
         }
         FlipAction::Unknown(act) => {

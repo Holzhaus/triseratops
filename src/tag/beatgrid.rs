@@ -68,7 +68,7 @@ impl Tag for Beatgrid {
     }
 
     fn write(&self, writer: impl io::Write) -> Result<usize, Error> {
-        write_beatgrid(writer, &self)
+        write_beatgrid(writer, self)
     }
 }
 
@@ -126,7 +126,7 @@ fn take_terminal_marker(input: &[u8]) -> Res<&[u8], TerminalMarker> {
 
 /// Take a [`Beatgrid` struct] parsed from the input slice.
 fn take_beatgrid(input: &[u8]) -> Res<&[u8], Beatgrid> {
-    let (input, version) = take_version(&input)?;
+    let (input, version) = take_version(input)?;
     let (input, non_terminal_markers) =
         nom::multi::length_count(take_non_terminal_marker_count, take_non_terminal_marker)(input)?;
     let (input, terminal_marker) = take_terminal_marker(input)?;
@@ -164,7 +164,7 @@ pub fn write_beatgrid(mut writer: impl io::Write, beatgrid: &Beatgrid) -> Result
     let num_markers = beatgrid.non_terminal_markers.len() as u32 + 1;
     bytes_written += writer.write(&num_markers.to_be_bytes())?;
     for marker in &beatgrid.non_terminal_markers {
-        bytes_written += write_non_terminal_marker(&mut writer, &marker)?;
+        bytes_written += write_non_terminal_marker(&mut writer, marker)?;
     }
     bytes_written += write_terminal_marker(&mut writer, &beatgrid.terminal_marker)?;
     bytes_written += writer.write(&[beatgrid.footer])?;

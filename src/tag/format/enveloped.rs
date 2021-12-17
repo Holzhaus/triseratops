@@ -62,7 +62,7 @@ pub fn base64_encode(mut writer: impl io::Write, input: &[u8]) -> Result<usize, 
     for (i, chunk) in chunks.enumerate() {
         let mut buf = Vec::new();
         buf.resize(72, 0);
-        let bytes_encoded = base64::encode_config_slice(&chunk, BASE64_FORGIVING, &mut buf);
+        let bytes_encoded = base64::encode_config_slice(chunk, BASE64_FORGIVING, &mut buf);
         bytes_written += writer.write(&buf[..bytes_encoded])?;
         if i == last_chunk_index {
             if bytes_encoded % 4 != 2 {

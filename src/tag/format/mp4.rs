@@ -15,7 +15,7 @@ pub trait MP4Tag: EnvelopedTag {
     const MP4_ATOM_FREEFORM_NAME: &'static str;
 
     fn parse_mp4(input: &[u8]) -> Result<Self, Error> {
-        Self::parse_enveloped(&input)
+        Self::parse_enveloped(input)
     }
 
     fn write_mp4(&self, writer: impl io::Write) -> Result<usize, Error> {
