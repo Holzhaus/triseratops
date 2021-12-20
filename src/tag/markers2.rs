@@ -505,16 +505,22 @@ fn write_markers2_content(
     Ok(bytes_written)
 }
 
+fn write_unknown_marker(
+    writer: &mut impl io::Write,
+    marker: &UnknownMarker,
+) -> Result<usize, Error> {
+    let UnknownMarker { name, data } = marker;
+    let mut bytes_written = writer.write(name.as_bytes())?;
+    bytes_written += writer.write(b"\0")?;
+    let size = marker.data.len() as u32;
+    bytes_written += writer.write(&size.to_be_bytes())?;
+    bytes_written += writer.write(data.as_slice())?;
+    Ok(bytes_written)
+}
+
 fn write_marker(writer: &mut impl io::Write, marker: &Marker) -> Result<usize, Error> {
     match marker {
-        Marker::Unknown(marker) => {
-            let mut bytes_written = writer.write(marker.name.as_bytes())?;
-            bytes_written += writer.write(b"\0")?;
-            let size = marker.data.len() as u32;
-            bytes_written += writer.write(&size.to_be_bytes())?;
-            bytes_written += writer.write(marker.data.as_slice())?;
-            Ok(bytes_written)
-        }
+        Marker::Unknown(marker) => write_unknown_marker(writer, marker),
         Marker::BPMLock(marker) => write_bpmlock_marker(writer, marker),
         Marker::Color(marker) => write_color_marker(writer, marker),
         Marker::Cue(marker) => write_cue_marker(writer, marker),
@@ -535,10 +541,11 @@ fn write_bpmlock_marker(
     writer: &mut impl io::Write,
     marker: &BPMLockMarker,
 ) -> Result<usize, Error> {
+    let BPMLockMarker { is_locked } = marker;
     let mut bytes_written = writer.write(b"BPMLOCK\0")?;
     let size: u32 = 1;
     bytes_written += writer.write(&size.to_be_bytes())?;
-    bytes_written += write_bool(writer, marker.is_locked)?;
+    bytes_written += write_bool(writer, *is_locked)?;
     Ok(bytes_written)
 }
 
@@ -602,6 +609,13 @@ fn write_loop_marker(writer: &mut impl io::Write, marker: &Loop) -> Result<usize
 }
 
 fn write_flip_marker(writer: &mut impl io::Write, marker: &Flip) -> Result<usize, Error> {
+    let Flip {
+        actions,
+        index,
+        is_enabled,
+        is_loop,
+        label,
+    } = marker;
     let mut bytes_written = writer.write(b"FLIP\0")?;
     let mut size: u32 = 9 + marker.label.as_bytes().len() as u32;
     for action in &marker.actions {
@@ -611,17 +625,16 @@ fn write_flip_marker(writer: &mut impl io::Write, marker: &Flip) -> Result<usize
             FlipAction::Unknown(act) => act.data.len() as u32 + 1,
         }
     }
-
     bytes_written += writer.write(&size.to_be_bytes())?;
     bytes_written += writer.write(b"\0")?;
-    bytes_written += writer.write(&[marker.index])?;
-    bytes_written += write_bool(writer, marker.is_enabled)?;
-    bytes_written += writer.write(marker.label.as_bytes())?;
+    bytes_written += writer.write(&[*index])?;
+    bytes_written += write_bool(writer, *is_enabled)?;
+    bytes_written += writer.write(label.as_bytes())?;
     bytes_written += writer.write(b"\0")?;
-    bytes_written += write_bool(writer, marker.is_loop)?;
-    let num_actions = marker.actions.len() as u32;
+    bytes_written += write_bool(writer, *is_loop)?;
+    let num_actions = actions.len() as u32;
     bytes_written += writer.write(&num_actions.to_be_bytes())?;
-    for action in &marker.actions {
+    for action in actions {
         bytes_written = write_flip_marker_action(writer, action)?;
     }
     Ok(bytes_written)
@@ -660,8 +673,12 @@ fn write_flip_marker_action_jump(
     writer: &mut impl io::Write,
     action: &JumpFlipAction,
 ) -> Result<usize, Error> {
-    let mut bytes_written = writer.write(&action.source_position_seconds.to_be_bytes())?;
-    bytes_written += writer.write(&action.target_position_seconds.to_be_bytes())?;
+    let JumpFlipAction {
+        source_position_seconds,
+        target_position_seconds,
+    } = action;
+    let mut bytes_written = writer.write(&source_position_seconds.to_be_bytes())?;
+    bytes_written += writer.write(&target_position_seconds.to_be_bytes())?;
     Ok(bytes_written)
 }
 
@@ -669,8 +686,13 @@ fn write_flip_marker_action_censor(
     writer: &mut impl io::Write,
     action: &CensorFlipAction,
 ) -> Result<usize, Error> {
-    let mut bytes_written = writer.write(&action.start_position_seconds.to_be_bytes())?;
-    bytes_written += writer.write(&action.end_position_seconds.to_be_bytes())?;
-    bytes_written += writer.write(&action.speed_factor.to_be_bytes())?;
+    let CensorFlipAction {
+        start_position_seconds,
+        end_position_seconds,
+        speed_factor,
+    } = action;
+    let mut bytes_written = writer.write(&start_position_seconds.to_be_bytes())?;
+    bytes_written += writer.write(&end_position_seconds.to_be_bytes())?;
+    bytes_written += writer.write(&speed_factor.to_be_bytes())?;
     Ok(bytes_written)
 }
