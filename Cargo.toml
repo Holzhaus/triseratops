@@ -16,5 +16,5 @@ base64 = "0.13"
 thiserror = "1"
 
 [dev-dependencies]
-id3 = "0.6"
+id3 = "1"
 textwrap = "0.14"
