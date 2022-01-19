@@ -19,11 +19,14 @@ repos:
   - id: fix-byte-order-marker
   - id: forbid-new-submodules
   - id: mixed-line-ending
+  - id: trailing-whitespace
 - repo: https://github.com/codespell-project/codespell
   rev: v2.1.0
   hooks:
   - id: codespell
-    args: [ --ignore-words=.codespellignore ]
+    args: [
+      --ignore-words=.codespellignore
+    ]
 - repo: https://github.com/doublify/pre-commit-rust
   rev: v1.0
   hooks:
