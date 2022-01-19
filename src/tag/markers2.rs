@@ -28,7 +28,7 @@ use std::io::Cursor;
 /// a single byte of data, while FLIP might become quite large. By storing the length explicitly
 /// instead of deriving it from the type, a parser could ignore unknown entry types and still be
 /// able to parse known ones.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Marker {
     Unknown(UnknownMarker),
     Color(TrackColorMarker),
@@ -39,7 +39,7 @@ pub enum Marker {
 }
 
 /// An unknown marker that we don't have a parser for.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct UnknownMarker {
     pub name: String,
     pub data: Vec<u8>,
@@ -48,7 +48,7 @@ pub struct UnknownMarker {
 /// A `COLOR` marker.
 ///
 /// `COLOR` markers describe a track's color.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct TrackColorMarker {
     pub color: Color,
 }
@@ -57,7 +57,7 @@ pub struct TrackColorMarker {
 ///
 /// The `BPMLOCK` marker contains a single boolean value that determines if [Beatgrid is
 /// locked](https://support.serato.com/hc/en-us/articles/235214887-Lock-Beatgrids).
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct BPMLockMarker {
     pub is_locked: bool,
 }
@@ -81,7 +81,7 @@ pub struct BPMLockMarker {
 ///     println!("{:?}", content);
 /// }
 /// ```
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Markers2 {
     pub version: Option<Version>,
     pub size: usize,
@@ -89,6 +89,7 @@ pub struct Markers2 {
 }
 
 impl Markers2 {
+    #[must_use]
     pub fn bpm_locked(&self) -> Option<bool> {
         for marker in &self.content.markers {
             if let Marker::BPMLock(m) = marker {
@@ -128,6 +129,7 @@ impl Markers2 {
         })
     }
 
+    #[must_use]
     pub fn track_color(&self) -> Option<Color> {
         self.content
             .markers
@@ -199,7 +201,7 @@ impl ogg::OggTag for Markers2 {
 }
 
 /// Represents the base64-encoded content of the `Serato Markers2` tag.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Markers2Content {
     pub version: Version,
     pub markers: Vec<Marker>,

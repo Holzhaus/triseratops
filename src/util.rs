@@ -1,5 +1,4 @@
 //! Various helper utilities for simplify parsing.
-extern crate nom;
 
 use nom::bytes::complete::take_until;
 

@@ -118,6 +118,7 @@ impl Color {
     ///
     /// assert_eq!(non_pro_color, Color { red: 0xC0, green: 0xFF, blue: 0xEE });
     /// ```
+    #[must_use]
     pub fn into_pro_hotcue_color(self) -> Self {
         if let Some(index) = HOTCUE_COLORS_INTRO.iter().position(|&x| x == self) {
             return HOTCUE_COLORS_PRO[index];
@@ -151,6 +152,7 @@ impl Color {
     ///
     /// assert_eq!(non_intro_color, Color { red: 0xC0, green: 0xFF, blue: 0xEE });
     /// ```
+    #[must_use]
     pub fn into_intro_hotcue_color(self) -> Self {
         if let Some(index) = HOTCUE_COLORS_PRO.iter().position(|&x| x == self) {
             return HOTCUE_COLORS_INTRO[index];
@@ -176,6 +178,7 @@ impl Color {
     /// let displayed_color = stored_color.into_displayed_track_color();
     /// assert_eq!(displayed_color, None);
     /// ```
+    #[must_use]
     pub fn into_displayed_track_color(self) -> Option<Self> {
         match self {
             Color {
@@ -205,6 +208,7 @@ impl Color {
     /// let stored_color = Color::from_displayed_track_color(None);
     /// assert_eq!(stored_color, Color { red: 0xFF, green: 0xFF, blue: 0xFF });
     /// ```
+    #[must_use]
     pub fn from_displayed_track_color(color: Option<Self>) -> Self {
         let code: u32 = match color {
             Some(color) => color.into(),

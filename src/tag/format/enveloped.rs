@@ -1,6 +1,4 @@
 //! Helper for FLAC and MP4 tags
-extern crate base64;
-extern crate nom;
 
 use super::Tag;
 use crate::error::Error;
@@ -29,10 +27,12 @@ pub fn parse_envelope(input: &[u8]) -> Result<(&str, &[u8]), Error> {
     Ok((name, input))
 }
 
+#[must_use]
 pub fn is_base64(byte: u8) -> bool {
     byte.is_ascii_alphanumeric() || byte == b'+' || byte == b'/' || byte == b'='
 }
 
+#[must_use]
 pub fn is_newline(byte: u8) -> bool {
     byte == b'\n'
 }

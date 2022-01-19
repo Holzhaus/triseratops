@@ -16,7 +16,7 @@ use std::io;
 use std::io::Cursor;
 
 /// Represents a single marker in the `Serato Markers_` tag.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Marker {
     /// The position of the loop or cue.
     pub start_position: Option<Position>,
@@ -57,7 +57,7 @@ pub struct Marker {
 ///     println!("{:?}", content);
 /// }
 /// ```
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Markers {
     /// The tag version.
     pub version: Version,
@@ -70,6 +70,7 @@ pub struct Markers {
 }
 
 impl Markers {
+    #[must_use]
     pub fn cues(&self) -> Vec<(u8, &Marker)> {
         let mut index: u8 = 0;
         let mut cues = Vec::new();
@@ -84,6 +85,7 @@ impl Markers {
         cues
     }
 
+    #[must_use]
     pub fn loops(&self) -> Vec<(u8, &Marker)> {
         let mut index: u8 = 0;
         let mut loops = Vec::new();
@@ -98,6 +100,7 @@ impl Markers {
         loops
     }
 
+    #[must_use]
     pub fn track_color(&self) -> Color {
         self.track_color
     }

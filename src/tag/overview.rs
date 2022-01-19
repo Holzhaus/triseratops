@@ -25,7 +25,7 @@ use std::io;
 ///     println!("{:?}", content);
 /// }
 /// ```
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Overview {
     /// The tag version.
     pub version: Version,

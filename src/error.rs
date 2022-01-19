@@ -1,8 +1,5 @@
 //! Error types and helper functions.
 
-extern crate base64;
-extern crate thiserror;
-
 /// Error enumerates all possible errors returned by this library.
 #[derive(thiserror::Error, Debug)]
 pub enum Error {

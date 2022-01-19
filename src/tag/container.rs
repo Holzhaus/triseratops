@@ -14,6 +14,7 @@ use std::io;
 ///
 /// Some of the data in Serato's tags is redundant and may contradict each other. This class
 /// implements the same merge strategies for inconsistent data that Serato uses, too.
+#[derive(Debug, Clone)]
 pub struct TagContainer {
     autotags: Option<Autotags>,
     beatgrid: Option<Beatgrid>,
@@ -26,6 +27,7 @@ pub struct TagContainer {
 ///
 /// The format of the Serato tag data differs between tag types.
 /// Therefore it's necessary to tell the parser from what kind of the the data originates from.
+#[derive(Debug, Clone, Copy)]
 pub enum TagFormat {
     ID3,
     FLAC,
@@ -35,7 +37,8 @@ pub enum TagFormat {
 
 impl TagContainer {
     /// Create an empty Serato tag container.
-    pub fn new() -> Self {
+    #[must_use]
+    pub const fn new() -> Self {
         Self {
             autotags: None,
             beatgrid: None,
@@ -219,6 +222,7 @@ impl TagContainer {
     }
 
     /// Returns the [`auto_gain`](Autotags::auto_gain) value from the [`Serato Autotags`](Autotags) tag.
+    #[must_use]
     pub fn auto_gain(&self) -> Option<f64> {
         if let Some(tag) = &self.autotags {
             return Some(tag.auto_gain);
@@ -228,6 +232,7 @@ impl TagContainer {
     }
 
     /// Returns the [`gain_db`](Autotags::gain_db) value from the [`Serato Autotags`](Autotags) tag.
+    #[must_use]
     pub fn gain_db(&self) -> Option<f64> {
         if let Some(tag) = &self.autotags {
             return Some(tag.gain_db);
@@ -237,6 +242,7 @@ impl TagContainer {
     }
 
     /// Returns the beatgrid from the [`Serato BeatGrid`](Beatgrid) tag.
+    #[must_use]
     pub fn beatgrid(
         &self,
     ) -> Option<(&Vec<beatgrid::NonTerminalMarker>, &beatgrid::TerminalMarker)> {
@@ -248,6 +254,7 @@ impl TagContainer {
     }
 
     /// Returns BPM lock status from the [`Serato Markers2`](Markers2) tag.
+    #[must_use]
     pub fn bpm_locked(&self) -> Option<bool> {
         if let Some(m) = &self.markers2 {
             return m.bpm_locked();
@@ -261,6 +268,7 @@ impl TagContainer {
     /// This retrieves the `Serato Markers2` cues first, then overwrite the values with those from
     /// `Serato Markers_`. This is what Serato does too (i.e. if `Serato Markers_` and `Serato
     /// Markers2` contradict each other, Serato will use the values from `Serato Markers_`).
+    #[must_use]
     pub fn cues(&self) -> Vec<generic::Cue> {
         let mut map = std::collections::BTreeMap::new();
 
@@ -325,6 +333,7 @@ impl TagContainer {
     /// This retrieves the `Serato Markers2` loops first, then overwrite the values with those from
     /// `Serato Markers_`. This is what Serato does too (i.e. if `Serato Markers_` and `Serato
     /// Markers2` contradict each other, Serato will use the values from `Serato Markers_`).
+    #[must_use]
     pub fn loops(&self) -> Vec<generic::Loop> {
         let mut map = std::collections::BTreeMap::new();
 
@@ -394,6 +403,7 @@ impl TagContainer {
     /// `Serato Markers2`. This is what Serato does too, i.e. if `Serato Markers_`
     /// and `Serato Markers2` contradict each other, Serato will use the value
     /// from `Serato Markers_`.
+    #[must_use]
     pub fn track_color(&self) -> Option<Color> {
         self.markers
             .as_ref()
@@ -402,6 +412,7 @@ impl TagContainer {
     }
 
     /// Returns the waveform overview data color from the [`Serato Overview`](Overview) tag.
+    #[must_use]
     pub fn overview_data(&self) -> Option<&[Vec<u8>]> {
         self.overview.as_ref().map(|overview| &overview.data[..])
     }

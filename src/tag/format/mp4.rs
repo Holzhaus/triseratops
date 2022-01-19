@@ -1,8 +1,5 @@
 //! MP4 tags
 
-extern crate base64;
-extern crate nom;
-
 use super::enveloped::EnvelopedTag;
 use crate::error::Error;
 use std::io;

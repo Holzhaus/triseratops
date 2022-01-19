@@ -1,5 +1,4 @@
 //! Various helper utilities for simplify parsing.
-extern crate nom;
 
 use super::color::Color;
 use super::generic::Version;

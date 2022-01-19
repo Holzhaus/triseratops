@@ -11,7 +11,7 @@ use std::io;
 ///
 /// The last beatgrid marker always has to be a terminal one. This is also the case if the tag only
 /// contains a single beatgrid marker.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct TerminalMarker {
     /// The position in seconds.
     pub position: f32,
@@ -22,7 +22,7 @@ pub struct TerminalMarker {
 /// Represents a non-terminal beatgrid marker in the `Serato BeatGrid` tag.
 ///
 /// All beatgrid markers before the last one are non-terminal beatgrid markers.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct NonTerminalMarker {
     /// The position in seconds.
     pub position: f32,
@@ -47,7 +47,7 @@ pub struct NonTerminalMarker {
 ///     println!("{:?}", content);
 /// }
 /// ```
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Beatgrid {
     /// The analysis version.
     pub version: Version,

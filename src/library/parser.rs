@@ -49,6 +49,7 @@ pub struct Track {
 
 impl Track {
     /// Creates a new, empty Track object.
+    #[must_use]
     pub fn new() -> Self {
         Self {
             file_type: None,
@@ -120,6 +121,7 @@ impl Default for Track {
 }
 
 /// DAO that reads Serato libraries from the file system.
+#[derive(Debug, Clone)]
 pub struct Library {
     path: PathBuf,
     tracks: HashMap<PathBuf, Track>,
@@ -127,13 +129,21 @@ pub struct Library {
 
 impl Library {
     /// Read the library in the given path.
-    pub fn read_from_path(path: impl AsRef<Path>) -> Result<Self, Error> {
+    pub fn read_from_path_ref(path: &Path) -> Result<Self, Error> {
         let path = fs::canonicalize(path)?;
         let tracks = HashMap::new();
         let mut library = Library { path, tracks };
         library.reload()?;
 
         Ok(library)
+    }
+
+    /// Read the library in the given path.
+    ///
+    /// Convenience function that accepts anything that could be
+    /// converted into a `Path` reference.
+    pub fn read_from_path(path: impl AsRef<Path>) -> Result<Self, Error> {
+        Self::read_from_path_ref(path.as_ref())
     }
 
     fn serato_path(&self) -> PathBuf {
@@ -148,7 +158,7 @@ impl Library {
         file.read_to_end(&mut data)?;
 
         let fields = database::parse(&data)?;
-        let tracks: Result<HashMap<_, _>, Error> = fields
+        self.tracks = fields
             .into_iter()
             .filter_map(|field| {
                 if let database::Field::Track(t) = field {
@@ -158,8 +168,7 @@ impl Library {
                 }
             })
             .map(Track::from_fields)
-            .collect();
-        self.tracks = tracks?;
+            .collect::<Result<HashMap<_, _>, _>>()?;
 
         Ok(())
     }
@@ -170,6 +179,7 @@ impl Library {
     }
 
     /// Get the track struct for the given path.
+    #[must_use]
     pub fn track(&self, file_path: &Path) -> Option<&Track> {
         self.tracks.get(file_path)
     }

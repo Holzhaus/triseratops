@@ -46,6 +46,7 @@ use std::io;
 /// let (a, b, c, d) = encode(0x00, 0x00, 0xCC);
 /// assert_eq!(decode(a, b, c, d), (0x00, 0x00, 0xCC));
 /// ```
+#[must_use]
 pub const fn decode(enc1: u8, enc2: u8, enc3: u8, enc4: u8) -> (u8, u8, u8) {
     let dec3: u8 = (enc4 & 0x7F) | ((enc3 & 0x01) << 7);
     let dec2: u8 = ((enc3 & 0x7F) >> 1) | ((enc2 & 0x03) << 6);
@@ -64,6 +65,7 @@ pub const fn decode(enc1: u8, enc2: u8, enc3: u8, enc4: u8) -> (u8, u8, u8) {
 /// let (x, y, z) = decode(0x00, 0x00, 0x01, 0x4C);
 /// assert_eq!(encode(x, y, z), (0x00, 0x00, 0x01, 0x4C));
 /// ```
+#[must_use]
 pub const fn encode(dec1: u8, dec2: u8, dec3: u8) -> (u8, u8, u8, u8) {
     let enc4: u8 = dec3 & 0x7F;
     let enc3: u8 = ((dec3 >> 7) | (dec2 << 1)) & 0x7F;
