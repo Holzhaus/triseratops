@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src&#x2F;tag&#x2F;container.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>container.rs - source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled ><script id="default-settings" ></script><script src="../../../storage.js"></script><script src="../../../crates.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../../triseratops/index.html'><div class='logo-container rust-logo'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="18" height="18" alt="Pick another theme!" src="../../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../../settings.html" title="settings"><img width="18" height="18" alt="Change settings" src="../../../wheel.svg"></a></div></form></nav><section id="main" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src&#x2F;tag&#x2F;container.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>container.rs - source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled ><script id="default-settings" ></script><script src="../../../storage.js"></script><script src="../../../crates.js"></script><script defer src="../../../main.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script>
+    <noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../../triseratops/index.html'><div class='logo-container rust-logo'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="18" height="18" alt="Pick another theme!" src="../../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../../settings.html" title="settings"><img width="18" height="18" alt="Change settings" src="../../../wheel.svg"></a></div></form></nav><section id="main" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -412,6 +413,17 @@
 <span id="412">412</span>
 <span id="413">413</span>
 <span id="414">414</span>
+<span id="415">415</span>
+<span id="416">416</span>
+<span id="417">417</span>
+<span id="418">418</span>
+<span id="419">419</span>
+<span id="420">420</span>
+<span id="421">421</span>
+<span id="422">422</span>
+<span id="423">423</span>
+<span id="424">424</span>
+<span id="425">425</span>
 </pre><pre class="rust"><code><span class="doccomment">//! Provides the [`TagContainer` struct](TagContainer), a simple interface to access data in</span>
 <span class="doccomment">//! Serato&#39;s tags.</span>
 <span class="kw">use</span> <span class="kw">super</span>::{
@@ -428,6 +440,7 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// Some of the data in Serato&#39;s tags is redundant and may contradict each other. This class</span>
 <span class="doccomment">/// implements the same merge strategies for inconsistent data that Serato uses, too.</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">TagContainer</span> {
     <span class="ident">autotags</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Autotags</span><span class="op">&gt;</span>,
     <span class="ident">beatgrid</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Beatgrid</span><span class="op">&gt;</span>,
@@ -440,6 +453,7 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// The format of the Serato tag data differs between tag types.</span>
 <span class="doccomment">/// Therefore it&#39;s necessary to tell the parser from what kind of the the data originates from.</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">TagFormat</span> {
     <span class="ident">ID3</span>,
     <span class="ident">FLAC</span>,
@@ -449,7 +463,8 @@
 
 <span class="kw">impl</span> <span class="ident">TagContainer</span> {
     <span class="doccomment">/// Create an empty Serato tag container.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() -&gt; <span class="self">Self</span> {
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">new</span>() -&gt; <span class="self">Self</span> {
         <span class="self">Self</span> {
             <span class="ident">autotags</span>: <span class="prelude-val">None</span>,
             <span class="ident">beatgrid</span>: <span class="prelude-val">None</span>,
@@ -460,7 +475,7 @@
     }
 
     <span class="doccomment">/// Parse the [`Serato Autotags`](Autotags) tag.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_autotags</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">tag_format</span>: <span class="ident">TagFormat</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_autotags</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">tag_format</span>: <span class="ident">TagFormat</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="ident">tag_format</span> {
             <span class="ident">TagFormat::ID3</span> =&gt; {
                 <span class="self">self</span>.<span class="ident">autotags</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Autotags::parse_id3</span>(<span class="ident">input</span>)<span class="question-mark">?</span>);
@@ -479,7 +494,7 @@
     <span class="doccomment">/// Write the [`Serato Autotags`](Autotags) tag.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">write_autotags</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        <span class="ident">writer</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw">impl</span> <span class="ident">io::Write</span>,
+        <span class="ident">writer</span>: <span class="kw-2">&amp;mut</span> <span class="kw">impl</span> <span class="ident">io::Write</span>,
         <span class="ident">tag_format</span>: <span class="ident">TagFormat</span>,
     ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">tag</span> <span class="op">=</span> <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">autotags</span> {
@@ -495,7 +510,7 @@
     }
 
     <span class="doccomment">/// Parse the [`Serato BeatGrid`](Beatgrid) tag.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_beatgrid</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">tag_format</span>: <span class="ident">TagFormat</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_beatgrid</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">tag_format</span>: <span class="ident">TagFormat</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="ident">tag_format</span> {
             <span class="ident">TagFormat::ID3</span> =&gt; {
                 <span class="self">self</span>.<span class="ident">beatgrid</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Beatgrid::parse_id3</span>(<span class="ident">input</span>)<span class="question-mark">?</span>);
@@ -514,7 +529,7 @@
     <span class="doccomment">/// Write the [`Serato BeatGrid`](Beatgrid) tag.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">write_beatgrid</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        <span class="ident">writer</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw">impl</span> <span class="ident">io::Write</span>,
+        <span class="ident">writer</span>: <span class="kw-2">&amp;mut</span> <span class="kw">impl</span> <span class="ident">io::Write</span>,
         <span class="ident">tag_format</span>: <span class="ident">TagFormat</span>,
     ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">tag</span> <span class="op">=</span> <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">beatgrid</span> {
@@ -530,7 +545,7 @@
     }
 
     <span class="doccomment">/// Parse the [`Serato Markers_`](Markers) tag.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_markers</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">tag_format</span>: <span class="ident">TagFormat</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_markers</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">tag_format</span>: <span class="ident">TagFormat</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="ident">tag_format</span> {
             <span class="ident">TagFormat::ID3</span> =&gt; {
                 <span class="self">self</span>.<span class="ident">markers</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Markers::parse_id3</span>(<span class="ident">input</span>)<span class="question-mark">?</span>);
@@ -546,7 +561,7 @@
     <span class="doccomment">/// Write the [`Serato Markers_`](Markers) tag.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">write_markers</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        <span class="ident">writer</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw">impl</span> <span class="ident">io::Write</span>,
+        <span class="ident">writer</span>: <span class="kw-2">&amp;mut</span> <span class="kw">impl</span> <span class="ident">io::Write</span>,
         <span class="ident">tag_format</span>: <span class="ident">TagFormat</span>,
     ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">tag</span> <span class="op">=</span> <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">markers</span> {
@@ -561,7 +576,7 @@
     }
 
     <span class="doccomment">/// Parse the [`Serato Markers2`](Markers2) tag.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_markers2</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">tag_format</span>: <span class="ident">TagFormat</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_markers2</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">tag_format</span>: <span class="ident">TagFormat</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="ident">tag_format</span> {
             <span class="ident">TagFormat::ID3</span> =&gt; {
                 <span class="self">self</span>.<span class="ident">markers2</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Markers2::parse_id3</span>(<span class="ident">input</span>)<span class="question-mark">?</span>);
@@ -582,7 +597,7 @@
     <span class="doccomment">/// Write the [`Serato Markers2`](Markers2) tag.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">write_markers2</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        <span class="ident">writer</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw">impl</span> <span class="ident">io::Write</span>,
+        <span class="ident">writer</span>: <span class="kw-2">&amp;mut</span> <span class="kw">impl</span> <span class="ident">io::Write</span>,
         <span class="ident">tag_format</span>: <span class="ident">TagFormat</span>,
     ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">tag</span> <span class="op">=</span> <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">markers2</span> {
@@ -598,7 +613,7 @@
     }
 
     <span class="doccomment">/// Parse the [`Serato Overview`](Overview) tag.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_overview</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">tag_format</span>: <span class="ident">TagFormat</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_overview</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">tag_format</span>: <span class="ident">TagFormat</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="ident">tag_format</span> {
             <span class="ident">TagFormat::ID3</span> =&gt; {
                 <span class="self">self</span>.<span class="ident">overview</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Overview::parse_id3</span>(<span class="ident">input</span>)<span class="question-mark">?</span>);
@@ -617,7 +632,7 @@
     <span class="doccomment">/// Write the [`Serato Overview`](Overview) tag.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">write_overview</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        <span class="ident">writer</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw">impl</span> <span class="ident">io::Write</span>,
+        <span class="ident">writer</span>: <span class="kw-2">&amp;mut</span> <span class="kw">impl</span> <span class="ident">io::Write</span>,
         <span class="ident">tag_format</span>: <span class="ident">TagFormat</span>,
     ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">tag</span> <span class="op">=</span> <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">overview</span> {
@@ -633,6 +648,7 @@
     }
 
     <span class="doccomment">/// Returns the [`auto_gain`](Autotags::auto_gain) value from the [`Serato Autotags`](Autotags) tag.</span>
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">auto_gain</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">tag</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">autotags</span> {
             <span class="kw">return</span> <span class="prelude-val">Some</span>(<span class="ident">tag</span>.<span class="ident">auto_gain</span>);
@@ -642,6 +658,7 @@
     }
 
     <span class="doccomment">/// Returns the [`gain_db`](Autotags::gain_db) value from the [`Serato Autotags`](Autotags) tag.</span>
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">gain_db</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">tag</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">autotags</span> {
             <span class="kw">return</span> <span class="prelude-val">Some</span>(<span class="ident">tag</span>.<span class="ident">gain_db</span>);
@@ -651,6 +668,7 @@
     }
 
     <span class="doccomment">/// Returns the beatgrid from the [`Serato BeatGrid`](Beatgrid) tag.</span>
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">beatgrid</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
     ) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="kw-2">&amp;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">beatgrid::NonTerminalMarker</span><span class="op">&gt;</span>, <span class="kw-2">&amp;</span><span class="ident">beatgrid::TerminalMarker</span>)<span class="op">&gt;</span> {
@@ -662,6 +680,7 @@
     }
 
     <span class="doccomment">/// Returns BPM lock status from the [`Serato Markers2`](Markers2) tag.</span>
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">bpm_locked</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">m</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">markers2</span> {
             <span class="kw">return</span> <span class="ident">m</span>.<span class="ident">bpm_locked</span>();
@@ -675,6 +694,7 @@
     <span class="doccomment">/// This retrieves the `Serato Markers2` cues first, then overwrite the values with those from</span>
     <span class="doccomment">/// `Serato Markers_`. This is what Serato does too (i.e. if `Serato Markers_` and `Serato</span>
     <span class="doccomment">/// Markers2` contradict each other, Serato will use the values from `Serato Markers_`).</span>
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">cues</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">generic::Cue</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">map</span> <span class="op">=</span> <span class="ident">std::collections::BTreeMap::new</span>();
 
@@ -739,6 +759,7 @@
     <span class="doccomment">/// This retrieves the `Serato Markers2` loops first, then overwrite the values with those from</span>
     <span class="doccomment">/// `Serato Markers_`. This is what Serato does too (i.e. if `Serato Markers_` and `Serato</span>
     <span class="doccomment">/// Markers2` contradict each other, Serato will use the values from `Serato Markers_`).</span>
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">loops</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">generic::Loop</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">map</span> <span class="op">=</span> <span class="ident">std::collections::BTreeMap::new</span>();
 
@@ -808,6 +829,7 @@
     <span class="doccomment">/// `Serato Markers2`. This is what Serato does too, i.e. if `Serato Markers_`</span>
     <span class="doccomment">/// and `Serato Markers2` contradict each other, Serato will use the value</span>
     <span class="doccomment">/// from `Serato Markers_`.</span>
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">track_color</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Color</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">markers</span>
             .<span class="ident">as_ref</span>()
@@ -816,6 +838,7 @@
     }
 
     <span class="doccomment">/// Returns the waveform overview data color from the [`Serato Overview`](Overview) tag.</span>
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">overview_data</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>]<span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">overview</span>.<span class="ident">as_ref</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">overview</span><span class="op">|</span> <span class="kw-2">&amp;</span><span class="ident">overview</span>.<span class="ident">data</span>[..])
     }
@@ -828,5 +851,4 @@
 }
 </code></pre></div>
 </section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="triseratops" data-search-index-js="../../../search-index.js" data-search-js="../../../search.js"></div>
-    <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script>
 </body></html>
