@@ -27,7 +27,7 @@ use std::io;
 ///     println!("{:?}", content);
 /// }
 /// ```
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct Autotags {
     /// The tag version.
     pub version: Version,

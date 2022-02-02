@@ -1,5 +1,3 @@
-extern crate nom;
-
 use crate::error::Error;
 use crate::util::Res;
 use std::path::PathBuf;
