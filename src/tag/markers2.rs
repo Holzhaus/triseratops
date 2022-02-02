@@ -131,17 +131,13 @@ impl Markers2 {
 
     #[must_use]
     pub fn track_color(&self) -> Option<Color> {
-        self.content
-            .markers
-            .iter()
-            .filter_map(|marker| {
-                if let Marker::Color(m) = marker {
-                    Some(m.color)
-                } else {
-                    None
-                }
-            })
-            .next()
+        self.content.markers.iter().find_map(|marker| {
+            if let Marker::Color(m) = marker {
+                Some(m.color)
+            } else {
+                None
+            }
+        })
     }
 }
 
