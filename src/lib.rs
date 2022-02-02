@@ -93,8 +93,8 @@
 //! - Unfortunately, full lossless roundtrips  aren't possible for FLAC and MP4, because the data
 //!   is wrapped in base64-encoding where the decoded last byte seems to be random junk that change
 //!   when writing tags from Serato DJ even if no actual changes were made (possibly an
-//!   out-of-bounds read or uninitialized data in Serato DJ). For parsing and using this in Serato,
-//!   that doesn't make a different, but the roundtrip tests will ignore those last two bytes.
+//!   out-of-bounds read or uninitialized data in Serato DJ). For parsing and using this in Serato
+//!   that doesn't make a difference, but the roundtrip tests will ignore those last two bytes.
 //!
 //! # Library
 //!
