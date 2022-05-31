@@ -1,3 +1,3 @@
 (function() {var implementors = {};
-implementors["triseratops"] = [{"text":"impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.58.1/std/error/trait.Error.html\" title=\"trait std::error::Error\">Error</a> for <a class=\"enum\" href=\"triseratops/error/enum.Error.html\" title=\"enum triseratops::error::Error\">Error</a>","synthetic":false,"types":["triseratops::error::Error"]}];
+implementors["triseratops"] = [{"text":"impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.60.0/std/error/trait.Error.html\" title=\"trait std::error::Error\">Error</a> for <a class=\"enum\" href=\"triseratops/error/enum.Error.html\" title=\"enum triseratops::error::Error\">Error</a>","synthetic":false,"types":["triseratops::error::Error"]}];
 if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
