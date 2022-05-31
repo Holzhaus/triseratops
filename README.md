@@ -32,10 +32,10 @@ The goal was to integrate such a parser into [Mixxx](https://mixxx.org), a free
 and open-source DJ software to reduce vendor lock-in and allow former Serato
 DJ users to migrate to Mixxx without losing their cue points, beatgrids, etc.
 
-Mixxx currently uses a different implemented (in C++) to parse those tags, but
-since it will [aoide](https://gitlab.com/uklotzde/aoide-rs) for library
-management at some point in the future, it made sense to write a new parser in
-Rust.
+Mixxx currently uses a different implementation (in C++) to parse those tags,
+but since it will switch to [aoide](https://gitlab.com/uklotzde/aoide-rs) for
+library management at some point in the future, it made sense to write a new
+parser in Rust.
 
 ## License
 
