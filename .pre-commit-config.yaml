@@ -47,3 +47,7 @@ repos:
                     -D,
                     warnings,
                 ]
+    - repo: https://github.com/DavidAnson/markdownlint-cli2
+      rev: v0.6.0
+      hooks:
+          - id: markdownlint-cli2
