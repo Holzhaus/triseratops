@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["Error","Error enumerates all possible errors returned by this library."]]});
+window.SIDEBAR_ITEMS = {"enum":[["Error","Error enumerates all possible errors returned by this library."]]};

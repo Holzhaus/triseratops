@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["enveloped","Helper for FLAC and MP4 tags"],["flac","FLAC tags"],["id3","ID3 tags"],["mp4","MP4 tags"],["ogg","Ogg tags"]],"trait":[["Tag",""]]});
+window.SIDEBAR_ITEMS = {"mod":[["enveloped","Helper for FLAC and MP4 tags"],["flac","FLAC tags"],["id3","ID3 tags"],["mp4","MP4 tags"],["ogg","Ogg tags"]],"trait":[["Tag",""]]};

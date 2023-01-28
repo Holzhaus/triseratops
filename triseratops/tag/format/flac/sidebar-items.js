@@ -1,1 +1,1 @@
-initSidebarItems({"trait":[["FLACTag",""]]});
+window.SIDEBAR_ITEMS = {"trait":[["FLACTag",""]]};

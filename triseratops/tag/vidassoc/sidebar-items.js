@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["VidAssoc","Represents the  `Serato VidAssoc` tag."]]});
+window.SIDEBAR_ITEMS = {"struct":[["VidAssoc","Represents the  `Serato VidAssoc` tag."]]};

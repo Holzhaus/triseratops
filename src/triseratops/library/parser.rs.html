@@ -1,107 +1,102 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/library/parser.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>parser.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script src="../../../crates.js"></script><script defer src="../../../main.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script>
-    <noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../../triseratops/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div>
-        </a><h2 class="location"></h2>
-    </nav>
-    <nav class="sidebar"><a class="sidebar-logo" href="../../../triseratops/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div>
-        </a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../triseratops/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><nav class="sub"><div class="theme-picker hidden"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="22" height="22" alt="Pick another theme!" src="../../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
-<span id="2">  2</span>
-<span id="3">  3</span>
-<span id="4">  4</span>
-<span id="5">  5</span>
-<span id="6">  6</span>
-<span id="7">  7</span>
-<span id="8">  8</span>
-<span id="9">  9</span>
-<span id="10"> 10</span>
-<span id="11"> 11</span>
-<span id="12"> 12</span>
-<span id="13"> 13</span>
-<span id="14"> 14</span>
-<span id="15"> 15</span>
-<span id="16"> 16</span>
-<span id="17"> 17</span>
-<span id="18"> 18</span>
-<span id="19"> 19</span>
-<span id="20"> 20</span>
-<span id="21"> 21</span>
-<span id="22"> 22</span>
-<span id="23"> 23</span>
-<span id="24"> 24</span>
-<span id="25"> 25</span>
-<span id="26"> 26</span>
-<span id="27"> 27</span>
-<span id="28"> 28</span>
-<span id="29"> 29</span>
-<span id="30"> 30</span>
-<span id="31"> 31</span>
-<span id="32"> 32</span>
-<span id="33"> 33</span>
-<span id="34"> 34</span>
-<span id="35"> 35</span>
-<span id="36"> 36</span>
-<span id="37"> 37</span>
-<span id="38"> 38</span>
-<span id="39"> 39</span>
-<span id="40"> 40</span>
-<span id="41"> 41</span>
-<span id="42"> 42</span>
-<span id="43"> 43</span>
-<span id="44"> 44</span>
-<span id="45"> 45</span>
-<span id="46"> 46</span>
-<span id="47"> 47</span>
-<span id="48"> 48</span>
-<span id="49"> 49</span>
-<span id="50"> 50</span>
-<span id="51"> 51</span>
-<span id="52"> 52</span>
-<span id="53"> 53</span>
-<span id="54"> 54</span>
-<span id="55"> 55</span>
-<span id="56"> 56</span>
-<span id="57"> 57</span>
-<span id="58"> 58</span>
-<span id="59"> 59</span>
-<span id="60"> 60</span>
-<span id="61"> 61</span>
-<span id="62"> 62</span>
-<span id="63"> 63</span>
-<span id="64"> 64</span>
-<span id="65"> 65</span>
-<span id="66"> 66</span>
-<span id="67"> 67</span>
-<span id="68"> 68</span>
-<span id="69"> 69</span>
-<span id="70"> 70</span>
-<span id="71"> 71</span>
-<span id="72"> 72</span>
-<span id="73"> 73</span>
-<span id="74"> 74</span>
-<span id="75"> 75</span>
-<span id="76"> 76</span>
-<span id="77"> 77</span>
-<span id="78"> 78</span>
-<span id="79"> 79</span>
-<span id="80"> 80</span>
-<span id="81"> 81</span>
-<span id="82"> 82</span>
-<span id="83"> 83</span>
-<span id="84"> 84</span>
-<span id="85"> 85</span>
-<span id="86"> 86</span>
-<span id="87"> 87</span>
-<span id="88"> 88</span>
-<span id="89"> 89</span>
-<span id="90"> 90</span>
-<span id="91"> 91</span>
-<span id="92"> 92</span>
-<span id="93"> 93</span>
-<span id="94"> 94</span>
-<span id="95"> 95</span>
-<span id="96"> 96</span>
-<span id="97"> 97</span>
-<span id="98"> 98</span>
-<span id="99"> 99</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/library/parser.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>parser.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../../normalize.css"><link rel="stylesheet" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../../ayu.css" disabled><link rel="stylesheet" href="../../../dark.css" disabled><link rel="stylesheet" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../main.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../../triseratops/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
+<span id="2">2</span>
+<span id="3">3</span>
+<span id="4">4</span>
+<span id="5">5</span>
+<span id="6">6</span>
+<span id="7">7</span>
+<span id="8">8</span>
+<span id="9">9</span>
+<span id="10">10</span>
+<span id="11">11</span>
+<span id="12">12</span>
+<span id="13">13</span>
+<span id="14">14</span>
+<span id="15">15</span>
+<span id="16">16</span>
+<span id="17">17</span>
+<span id="18">18</span>
+<span id="19">19</span>
+<span id="20">20</span>
+<span id="21">21</span>
+<span id="22">22</span>
+<span id="23">23</span>
+<span id="24">24</span>
+<span id="25">25</span>
+<span id="26">26</span>
+<span id="27">27</span>
+<span id="28">28</span>
+<span id="29">29</span>
+<span id="30">30</span>
+<span id="31">31</span>
+<span id="32">32</span>
+<span id="33">33</span>
+<span id="34">34</span>
+<span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
+<span id="38">38</span>
+<span id="39">39</span>
+<span id="40">40</span>
+<span id="41">41</span>
+<span id="42">42</span>
+<span id="43">43</span>
+<span id="44">44</span>
+<span id="45">45</span>
+<span id="46">46</span>
+<span id="47">47</span>
+<span id="48">48</span>
+<span id="49">49</span>
+<span id="50">50</span>
+<span id="51">51</span>
+<span id="52">52</span>
+<span id="53">53</span>
+<span id="54">54</span>
+<span id="55">55</span>
+<span id="56">56</span>
+<span id="57">57</span>
+<span id="58">58</span>
+<span id="59">59</span>
+<span id="60">60</span>
+<span id="61">61</span>
+<span id="62">62</span>
+<span id="63">63</span>
+<span id="64">64</span>
+<span id="65">65</span>
+<span id="66">66</span>
+<span id="67">67</span>
+<span id="68">68</span>
+<span id="69">69</span>
+<span id="70">70</span>
+<span id="71">71</span>
+<span id="72">72</span>
+<span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
+<span id="76">76</span>
+<span id="77">77</span>
+<span id="78">78</span>
+<span id="79">79</span>
+<span id="80">80</span>
+<span id="81">81</span>
+<span id="82">82</span>
+<span id="83">83</span>
+<span id="84">84</span>
+<span id="85">85</span>
+<span id="86">86</span>
+<span id="87">87</span>
+<span id="88">88</span>
+<span id="89">89</span>
+<span id="90">90</span>
+<span id="91">91</span>
+<span id="92">92</span>
+<span id="93">93</span>
+<span id="94">94</span>
+<span id="95">95</span>
+<span id="96">96</span>
+<span id="97">97</span>
+<span id="98">98</span>
+<span id="99">99</span>
 <span id="100">100</span>
 <span id="101">101</span>
 <span id="102">102</span>
@@ -252,255 +247,270 @@
 <span id="247">247</span>
 <span id="248">248</span>
 <span id="249">249</span>
-</pre><pre class="rust"><code><span class="doccomment">//! High-level interface for parsing Serato libraries.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! ```</span>
-<span class="doccomment">//! use std::path::Path;</span>
-<span class="doccomment">//! use triseratops::library::Library;</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! fn read_library(music_dir: &amp;Path) {</span>
-<span class="doccomment">//!     let library = Library::read_from_path(music_dir).unwrap();</span>
-<span class="doccomment">//!     for subcrate_name in library.subcrates() {</span>
-<span class="doccomment">//!         let tracks: Vec&lt;_&gt; = library.subcrate(&amp;subcrate_name).unwrap().collect();</span>
-<span class="doccomment">//!         println!(&quot;Subcrate &#39;{}&#39;: {} tracks&quot;, subcrate_name, tracks.len());</span>
-<span class="doccomment">//!     }</span>
-<span class="doccomment">//! }</span>
-<span class="doccomment">//! ```</span>
+<span id="250">250</span>
+<span id="251">251</span>
+<span id="252">252</span>
+<span id="253">253</span>
+<span id="254">254</span>
+<span id="255">255</span>
+<span id="256">256</span>
+<span id="257">257</span>
+</pre><pre class="rust"><code><span class="comment">// Copyright (c) 2023 Jan Holthuis &lt;jan.holthuis@rub.de&gt;
+//
+// This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy
+// of the MPL was not distributed with this file, You can obtain one at
+// http://mozilla.org/MPL/2.0/.
+//
+// SPDX-License-Identifier: MPL-2.0
 
-<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::database</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::error::Error</span>;
-<span class="kw">use</span> <span class="ident">std::collections::HashMap</span>;
-<span class="kw">use</span> <span class="ident">std::fs</span>;
-<span class="kw">use</span> <span class="ident">std::fs::File</span>;
-<span class="kw">use</span> <span class="ident">std::io</span>;
-<span class="kw">use</span> <span class="ident">std::io</span>::{<span class="ident">BufReader</span>, <span class="ident">Read</span>};
-<span class="kw">use</span> <span class="ident">std::path</span>::{<span class="ident">Path</span>, <span class="ident">PathBuf</span>};
+</span><span class="doccomment">//! High-level interface for parsing Serato libraries.
+//!
+//! ```
+//! use std::path::Path;
+//! use triseratops::library::Library;
+//!
+//! fn read_library(music_dir: &amp;Path) {
+//!     let library = Library::read_from_path(music_dir).unwrap();
+//!     for subcrate_name in library.subcrates() {
+//!         let tracks: Vec&lt;_&gt; = library.subcrate(&amp;subcrate_name).unwrap().collect();
+//!         println!(&quot;Subcrate &#39;{}&#39;: {} tracks&quot;, subcrate_name, tracks.len());
+//!     }
+//! }
+//! ```
 
-<span class="doccomment">/// File name of the main database file</span>
-<span class="kw">const</span> <span class="ident">DATABASE_FILENAME</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;database V2&quot;</span>;
-<span class="doccomment">/// File extension of the crate database files</span>
-<span class="kw">const</span> <span class="ident">CRATE_EXTENSION</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;crate&quot;</span>;
-<span class="doccomment">/// Name of the Serato directory inside the library directory</span>
-<span class="kw">const</span> <span class="ident">SERATO_DIR</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;_Serato_&quot;</span>;
-<span class="doccomment">/// Name of the directory containing subcrates inside the Serato directory</span>
-<span class="kw">const</span> <span class="ident">SUBCRATE_DIR</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;Subcrates&quot;</span>;
+</span><span class="kw">use </span><span class="kw">super</span>::database;
+<span class="kw">use </span><span class="kw">crate</span>::error::Error;
+<span class="kw">use </span>std::collections::HashMap;
+<span class="kw">use </span>std::fs;
+<span class="kw">use </span>std::fs::File;
+<span class="kw">use </span>std::io;
+<span class="kw">use </span>std::io::{BufReader, Read};
+<span class="kw">use </span>std::path::{Path, PathBuf};
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Track</span> {
-    <span class="kw">pub</span> <span class="ident">file_type</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">title</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">artist</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">album</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">genre</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">comment</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">composer</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">grouping</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">label</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">key</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">missing</span>: <span class="ident">bool</span>,
-    <span class="kw">pub</span> <span class="ident">beatgrid_locked</span>: <span class="ident">bool</span>,
+<span class="doccomment">/// File name of the main database file
+</span><span class="kw">const </span>DATABASE_FILENAME: <span class="kw-2">&amp;</span>str = <span class="string">&quot;database V2&quot;</span>;
+<span class="doccomment">/// File extension of the crate database files
+</span><span class="kw">const </span>CRATE_EXTENSION: <span class="kw-2">&amp;</span>str = <span class="string">&quot;crate&quot;</span>;
+<span class="doccomment">/// Name of the Serato directory inside the library directory
+</span><span class="kw">const </span>SERATO_DIR: <span class="kw-2">&amp;</span>str = <span class="string">&quot;_Serato_&quot;</span>;
+<span class="doccomment">/// Name of the directory containing subcrates inside the Serato directory
+</span><span class="kw">const </span>SUBCRATE_DIR: <span class="kw-2">&amp;</span>str = <span class="string">&quot;Subcrates&quot;</span>;
+
+<span class="attribute">#[derive(Clone, Debug)]
+</span><span class="kw">pub struct </span>Track {
+    <span class="kw">pub </span>file_type: <span class="prelude-ty">Option</span>&lt;String&gt;,
+    <span class="kw">pub </span>title: <span class="prelude-ty">Option</span>&lt;String&gt;,
+    <span class="kw">pub </span>artist: <span class="prelude-ty">Option</span>&lt;String&gt;,
+    <span class="kw">pub </span>album: <span class="prelude-ty">Option</span>&lt;String&gt;,
+    <span class="kw">pub </span>genre: <span class="prelude-ty">Option</span>&lt;String&gt;,
+    <span class="kw">pub </span>comment: <span class="prelude-ty">Option</span>&lt;String&gt;,
+    <span class="kw">pub </span>composer: <span class="prelude-ty">Option</span>&lt;String&gt;,
+    <span class="kw">pub </span>grouping: <span class="prelude-ty">Option</span>&lt;String&gt;,
+    <span class="kw">pub </span>label: <span class="prelude-ty">Option</span>&lt;String&gt;,
+    <span class="kw">pub </span>key: <span class="prelude-ty">Option</span>&lt;String&gt;,
+    <span class="kw">pub </span>missing: bool,
+    <span class="kw">pub </span>beatgrid_locked: bool,
 }
 
-<span class="kw">impl</span> <span class="ident">Track</span> {
-    <span class="doccomment">/// Creates a new, empty Track object.</span>
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() -&gt; <span class="self">Self</span> {
-        <span class="self">Self</span> {
-            <span class="ident">file_type</span>: <span class="prelude-val">None</span>,
-            <span class="ident">title</span>: <span class="prelude-val">None</span>,
-            <span class="ident">artist</span>: <span class="prelude-val">None</span>,
-            <span class="ident">album</span>: <span class="prelude-val">None</span>,
-            <span class="ident">genre</span>: <span class="prelude-val">None</span>,
-            <span class="ident">comment</span>: <span class="prelude-val">None</span>,
-            <span class="ident">composer</span>: <span class="prelude-val">None</span>,
-            <span class="ident">grouping</span>: <span class="prelude-val">None</span>,
-            <span class="ident">label</span>: <span class="prelude-val">None</span>,
-            <span class="ident">key</span>: <span class="prelude-val">None</span>,
-            <span class="ident">missing</span>: <span class="bool-val">false</span>,
-            <span class="ident">beatgrid_locked</span>: <span class="bool-val">false</span>,
+<span class="kw">impl </span>Track {
+    <span class="doccomment">/// Creates a new, empty Track object.
+    </span><span class="attribute">#[must_use]
+    </span><span class="kw">pub fn </span>new() -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            file_type: <span class="prelude-val">None</span>,
+            title: <span class="prelude-val">None</span>,
+            artist: <span class="prelude-val">None</span>,
+            album: <span class="prelude-val">None</span>,
+            genre: <span class="prelude-val">None</span>,
+            comment: <span class="prelude-val">None</span>,
+            composer: <span class="prelude-val">None</span>,
+            grouping: <span class="prelude-val">None</span>,
+            label: <span class="prelude-val">None</span>,
+            key: <span class="prelude-val">None</span>,
+            missing: <span class="bool-val">false</span>,
+            beatgrid_locked: <span class="bool-val">false</span>,
         }
     }
 
-    <span class="doccomment">/// Creates a new Track object from a list of database fields.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_fields</span>(<span class="ident">fields</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">database::Field</span><span class="op">&gt;</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="ident">PathBuf</span>, <span class="self">Self</span>), <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">file_path</span> <span class="op">=</span> <span class="ident">PathBuf::new</span>();
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">track</span> <span class="op">=</span> <span class="ident"><span class="self">Self</span>::new</span>();
-        <span class="kw">for</span> <span class="ident">field</span> <span class="kw">in</span> <span class="ident">fields</span> {
-            <span class="kw">match</span> <span class="ident">field</span> {
-                <span class="ident">database::Field::FilePath</span>(<span class="ident">db_file_path</span>) =&gt; {
-                    <span class="ident">file_path</span> <span class="op">=</span> <span class="ident">db_file_path</span>;
+    <span class="doccomment">/// Creates a new Track object from a list of database fields.
+    </span><span class="kw">pub fn </span>from_fields(fields: Vec&lt;database::Field&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;(PathBuf, <span class="self">Self</span>), Error&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>file_path = PathBuf::new();
+        <span class="kw">let </span><span class="kw-2">mut </span>track = <span class="self">Self</span>::new();
+        <span class="kw">for </span>field <span class="kw">in </span>fields {
+            <span class="kw">match </span>field {
+                database::Field::FilePath(db_file_path) =&gt; {
+                    file_path = db_file_path;
                 }
-                <span class="ident">database::Field::FileType</span>(<span class="ident">file_type</span>) =&gt; {
-                    <span class="ident">track</span>.<span class="ident">file_type</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">file_type</span>);
+                database::Field::FileType(file_type) =&gt; {
+                    track.file_type = <span class="prelude-val">Some</span>(file_type);
                 }
-                <span class="ident">database::Field::Album</span>(<span class="ident">album</span>) =&gt; {
-                    <span class="ident">track</span>.<span class="ident">album</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">album</span>);
+                database::Field::Album(album) =&gt; {
+                    track.album = <span class="prelude-val">Some</span>(album);
                 }
-                <span class="ident">database::Field::Artist</span>(<span class="ident">artist</span>) =&gt; {
-                    <span class="ident">track</span>.<span class="ident">artist</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">artist</span>);
+                database::Field::Artist(artist) =&gt; {
+                    track.artist = <span class="prelude-val">Some</span>(artist);
                 }
-                <span class="ident">database::Field::Comment</span>(<span class="ident">comment</span>) =&gt; {
-                    <span class="ident">track</span>.<span class="ident">comment</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">comment</span>);
+                database::Field::Comment(comment) =&gt; {
+                    track.comment = <span class="prelude-val">Some</span>(comment);
                 }
-                <span class="ident">database::Field::Composer</span>(<span class="ident">composer</span>) =&gt; {
-                    <span class="ident">track</span>.<span class="ident">composer</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">composer</span>);
+                database::Field::Composer(composer) =&gt; {
+                    track.composer = <span class="prelude-val">Some</span>(composer);
                 }
-                <span class="ident">database::Field::Grouping</span>(<span class="ident">grouping</span>) =&gt; {
-                    <span class="ident">track</span>.<span class="ident">grouping</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">grouping</span>);
+                database::Field::Grouping(grouping) =&gt; {
+                    track.grouping = <span class="prelude-val">Some</span>(grouping);
                 }
-                <span class="ident">database::Field::Label</span>(<span class="ident">label</span>) =&gt; {
-                    <span class="ident">track</span>.<span class="ident">label</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">label</span>);
+                database::Field::Label(label) =&gt; {
+                    track.label = <span class="prelude-val">Some</span>(label);
                 }
-                <span class="ident">database::Field::Key</span>(<span class="ident">key</span>) =&gt; {
-                    <span class="ident">track</span>.<span class="ident">key</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">key</span>);
+                database::Field::Key(key) =&gt; {
+                    track.key = <span class="prelude-val">Some</span>(key);
                 }
-                <span class="ident">database::Field::Missing</span>(<span class="ident">missing</span>) =&gt; {
-                    <span class="ident">track</span>.<span class="ident">missing</span> <span class="op">=</span> <span class="ident">missing</span>;
+                database::Field::Missing(missing) =&gt; {
+                    track.missing = missing;
                 }
-                <span class="ident">database::Field::BeatgridLocked</span>(<span class="ident">beatgrid_lock</span>) =&gt; {
-                    <span class="ident">track</span>.<span class="ident">beatgrid_locked</span> <span class="op">=</span> <span class="ident">beatgrid_lock</span>;
+                database::Field::BeatgridLocked(beatgrid_lock) =&gt; {
+                    track.beatgrid_locked = beatgrid_lock;
                 }
-                <span class="kw">_</span> =&gt; (),
+                <span class="kw">_ </span>=&gt; (),
             }
         }
 
-        <span class="prelude-val">Ok</span>((<span class="ident">file_path</span>, <span class="ident">track</span>))
+        <span class="prelude-val">Ok</span>((file_path, track))
     }
 }
 
-<span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">Track</span> {
-    <span class="kw">fn</span> <span class="ident">default</span>() -&gt; <span class="self">Self</span> {
-        <span class="ident"><span class="self">Self</span>::new</span>()
+<span class="kw">impl </span>Default <span class="kw">for </span>Track {
+    <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>::new()
     }
 }
 
-<span class="doccomment">/// DAO that reads Serato libraries from the file system.</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Library</span> {
-    <span class="ident">path</span>: <span class="ident">PathBuf</span>,
-    <span class="ident">tracks</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">PathBuf</span>, <span class="ident">Track</span><span class="op">&gt;</span>,
+<span class="doccomment">/// DAO that reads Serato libraries from the file system.
+</span><span class="attribute">#[derive(Debug, Clone)]
+</span><span class="kw">pub struct </span>Library {
+    path: PathBuf,
+    tracks: HashMap&lt;PathBuf, Track&gt;,
 }
 
-<span class="kw">impl</span> <span class="ident">Library</span> {
-    <span class="doccomment">/// Read the library in the given path.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">read_from_path_ref</span>(<span class="ident">path</span>: <span class="kw-2">&amp;</span><span class="ident">Path</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">path</span> <span class="op">=</span> <span class="ident">fs::canonicalize</span>(<span class="ident">path</span>)<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">tracks</span> <span class="op">=</span> <span class="ident">HashMap::new</span>();
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">library</span> <span class="op">=</span> <span class="ident">Library</span> { <span class="ident">path</span>, <span class="ident">tracks</span> };
-        <span class="ident">library</span>.<span class="ident">reload</span>()<span class="question-mark">?</span>;
+<span class="kw">impl </span>Library {
+    <span class="doccomment">/// Read the library in the given path.
+    </span><span class="kw">pub fn </span>read_from_path_ref(path: <span class="kw-2">&amp;</span>Path) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, Error&gt; {
+        <span class="kw">let </span>path = fs::canonicalize(path)<span class="question-mark">?</span>;
+        <span class="kw">let </span>tracks = HashMap::new();
+        <span class="kw">let </span><span class="kw-2">mut </span>library = Library { path, tracks };
+        library.reload()<span class="question-mark">?</span>;
 
-        <span class="prelude-val">Ok</span>(<span class="ident">library</span>)
+        <span class="prelude-val">Ok</span>(library)
     }
 
-    <span class="doccomment">/// Read the library in the given path.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// Convenience function that accepts anything that could be</span>
-    <span class="doccomment">/// converted into a `Path` reference.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">read_from_path</span>(<span class="ident">path</span>: <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="ident"><span class="self">Self</span>::read_from_path_ref</span>(<span class="ident">path</span>.<span class="ident">as_ref</span>())
+    <span class="doccomment">/// Read the library in the given path.
+    ///
+    /// Convenience function that accepts anything that could be
+    /// converted into a `Path` reference.
+    </span><span class="kw">pub fn </span>read_from_path(path: <span class="kw">impl </span>AsRef&lt;Path&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, Error&gt; {
+        <span class="self">Self</span>::read_from_path_ref(path.as_ref())
     }
 
-    <span class="kw">fn</span> <span class="ident">serato_path</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">PathBuf</span> {
-        <span class="self">self</span>.<span class="ident">path</span>.<span class="ident">join</span>(<span class="ident">SERATO_DIR</span>)
+    <span class="kw">fn </span>serato_path(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; PathBuf {
+        <span class="self">self</span>.path.join(SERATO_DIR)
     }
 
-    <span class="doccomment">/// Reload the library database from the hard disk.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">reload</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">database_path</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">serato_path</span>().<span class="ident">join</span>(<span class="ident">DATABASE_FILENAME</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">file</span> <span class="op">=</span> <span class="ident">BufReader::new</span>(<span class="ident">File::open</span>(<span class="ident">database_path</span>)<span class="question-mark">?</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">data</span> <span class="op">=</span> <span class="macro">vec!</span>[];
-        <span class="ident">file</span>.<span class="ident">read_to_end</span>(<span class="kw-2">&amp;mut</span> <span class="ident">data</span>)<span class="question-mark">?</span>;
+    <span class="doccomment">/// Reload the library database from the hard disk.
+    </span><span class="kw">pub fn </span>reload(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+        <span class="kw">let </span>database_path = <span class="self">self</span>.serato_path().join(DATABASE_FILENAME);
+        <span class="kw">let </span><span class="kw-2">mut </span>file = BufReader::new(File::open(database_path)<span class="question-mark">?</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>data = <span class="macro">vec!</span>[];
+        file.read_to_end(<span class="kw-2">&amp;mut </span>data)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">fields</span> <span class="op">=</span> <span class="ident">database::parse</span>(<span class="kw-2">&amp;</span><span class="ident">data</span>)<span class="question-mark">?</span>;
-        <span class="self">self</span>.<span class="ident">tracks</span> <span class="op">=</span> <span class="ident">fields</span>
-            .<span class="ident">into_iter</span>()
-            .<span class="ident">filter_map</span>(<span class="op">|</span><span class="ident">field</span><span class="op">|</span> {
-                <span class="kw">if</span> <span class="kw">let</span> <span class="ident">database::Field::Track</span>(<span class="ident">t</span>) <span class="op">=</span> <span class="ident">field</span> {
-                    <span class="prelude-val">Some</span>(<span class="ident">t</span>)
-                } <span class="kw">else</span> {
-                    <span class="prelude-val">None</span>
-                }
+        <span class="kw">let </span>fields = database::parse(<span class="kw-2">&amp;</span>data)<span class="question-mark">?</span>;
+        <span class="self">self</span>.tracks = fields
+            .into_iter()
+            .filter_map(|field| {
+                <span class="kw">if let </span>database::Field::Track(t) = field {
+                    <span class="prelude-val">Some</span>(t)
+                } <span class="kw">else </span>{
+                    <span class="prelude-val">None
+                </span>}
             })
-            .<span class="ident">map</span>(<span class="ident">Track::from_fields</span>)
-            .<span class="ident">collect</span>::<span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">HashMap</span><span class="op">&lt;</span><span class="kw">_</span>, <span class="kw">_</span><span class="op">&gt;</span>, <span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>()<span class="question-mark">?</span>;
+            .map(Track::from_fields)
+            .collect::&lt;<span class="prelude-ty">Result</span>&lt;HashMap&lt;<span class="kw">_</span>, <span class="kw">_</span>&gt;, <span class="kw">_</span>&gt;&gt;()<span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="doccomment">/// Get all tracks in the library.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">tracks</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw">impl</span> <span class="ident">Iterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">Track</span><span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">tracks</span>.<span class="ident">values</span>()
+    <span class="doccomment">/// Get all tracks in the library.
+    </span><span class="kw">pub fn </span>tracks(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw">impl </span>Iterator&lt;Item = <span class="kw-2">&amp;</span>Track&gt; {
+        <span class="self">self</span>.tracks.values()
     }
 
-    <span class="doccomment">/// Get the track struct for the given path.</span>
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">track</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">file_path</span>: <span class="kw-2">&amp;</span><span class="ident">Path</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">Track</span><span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">tracks</span>.<span class="ident">get</span>(<span class="ident">file_path</span>)
+    <span class="doccomment">/// Get the track struct for the given path.
+    </span><span class="attribute">#[must_use]
+    </span><span class="kw">pub fn </span>track(<span class="kw-2">&amp;</span><span class="self">self</span>, file_path: <span class="kw-2">&amp;</span>Path) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Track&gt; {
+        <span class="self">self</span>.tracks.get(file_path)
     }
 
-    <span class="doccomment">/// Get a list of subcrate names.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">subcrates</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw">impl</span> <span class="ident">Iterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="ident">String</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">crates_path</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">serato_path</span>().<span class="ident">join</span>(<span class="ident">SUBCRATE_DIR</span>);
-        <span class="ident">crates_path</span>
-            .<span class="ident">read_dir</span>()
-            .<span class="ident">into_iter</span>()
-            .<span class="ident">flatten</span>()
-            .<span class="ident">filter_map</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span>.<span class="ident">ok</span>())
-            .<span class="ident">map</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span>.<span class="ident">path</span>())
-            .<span class="ident">filter_map</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">crate_name_from_path</span>(<span class="kw-2">&amp;</span><span class="ident">x</span>).<span class="ident">ok</span>())
+    <span class="doccomment">/// Get a list of subcrate names.
+    </span><span class="kw">pub fn </span>subcrates(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw">impl </span>Iterator&lt;Item = String&gt; {
+        <span class="kw">let </span>crates_path = <span class="self">self</span>.serato_path().join(SUBCRATE_DIR);
+        crates_path
+            .read_dir()
+            .into_iter()
+            .flatten()
+            .filter_map(|x| x.ok())
+            .map(|x| x.path())
+            .filter_map(|x| crate_name_from_path(<span class="kw-2">&amp;</span>x).ok())
     }
 
-    <span class="doccomment">/// Get a list of tracks from the subcrate with the given name.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">subcrate</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw">impl</span> <span class="ident">Iterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">Track</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">filename</span> <span class="op">=</span> <span class="macro">format!</span>(<span class="string">&quot;{}.{}&quot;</span>, <span class="ident">name</span>, <span class="ident">CRATE_EXTENSION</span>);
-        <span class="kw">let</span> <span class="ident">crate_path</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">serato_path</span>().<span class="ident">join</span>(<span class="ident">SUBCRATE_DIR</span>).<span class="ident">join</span>(<span class="ident">filename</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">file</span> <span class="op">=</span> <span class="ident">BufReader::new</span>(<span class="ident">File::open</span>(<span class="ident">crate_path</span>)<span class="question-mark">?</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">data</span> <span class="op">=</span> <span class="macro">vec!</span>[];
-        <span class="ident">file</span>.<span class="ident">read_to_end</span>(<span class="kw-2">&amp;mut</span> <span class="ident">data</span>)<span class="question-mark">?</span>;
+    <span class="doccomment">/// Get a list of tracks from the subcrate with the given name.
+    </span><span class="kw">pub fn </span>subcrate(<span class="kw-2">&amp;</span><span class="self">self</span>, name: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw">impl </span>Iterator&lt;Item = <span class="kw-2">&amp;</span>Track&gt;, Error&gt; {
+        <span class="kw">let </span>filename = <span class="macro">format!</span>(<span class="string">&quot;{}.{}&quot;</span>, name, CRATE_EXTENSION);
+        <span class="kw">let </span>crate_path = <span class="self">self</span>.serato_path().join(SUBCRATE_DIR).join(filename);
+        <span class="kw">let </span><span class="kw-2">mut </span>file = BufReader::new(File::open(crate_path)<span class="question-mark">?</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>data = <span class="macro">vec!</span>[];
+        file.read_to_end(<span class="kw-2">&amp;mut </span>data)<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">fields</span> <span class="op">=</span> <span class="ident">database::parse</span>(<span class="kw-2">&amp;</span><span class="ident">data</span>)<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">tracks</span> <span class="op">=</span> <span class="ident">fields</span>.<span class="ident">into_iter</span>().<span class="ident">filter_map</span>(<span class="kw">move</span> <span class="op">|</span><span class="ident">field</span><span class="op">|</span> {
-            <span class="kw">if</span> <span class="kw">let</span> <span class="ident">database::Field::Track</span>(<span class="ident">track_fields</span>) <span class="op">=</span> <span class="ident">field</span> {
-                <span class="kw">for</span> <span class="ident">track_field</span> <span class="kw">in</span> <span class="ident">track_fields</span> {
-                    <span class="kw">if</span> <span class="kw">let</span> <span class="ident">database::Field::TrackPath</span>(<span class="ident">path</span>) <span class="op">=</span> <span class="ident">track_field</span> {
-                        <span class="kw">return</span> <span class="self">self</span>.<span class="ident">track</span>(<span class="kw-2">&amp;</span><span class="ident">path</span>);
+        <span class="kw">let </span>fields = database::parse(<span class="kw-2">&amp;</span>data)<span class="question-mark">?</span>;
+        <span class="kw">let </span>tracks = fields.into_iter().filter_map(<span class="kw">move </span>|field| {
+            <span class="kw">if let </span>database::Field::Track(track_fields) = field {
+                <span class="kw">for </span>track_field <span class="kw">in </span>track_fields {
+                    <span class="kw">if let </span>database::Field::TrackPath(path) = track_field {
+                        <span class="kw">return </span><span class="self">self</span>.track(<span class="kw-2">&amp;</span>path);
                     }
                 }
             }
 
-            <span class="prelude-val">None</span>
-        });
-        <span class="prelude-val">Ok</span>(<span class="ident">tracks</span>)
+            <span class="prelude-val">None
+        </span>});
+        <span class="prelude-val">Ok</span>(tracks)
     }
 }
 
-<span class="kw">fn</span> <span class="ident">crate_name_from_path</span>(<span class="ident">path</span>: <span class="kw-2">&amp;</span><span class="ident">Path</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-    <span class="kw">if</span> <span class="op">!</span><span class="ident">path</span>.<span class="ident">is_file</span>() {
-        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::IOError</span>(<span class="ident">io::Error::new</span>(
-            <span class="ident">io::ErrorKind::Other</span>,
+<span class="kw">fn </span>crate_name_from_path(path: <span class="kw-2">&amp;</span>Path) -&gt; <span class="prelude-ty">Result</span>&lt;String, Error&gt; {
+    <span class="kw">if </span>!path.is_file() {
+        <span class="kw">return </span><span class="prelude-val">Err</span>(Error::IOError(io::Error::new(
+            io::ErrorKind::Other,
             <span class="string">&quot;crate path is not a file&quot;</span>,
         )));
     }
 
-    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">ext</span>) <span class="op">=</span> <span class="ident">path</span>.<span class="ident">extension</span>() {
-        <span class="kw">if</span> <span class="ident">ext</span> <span class="op">!</span><span class="op">=</span> <span class="ident">CRATE_EXTENSION</span> {
-            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::IOError</span>(<span class="ident">io::Error::new</span>(
-                <span class="ident">io::ErrorKind::Other</span>,
+    <span class="kw">if let </span><span class="prelude-val">Some</span>(ext) = path.extension() {
+        <span class="kw">if </span>ext != CRATE_EXTENSION {
+            <span class="kw">return </span><span class="prelude-val">Err</span>(Error::IOError(io::Error::new(
+                io::ErrorKind::Other,
                 <span class="string">&quot;crate path has no .crate extension&quot;</span>,
             )));
         }
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">crate_name_osstr</span>) <span class="op">=</span> <span class="ident">path</span>.<span class="ident">file_stem</span>() {
-            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">crate_name</span>) <span class="op">=</span> <span class="ident">crate_name_osstr</span>.<span class="ident">to_str</span>() {
-                <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">crate_name</span>.<span class="ident">to_string</span>());
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(crate_name_osstr) = path.file_stem() {
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(crate_name) = crate_name_osstr.to_str() {
+                <span class="kw">return </span><span class="prelude-val">Ok</span>(crate_name.to_string());
             }
         }
     }
 
-    <span class="prelude-val">Err</span>(<span class="ident">Error::IOError</span>(<span class="ident">io::Error::new</span>(
-        <span class="ident">io::ErrorKind::Other</span>,
+    <span class="prelude-val">Err</span>(Error::IOError(io::Error::new(
+        io::ErrorKind::Other,
         <span class="string">&quot;Failed to create crate name&quot;</span>,
     )))
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="triseratops" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0 (7737e0b5c 2022-04-04)" ></div>
-</body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="triseratops" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.1 (90743e729 2023-01-10)" ></div></body></html>

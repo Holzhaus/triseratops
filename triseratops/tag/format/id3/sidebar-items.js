@@ -1,1 +1,1 @@
-initSidebarItems({"trait":[["ID3Tag",""]]});
+window.SIDEBAR_ITEMS = {"trait":[["ID3Tag",""]]};

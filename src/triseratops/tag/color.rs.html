@@ -1,107 +1,102 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/tag/color.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>color.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script src="../../../crates.js"></script><script defer src="../../../main.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script>
-    <noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../../triseratops/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div>
-        </a><h2 class="location"></h2>
-    </nav>
-    <nav class="sidebar"><a class="sidebar-logo" href="../../../triseratops/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div>
-        </a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../triseratops/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><nav class="sub"><div class="theme-picker hidden"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="22" height="22" alt="Pick another theme!" src="../../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
-<span id="2">  2</span>
-<span id="3">  3</span>
-<span id="4">  4</span>
-<span id="5">  5</span>
-<span id="6">  6</span>
-<span id="7">  7</span>
-<span id="8">  8</span>
-<span id="9">  9</span>
-<span id="10"> 10</span>
-<span id="11"> 11</span>
-<span id="12"> 12</span>
-<span id="13"> 13</span>
-<span id="14"> 14</span>
-<span id="15"> 15</span>
-<span id="16"> 16</span>
-<span id="17"> 17</span>
-<span id="18"> 18</span>
-<span id="19"> 19</span>
-<span id="20"> 20</span>
-<span id="21"> 21</span>
-<span id="22"> 22</span>
-<span id="23"> 23</span>
-<span id="24"> 24</span>
-<span id="25"> 25</span>
-<span id="26"> 26</span>
-<span id="27"> 27</span>
-<span id="28"> 28</span>
-<span id="29"> 29</span>
-<span id="30"> 30</span>
-<span id="31"> 31</span>
-<span id="32"> 32</span>
-<span id="33"> 33</span>
-<span id="34"> 34</span>
-<span id="35"> 35</span>
-<span id="36"> 36</span>
-<span id="37"> 37</span>
-<span id="38"> 38</span>
-<span id="39"> 39</span>
-<span id="40"> 40</span>
-<span id="41"> 41</span>
-<span id="42"> 42</span>
-<span id="43"> 43</span>
-<span id="44"> 44</span>
-<span id="45"> 45</span>
-<span id="46"> 46</span>
-<span id="47"> 47</span>
-<span id="48"> 48</span>
-<span id="49"> 49</span>
-<span id="50"> 50</span>
-<span id="51"> 51</span>
-<span id="52"> 52</span>
-<span id="53"> 53</span>
-<span id="54"> 54</span>
-<span id="55"> 55</span>
-<span id="56"> 56</span>
-<span id="57"> 57</span>
-<span id="58"> 58</span>
-<span id="59"> 59</span>
-<span id="60"> 60</span>
-<span id="61"> 61</span>
-<span id="62"> 62</span>
-<span id="63"> 63</span>
-<span id="64"> 64</span>
-<span id="65"> 65</span>
-<span id="66"> 66</span>
-<span id="67"> 67</span>
-<span id="68"> 68</span>
-<span id="69"> 69</span>
-<span id="70"> 70</span>
-<span id="71"> 71</span>
-<span id="72"> 72</span>
-<span id="73"> 73</span>
-<span id="74"> 74</span>
-<span id="75"> 75</span>
-<span id="76"> 76</span>
-<span id="77"> 77</span>
-<span id="78"> 78</span>
-<span id="79"> 79</span>
-<span id="80"> 80</span>
-<span id="81"> 81</span>
-<span id="82"> 82</span>
-<span id="83"> 83</span>
-<span id="84"> 84</span>
-<span id="85"> 85</span>
-<span id="86"> 86</span>
-<span id="87"> 87</span>
-<span id="88"> 88</span>
-<span id="89"> 89</span>
-<span id="90"> 90</span>
-<span id="91"> 91</span>
-<span id="92"> 92</span>
-<span id="93"> 93</span>
-<span id="94"> 94</span>
-<span id="95"> 95</span>
-<span id="96"> 96</span>
-<span id="97"> 97</span>
-<span id="98"> 98</span>
-<span id="99"> 99</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/tag/color.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>color.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../../normalize.css"><link rel="stylesheet" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../../ayu.css" disabled><link rel="stylesheet" href="../../../dark.css" disabled><link rel="stylesheet" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../main.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../../triseratops/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
+<span id="2">2</span>
+<span id="3">3</span>
+<span id="4">4</span>
+<span id="5">5</span>
+<span id="6">6</span>
+<span id="7">7</span>
+<span id="8">8</span>
+<span id="9">9</span>
+<span id="10">10</span>
+<span id="11">11</span>
+<span id="12">12</span>
+<span id="13">13</span>
+<span id="14">14</span>
+<span id="15">15</span>
+<span id="16">16</span>
+<span id="17">17</span>
+<span id="18">18</span>
+<span id="19">19</span>
+<span id="20">20</span>
+<span id="21">21</span>
+<span id="22">22</span>
+<span id="23">23</span>
+<span id="24">24</span>
+<span id="25">25</span>
+<span id="26">26</span>
+<span id="27">27</span>
+<span id="28">28</span>
+<span id="29">29</span>
+<span id="30">30</span>
+<span id="31">31</span>
+<span id="32">32</span>
+<span id="33">33</span>
+<span id="34">34</span>
+<span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
+<span id="38">38</span>
+<span id="39">39</span>
+<span id="40">40</span>
+<span id="41">41</span>
+<span id="42">42</span>
+<span id="43">43</span>
+<span id="44">44</span>
+<span id="45">45</span>
+<span id="46">46</span>
+<span id="47">47</span>
+<span id="48">48</span>
+<span id="49">49</span>
+<span id="50">50</span>
+<span id="51">51</span>
+<span id="52">52</span>
+<span id="53">53</span>
+<span id="54">54</span>
+<span id="55">55</span>
+<span id="56">56</span>
+<span id="57">57</span>
+<span id="58">58</span>
+<span id="59">59</span>
+<span id="60">60</span>
+<span id="61">61</span>
+<span id="62">62</span>
+<span id="63">63</span>
+<span id="64">64</span>
+<span id="65">65</span>
+<span id="66">66</span>
+<span id="67">67</span>
+<span id="68">68</span>
+<span id="69">69</span>
+<span id="70">70</span>
+<span id="71">71</span>
+<span id="72">72</span>
+<span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
+<span id="76">76</span>
+<span id="77">77</span>
+<span id="78">78</span>
+<span id="79">79</span>
+<span id="80">80</span>
+<span id="81">81</span>
+<span id="82">82</span>
+<span id="83">83</span>
+<span id="84">84</span>
+<span id="85">85</span>
+<span id="86">86</span>
+<span id="87">87</span>
+<span id="88">88</span>
+<span id="89">89</span>
+<span id="90">90</span>
+<span id="91">91</span>
+<span id="92">92</span>
+<span id="93">93</span>
+<span id="94">94</span>
+<span id="95">95</span>
+<span id="96">96</span>
+<span id="97">97</span>
+<span id="98">98</span>
+<span id="99">99</span>
 <span id="100">100</span>
 <span id="101">101</span>
 <span id="102">102</span>
@@ -464,467 +459,482 @@
 <span id="459">459</span>
 <span id="460">460</span>
 <span id="461">461</span>
-</pre><pre class="rust"><code><span class="doccomment">//! Hotcue and Track Colors Helpers</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! # Hotcue Colors</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! The on-screen representation of hotcue colors can differ slightly from what&#39;s stored in the</span>
-<span class="doccomment">//! [`Serato Markers`](super::markers) and [`Serato Markers2`](super::markers2) tags depending on</span>
-<span class="doccomment">//! whether Serato DJ Pro, Serato DJ Lite or Serato DJ Intro is used.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! Both Serato DJ Pro and Serato DJ Intro let the user choose from a palette of 18 different</span>
-<span class="doccomment">//! colors.</span>
-<span class="doccomment">//! In contrast to the latter which just displays the exact same colors that are saved in the</span>
-<span class="doccomment">//! metadata, both Serato DJ Lite and Serato DJ Pro map the colors to another color palette:</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! | Palette Index | Default Hotcue  | Serato DJ Intro/Metadata                                                                                        | Serato DJ Pro/Lite                                                                                            |</span>
-<span class="doccomment">//! | ------------- | --------------- | --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |</span>
-<span class="doccomment">//! |         **1** |               1 | ![CC0000](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/intro_CC0000.gif) `#CC0000` | ![C02626](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/pro_C02626.gif) `#C02626` |</span>
-<span class="doccomment">//! |             2 |                 | ![CC4400](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/intro_CC4400.gif) `#CC4400` | ![DB4E27](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/pro_DB4E27.gif) `#DB4E27` |</span>
-<span class="doccomment">//! |         **3** |               2 | ![CC8800](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/intro_CC8800.gif) `#CC8800` | ![F8821A](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/pro_F8821A.gif) `#F8821A` |</span>
-<span class="doccomment">//! |         **4** |               4 | ![CCCC00](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/intro_CCCC00.gif) `#CCCC00` | ![FAC313](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/pro_FAC313.gif) `#FAC313` |</span>
-<span class="doccomment">//! |             5 |                 | ![88CC00](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/intro_88CC00.gif) `#88CC00` | ![4EB648](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/pro_4EB648.gif) `#4EB648` |</span>
-<span class="doccomment">//! |             6 |                 | ![44CC00](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/intro_44CC00.gif) `#44CC00` | ![006838](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/pro_006838.gif) `#006838` |</span>
-<span class="doccomment">//! |             7 |               5 | ![00CC00](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/intro_00CC00.gif) `#00CC00` | ![1FAD26](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/pro_1FAD26.gif) `#1FAD26` |</span>
-<span class="doccomment">//! |             8 |                 | ![00CC44](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/intro_00CC44.gif) `#00CC44` | ![8DC63F](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/pro_8DC63F.gif) `#8DC63F` |</span>
-<span class="doccomment">//! |             9 |                 | ![00CC88](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/intro_00CC88.gif) `#00CC88` | ![2B3673](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/pro_2B3673.gif) `#2B3673` |</span>
-<span class="doccomment">//! |            10 |               7 | ![00CCCC](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/intro_00CCCC.gif) `#00CCCC` | ![1DBEBD](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/pro_1DBEBD.gif) `#1DBEBD` |</span>
-<span class="doccomment">//! |            11 |                 | ![0088CC](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/intro_0088CC.gif) `#0088CC` | ![0F88CA](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/pro_0F88CA.gif) `#0F88CA` |</span>
-<span class="doccomment">//! |            12 |                 | ![0044CC](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/intro_0044CC.gif) `#0044CC` | ![16308B](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/pro_16308B.gif) `#16308B` |</span>
-<span class="doccomment">//! |        **13** |               3 | ![0000CC](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/intro_0000CC.gif) `#0000CC` | ![173BA2](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/pro_173BA2.gif) `#173BA2` |</span>
-<span class="doccomment">//! |            14 |                 | ![4400CC](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/intro_4400CC.gif) `#4400CC` | ![5C3F97](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/pro_5C3F97.gif) `#5C3F97` |</span>
-<span class="doccomment">//! |            15 |               8 | ![8800CC](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/intro_8800CC.gif) `#8800CC` | ![6823B6](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/pro_6823B6.gif) `#6823B6` |</span>
-<span class="doccomment">//! |            16 |               6 | ![CC00CC](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/intro_CC00CC.gif) `#CC00CC` | ![CE359E](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/pro_CE359E.gif) `#CE359E` |</span>
-<span class="doccomment">//! |            17 |                 | ![CC0088](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/intro_CC0088.gif) `#CC0088` | ![DC1D49](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/pro_DC1D49.gif) `#DC1D49` |</span>
-<span class="doccomment">//! |            18 |                 | ![CC0044](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/intro_CC0044.gif) `#CC0044` | ![C71136](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/pro_C71136.gif) `#C71136` |</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! This means that if a Hotcue is saved with color `#C02626` in Serato DJ Pro, it actually saves</span>
-<span class="doccomment">//! `#CC0000` in the metadata. If that file is opened in Serato DJ Intro, the hotcue will be</span>
-<span class="doccomment">//! displayed with color `#CC0000` (i.e. the metadata color), if the file is opened in Serato DJ</span>
-<span class="doccomment">//! Pro/Lite, the hotcue will be displayed with color `#C02626`.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! Hence, Serato DJ Intro is the only Serato DJ variant that displays the colors exactly like they</span>
-<span class="doccomment">//! are saved (i.e. without applying any transformation/colorscheme).</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! Note that Serato DJ Lite only has 4 hotcues with predefined, unchangeable colors (the</span>
-<span class="doccomment">//! emphasized hotcue colors 1-4 in the table above).</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! # Track Colors</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! Serato DJ Pro displays different colors in the color picker and the actual column (see table</span>
-<span class="doccomment">//! below). Generally, the column value can be calculated by subtracting `0x666666` from the</span>
-<span class="doccomment">//! stored value. If the result is less than 0, `0x1000000` is also added. An alternative way to</span>
-<span class="doccomment">//! calculate is without using signed numbers: If the stored value is less than `0x666666` then add</span>
-<span class="doccomment">//! `0x99999A`, else subtract `0x666666`</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! There are some exceptions though:</span>
-<span class="doccomment">//! - If the stored color is `0x999999`, `0x090909` will be displayed instead of `0x333333` (this</span>
-<span class="doccomment">//!   means that both `0x999999` and `0x6F6F6F` will result in the same color)</span>
-<span class="doccomment">//! - If the stored color is `0xFFFFFF`, `0x333333` will be displayed instead of `0x999999`</span>
-<span class="doccomment">//! - If the stored color is `0x000000`, `0x333333` will be displayed instead of `0X99999A`</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! This means that both `0x999999` and `0X999999A` cannot be used in the track color library</span>
-<span class="doccomment">//! column.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! |  # | Color Picker / Stored in Tag                                                                                           | Shown in Library Column                                                                                                 |</span>
-<span class="doccomment">//! | -- | ---------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |</span>
-<span class="doccomment">//! |  1 | ![FF99FF](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_FF99FF.gif) `#FF99FF` | ![993399](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_993399.gif) `#993399` |</span>
-<span class="doccomment">//! |  2 | ![FF99DD](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_FF99DD.gif) `#FF99DD` | ![993377](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_993377.gif) `#993377` |</span>
-<span class="doccomment">//! |  3 | ![FF99BB](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_FF99BB.gif) `#FF99BB` | ![993355](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_993355.gif) `#993355` |</span>
-<span class="doccomment">//! |  4 | ![FF9999](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_FF9999.gif) `#FF9999` | ![993333](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_993333.gif) `#993333` |</span>
-<span class="doccomment">//! |  5 | ![FFBB99](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_FFBB99.gif) `#FFBB99` | ![995533](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_995533.gif) `#995533` |</span>
-<span class="doccomment">//! |  6 | ![FFDD99](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_FFDD99.gif) `#FFDD99` | ![997733](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_997733.gif) `#997733` |</span>
-<span class="doccomment">//! |  7 | ![FFFF99](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_FFFF99.gif) `#FFFF99` | ![999933](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_999933.gif) `#999933` |</span>
-<span class="doccomment">//! |  8 | ![DDFF99](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_DDFF99.gif) `#DDFF99` | ![779933](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_779933.gif) `#779933` |</span>
-<span class="doccomment">//! |  9 | ![BBFF99](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_BBFF99.gif) `#BBFF99` | ![559933](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_559933.gif) `#559933` |</span>
-<span class="doccomment">//! | 10 | ![99FF99](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_99FF99.gif) `#99FF99` | ![339933](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_339933.gif) `#339933` |</span>
-<span class="doccomment">//! | 11 | ![99FFBB](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_99FFBB.gif) `#99FFBB` | ![339955](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_339955.gif) `#339955` |</span>
-<span class="doccomment">//! | 12 | ![99FFDD](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_99FFDD.gif) `#99FFDD` | ![339977](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_339977.gif) `#339977` |</span>
-<span class="doccomment">//! | 13 | ![99FFFF](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_99FFFF.gif) `#99FFFF` | ![339999](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_339999.gif) `#339999` |</span>
-<span class="doccomment">//! | 14 | ![99DDFF](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_99DDFF.gif) `#99DDFF` | ![337799](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_337799.gif) `#337799` |</span>
-<span class="doccomment">//! | 15 | ![99BBFF](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_99BBFF.gif) `#99BBFF` | ![335599](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_335599.gif) `#335599` |</span>
-<span class="doccomment">//! | 16 | ![9999FF](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_9999FF.gif) `#9999FF` | ![333399](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_333399.gif) `#333399` |</span>
-<span class="doccomment">//! | 17 | ![BB99FF](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_BB99FF.gif) `#BB99FF` | ![553399](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_553399.gif) `#553399` |</span>
-<span class="doccomment">//! | 18 | ![DD99FF](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_DD99FF.gif) `#DD99FF` | ![773399](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_773399.gif) `#773399` |</span>
-<span class="doccomment">//! | 19 | ![FFFFFF](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_FFFFFF.gif) `#FFFFFF` | ![333333](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_333333.gif) `#333333` |</span>
-<span class="doccomment">//! | 20 | ![BBBBBB](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_BBBBBB.gif) `#BBBBBB` | ![555555](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_555555.gif) `#555555` |</span>
-<span class="doccomment">//! | 21 | ![999999](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_999999.gif) `#999999` | ![090909](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_090909.gif) `#090909` |</span>
+<span id="462">462</span>
+<span id="463">463</span>
+<span id="464">464</span>
+<span id="465">465</span>
+<span id="466">466</span>
+<span id="467">467</span>
+<span id="468">468</span>
+<span id="469">469</span>
+</pre><pre class="rust"><code><span class="comment">// Copyright (c) 2023 Jan Holthuis &lt;jan.holthuis@rub.de&gt;
+//
+// This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy
+// of the MPL was not distributed with this file, You can obtain one at
+// http://mozilla.org/MPL/2.0/.
+//
+// SPDX-License-Identifier: MPL-2.0
 
-<span class="doccomment">/// Represents a 3-Byte RGB color value.</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Copy</span>, <span class="ident">Clone</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Color</span> {
-    <span class="kw">pub</span> <span class="ident">red</span>: <span class="ident">u8</span>,
-    <span class="kw">pub</span> <span class="ident">green</span>: <span class="ident">u8</span>,
-    <span class="kw">pub</span> <span class="ident">blue</span>: <span class="ident">u8</span>,
+</span><span class="doccomment">//! Hotcue and Track Colors Helpers
+//!
+//! # Hotcue Colors
+//!
+//! The on-screen representation of hotcue colors can differ slightly from what&#39;s stored in the
+//! [`Serato Markers`](super::markers) and [`Serato Markers2`](super::markers2) tags depending on
+//! whether Serato DJ Pro, Serato DJ Lite or Serato DJ Intro is used.
+//!
+//! Both Serato DJ Pro and Serato DJ Intro let the user choose from a palette of 18 different
+//! colors.
+//! In contrast to the latter which just displays the exact same colors that are saved in the
+//! metadata, both Serato DJ Lite and Serato DJ Pro map the colors to another color palette:
+//!
+//! | Palette Index | Default Hotcue  | Serato DJ Intro/Metadata                                                                                        | Serato DJ Pro/Lite                                                                                            |
+//! | ------------- | --------------- | --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+//! |         **1** |               1 | ![CC0000](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/intro_CC0000.gif) `#CC0000` | ![C02626](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/pro_C02626.gif) `#C02626` |
+//! |             2 |                 | ![CC4400](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/intro_CC4400.gif) `#CC4400` | ![DB4E27](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/pro_DB4E27.gif) `#DB4E27` |
+//! |         **3** |               2 | ![CC8800](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/intro_CC8800.gif) `#CC8800` | ![F8821A](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/pro_F8821A.gif) `#F8821A` |
+//! |         **4** |               4 | ![CCCC00](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/intro_CCCC00.gif) `#CCCC00` | ![FAC313](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/pro_FAC313.gif) `#FAC313` |
+//! |             5 |                 | ![88CC00](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/intro_88CC00.gif) `#88CC00` | ![4EB648](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/pro_4EB648.gif) `#4EB648` |
+//! |             6 |                 | ![44CC00](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/intro_44CC00.gif) `#44CC00` | ![006838](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/pro_006838.gif) `#006838` |
+//! |             7 |               5 | ![00CC00](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/intro_00CC00.gif) `#00CC00` | ![1FAD26](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/pro_1FAD26.gif) `#1FAD26` |
+//! |             8 |                 | ![00CC44](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/intro_00CC44.gif) `#00CC44` | ![8DC63F](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/pro_8DC63F.gif) `#8DC63F` |
+//! |             9 |                 | ![00CC88](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/intro_00CC88.gif) `#00CC88` | ![2B3673](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/pro_2B3673.gif) `#2B3673` |
+//! |            10 |               7 | ![00CCCC](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/intro_00CCCC.gif) `#00CCCC` | ![1DBEBD](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/pro_1DBEBD.gif) `#1DBEBD` |
+//! |            11 |                 | ![0088CC](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/intro_0088CC.gif) `#0088CC` | ![0F88CA](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/pro_0F88CA.gif) `#0F88CA` |
+//! |            12 |                 | ![0044CC](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/intro_0044CC.gif) `#0044CC` | ![16308B](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/pro_16308B.gif) `#16308B` |
+//! |        **13** |               3 | ![0000CC](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/intro_0000CC.gif) `#0000CC` | ![173BA2](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/pro_173BA2.gif) `#173BA2` |
+//! |            14 |                 | ![4400CC](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/intro_4400CC.gif) `#4400CC` | ![5C3F97](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/pro_5C3F97.gif) `#5C3F97` |
+//! |            15 |               8 | ![8800CC](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/intro_8800CC.gif) `#8800CC` | ![6823B6](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/pro_6823B6.gif) `#6823B6` |
+//! |            16 |               6 | ![CC00CC](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/intro_CC00CC.gif) `#CC00CC` | ![CE359E](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/pro_CE359E.gif) `#CE359E` |
+//! |            17 |                 | ![CC0088](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/intro_CC0088.gif) `#CC0088` | ![DC1D49](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/pro_DC1D49.gif) `#DC1D49` |
+//! |            18 |                 | ![CC0044](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/intro_CC0044.gif) `#CC0044` | ![C71136](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/pro_C71136.gif) `#C71136` |
+//!
+//! This means that if a Hotcue is saved with color `#C02626` in Serato DJ Pro, it actually saves
+//! `#CC0000` in the metadata. If that file is opened in Serato DJ Intro, the hotcue will be
+//! displayed with color `#CC0000` (i.e. the metadata color), if the file is opened in Serato DJ
+//! Pro/Lite, the hotcue will be displayed with color `#C02626`.
+//!
+//! Hence, Serato DJ Intro is the only Serato DJ variant that displays the colors exactly like they
+//! are saved (i.e. without applying any transformation/colorscheme).
+//!
+//! Note that Serato DJ Lite only has 4 hotcues with predefined, unchangeable colors (the
+//! emphasized hotcue colors 1-4 in the table above).
+//!
+//! # Track Colors
+//!
+//! Serato DJ Pro displays different colors in the color picker and the actual column (see table
+//! below). Generally, the column value can be calculated by subtracting `0x666666` from the
+//! stored value. If the result is less than 0, `0x1000000` is also added. An alternative way to
+//! calculate is without using signed numbers: If the stored value is less than `0x666666` then add
+//! `0x99999A`, else subtract `0x666666`
+//!
+//! There are some exceptions though:
+//! - If the stored color is `0x999999`, `0x090909` will be displayed instead of `0x333333` (this
+//!   means that both `0x999999` and `0x6F6F6F` will result in the same color)
+//! - If the stored color is `0xFFFFFF`, `0x333333` will be displayed instead of `0x999999`
+//! - If the stored color is `0x000000`, `0x333333` will be displayed instead of `0X99999A`
+//!
+//! This means that both `0x999999` and `0X999999A` cannot be used in the track color library
+//! column.
+//!
+//! |  # | Color Picker / Stored in Tag                                                                                           | Shown in Library Column                                                                                                 |
+//! | -- | ---------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+//! |  1 | ![FF99FF](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_FF99FF.gif) `#FF99FF` | ![993399](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_993399.gif) `#993399` |
+//! |  2 | ![FF99DD](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_FF99DD.gif) `#FF99DD` | ![993377](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_993377.gif) `#993377` |
+//! |  3 | ![FF99BB](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_FF99BB.gif) `#FF99BB` | ![993355](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_993355.gif) `#993355` |
+//! |  4 | ![FF9999](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_FF9999.gif) `#FF9999` | ![993333](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_993333.gif) `#993333` |
+//! |  5 | ![FFBB99](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_FFBB99.gif) `#FFBB99` | ![995533](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_995533.gif) `#995533` |
+//! |  6 | ![FFDD99](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_FFDD99.gif) `#FFDD99` | ![997733](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_997733.gif) `#997733` |
+//! |  7 | ![FFFF99](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_FFFF99.gif) `#FFFF99` | ![999933](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_999933.gif) `#999933` |
+//! |  8 | ![DDFF99](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_DDFF99.gif) `#DDFF99` | ![779933](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_779933.gif) `#779933` |
+//! |  9 | ![BBFF99](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_BBFF99.gif) `#BBFF99` | ![559933](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_559933.gif) `#559933` |
+//! | 10 | ![99FF99](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_99FF99.gif) `#99FF99` | ![339933](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_339933.gif) `#339933` |
+//! | 11 | ![99FFBB](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_99FFBB.gif) `#99FFBB` | ![339955](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_339955.gif) `#339955` |
+//! | 12 | ![99FFDD](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_99FFDD.gif) `#99FFDD` | ![339977](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_339977.gif) `#339977` |
+//! | 13 | ![99FFFF](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_99FFFF.gif) `#99FFFF` | ![339999](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_339999.gif) `#339999` |
+//! | 14 | ![99DDFF](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_99DDFF.gif) `#99DDFF` | ![337799](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_337799.gif) `#337799` |
+//! | 15 | ![99BBFF](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_99BBFF.gif) `#99BBFF` | ![335599](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_335599.gif) `#335599` |
+//! | 16 | ![9999FF](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_9999FF.gif) `#9999FF` | ![333399](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_333399.gif) `#333399` |
+//! | 17 | ![BB99FF](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_BB99FF.gif) `#BB99FF` | ![553399](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_553399.gif) `#553399` |
+//! | 18 | ![DD99FF](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_DD99FF.gif) `#DD99FF` | ![773399](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_773399.gif) `#773399` |
+//! | 19 | ![FFFFFF](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_FFFFFF.gif) `#FFFFFF` | ![333333](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_333333.gif) `#333333` |
+//! | 20 | ![BBBBBB](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_BBBBBB.gif) `#BBBBBB` | ![555555](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_555555.gif) `#555555` |
+//! | 21 | ![999999](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_999999.gif) `#999999` | ![090909](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_090909.gif) `#090909` |
+
+/// Represents a 3-Byte RGB color value.
+</span><span class="attribute">#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+</span><span class="kw">pub struct </span>Color {
+    <span class="kw">pub </span>red: u8,
+    <span class="kw">pub </span>green: u8,
+    <span class="kw">pub </span>blue: u8,
 }
 
-<span class="kw">impl</span> <span class="ident">Color</span> {
-    <span class="doccomment">/// Return the corresponding Serato DJ Pro Hotcue color for this color.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// Hotcue colors stored in Serato&#39;s metadata are not necessarily the same as displayed in the</span>
-    <span class="doccomment">/// UI. Serato DJ Intro/Pro/Lite always stores colors as shown in the legacy [Serato DJ</span>
-    <span class="doccomment">/// Intro](https://serato.com/dj/intro).</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// Serato DJ Pro and Lite then map the stored color to their own color palette. If the color</span>
-    <span class="doccomment">/// is not in the palette, this returns the color unchanged.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// use triseratops::tag::color::Color;</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// // This color is in the Serato DJ Intro palette...</span>
-    <span class="doccomment">/// let intro_color = Color { red: 0xCC, green: 0x88, blue: 0x00 };</span>
-    <span class="doccomment">/// let pro_color = intro_color.into_pro_hotcue_color();</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// assert_eq!(pro_color, Color { red: 0xF8, green: 0x82, blue: 0x1A });</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// // ... and this color isn&#39;t.</span>
-    <span class="doccomment">/// let non_intro_color = Color { red: 0xC0, green: 0xFF, blue: 0xEE };</span>
-    <span class="doccomment">/// let non_pro_color = non_intro_color.into_pro_hotcue_color();</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// assert_eq!(non_pro_color, Color { red: 0xC0, green: 0xFF, blue: 0xEE });</span>
-    <span class="doccomment">/// ```</span>
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">into_pro_hotcue_color</span>(<span class="self">self</span>) -&gt; <span class="self">Self</span> {
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">index</span>) <span class="op">=</span> <span class="ident">HOTCUE_COLORS_INTRO</span>.<span class="ident">iter</span>().<span class="ident">position</span>(<span class="op">|</span><span class="kw-2">&amp;</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span> <span class="op">==</span> <span class="self">self</span>) {
-            <span class="kw">return</span> <span class="ident">HOTCUE_COLORS_PRO</span>[<span class="ident">index</span>];
+<span class="kw">impl </span>Color {
+    <span class="doccomment">/// Return the corresponding Serato DJ Pro Hotcue color for this color.
+    ///
+    /// Hotcue colors stored in Serato&#39;s metadata are not necessarily the same as displayed in the
+    /// UI. Serato DJ Intro/Pro/Lite always stores colors as shown in the legacy [Serato DJ
+    /// Intro](https://serato.com/dj/intro).
+    ///
+    /// Serato DJ Pro and Lite then map the stored color to their own color palette. If the color
+    /// is not in the palette, this returns the color unchanged.
+    ///
+    /// ```
+    /// use triseratops::tag::color::Color;
+    ///
+    ///
+    /// // This color is in the Serato DJ Intro palette...
+    /// let intro_color = Color { red: 0xCC, green: 0x88, blue: 0x00 };
+    /// let pro_color = intro_color.into_pro_hotcue_color();
+    ///
+    /// assert_eq!(pro_color, Color { red: 0xF8, green: 0x82, blue: 0x1A });
+    ///
+    /// // ... and this color isn&#39;t.
+    /// let non_intro_color = Color { red: 0xC0, green: 0xFF, blue: 0xEE };
+    /// let non_pro_color = non_intro_color.into_pro_hotcue_color();
+    ///
+    /// assert_eq!(non_pro_color, Color { red: 0xC0, green: 0xFF, blue: 0xEE });
+    /// ```
+    </span><span class="attribute">#[must_use]
+    </span><span class="kw">pub fn </span>into_pro_hotcue_color(<span class="self">self</span>) -&gt; <span class="self">Self </span>{
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(index) = HOTCUE_COLORS_INTRO.iter().position(|<span class="kw-2">&amp;</span>x| x == <span class="self">self</span>) {
+            <span class="kw">return </span>HOTCUE_COLORS_PRO[index];
         }
 
-        <span class="self">self</span>
-    }
+        <span class="self">self
+    </span>}
 
-    <span class="doccomment">/// Return the corresponding Serato DJ Intro Hotcue (i.e. Metadata) color for this color.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// Hotcue colors stored in Serato&#39;s metadata are not necessarily the same as displayed in the</span>
-    <span class="doccomment">/// UI. Serato DJ Intro/Pro/Lite always stores colors as shown in the legacy [Serato DJ</span>
-    <span class="doccomment">/// Intro](https://serato.com/dj/intro).</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// Serato DJ Pro and Lite then map the stored color to their own color palette. If the color</span>
-    <span class="doccomment">/// is not in the palette, this returns the color unchanged.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// use triseratops::tag::color::Color;</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// // This color is in the Serato DJ Pro palette...</span>
-    <span class="doccomment">/// let pro_color = Color { red: 0xF8, green: 0x82, blue: 0x1A };</span>
-    <span class="doccomment">/// let intro_color = pro_color.into_intro_hotcue_color();</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// assert_eq!(intro_color, Color { red: 0xCC, green: 0x88, blue: 0x00 });</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// // ... and this color isn&#39;t.</span>
-    <span class="doccomment">/// let non_pro_color = Color { red: 0xC0, green: 0xFF, blue: 0xEE };</span>
-    <span class="doccomment">/// let non_intro_color = non_pro_color.into_intro_hotcue_color();</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// assert_eq!(non_intro_color, Color { red: 0xC0, green: 0xFF, blue: 0xEE });</span>
-    <span class="doccomment">/// ```</span>
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">into_intro_hotcue_color</span>(<span class="self">self</span>) -&gt; <span class="self">Self</span> {
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">index</span>) <span class="op">=</span> <span class="ident">HOTCUE_COLORS_PRO</span>.<span class="ident">iter</span>().<span class="ident">position</span>(<span class="op">|</span><span class="kw-2">&amp;</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span> <span class="op">==</span> <span class="self">self</span>) {
-            <span class="kw">return</span> <span class="ident">HOTCUE_COLORS_INTRO</span>[<span class="ident">index</span>];
+    <span class="doccomment">/// Return the corresponding Serato DJ Intro Hotcue (i.e. Metadata) color for this color.
+    ///
+    /// Hotcue colors stored in Serato&#39;s metadata are not necessarily the same as displayed in the
+    /// UI. Serato DJ Intro/Pro/Lite always stores colors as shown in the legacy [Serato DJ
+    /// Intro](https://serato.com/dj/intro).
+    ///
+    /// Serato DJ Pro and Lite then map the stored color to their own color palette. If the color
+    /// is not in the palette, this returns the color unchanged.
+    ///
+    /// ```
+    /// use triseratops::tag::color::Color;
+    ///
+    ///
+    /// // This color is in the Serato DJ Pro palette...
+    /// let pro_color = Color { red: 0xF8, green: 0x82, blue: 0x1A };
+    /// let intro_color = pro_color.into_intro_hotcue_color();
+    ///
+    /// assert_eq!(intro_color, Color { red: 0xCC, green: 0x88, blue: 0x00 });
+    ///
+    /// // ... and this color isn&#39;t.
+    /// let non_pro_color = Color { red: 0xC0, green: 0xFF, blue: 0xEE };
+    /// let non_intro_color = non_pro_color.into_intro_hotcue_color();
+    ///
+    /// assert_eq!(non_intro_color, Color { red: 0xC0, green: 0xFF, blue: 0xEE });
+    /// ```
+    </span><span class="attribute">#[must_use]
+    </span><span class="kw">pub fn </span>into_intro_hotcue_color(<span class="self">self</span>) -&gt; <span class="self">Self </span>{
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(index) = HOTCUE_COLORS_PRO.iter().position(|<span class="kw-2">&amp;</span>x| x == <span class="self">self</span>) {
+            <span class="kw">return </span>HOTCUE_COLORS_INTRO[index];
         }
 
-        <span class="self">self</span>
-    }
+        <span class="self">self
+    </span>}
 
-    <span class="doccomment">/// Return the displayed track color from the stored track color value.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// Serato stores Track colors differently from how they are displayed in</span>
-    <span class="doccomment">/// the library column. Instead of the color from the library view, the</span>
-    <span class="doccomment">/// value from the color picker is stored instead (which is different).</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// use triseratops::tag::color::Color;</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// let stored_color = Color { red: 0xFF, green: 0x99, blue: 0xFF };</span>
-    <span class="doccomment">/// let displayed_color = stored_color.into_displayed_track_color();</span>
-    <span class="doccomment">/// assert_eq!(displayed_color, Some(Color {red: 0x99, green: 0x33, blue: 0x99 }));</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// let stored_color = Color { red: 0xFF, green: 0xFF, blue: 0xFF };</span>
-    <span class="doccomment">/// let displayed_color = stored_color.into_displayed_track_color();</span>
-    <span class="doccomment">/// assert_eq!(displayed_color, None);</span>
-    <span class="doccomment">/// ```</span>
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">into_displayed_track_color</span>(<span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
-        <span class="kw">match</span> <span class="self">self</span> {
-            <span class="ident">Color</span> {
-                <span class="ident">red</span>: <span class="number">0xFF</span>,
-                <span class="ident">green</span>: <span class="number">0xFF</span>,
-                <span class="ident">blue</span>: <span class="number">0xFF</span>,
+    <span class="doccomment">/// Return the displayed track color from the stored track color value.
+    ///
+    /// Serato stores Track colors differently from how they are displayed in
+    /// the library column. Instead of the color from the library view, the
+    /// value from the color picker is stored instead (which is different).
+    ///
+    /// ```
+    /// use triseratops::tag::color::Color;
+    ///
+    /// let stored_color = Color { red: 0xFF, green: 0x99, blue: 0xFF };
+    /// let displayed_color = stored_color.into_displayed_track_color();
+    /// assert_eq!(displayed_color, Some(Color {red: 0x99, green: 0x33, blue: 0x99 }));
+    ///
+    /// let stored_color = Color { red: 0xFF, green: 0xFF, blue: 0xFF };
+    /// let displayed_color = stored_color.into_displayed_track_color();
+    /// assert_eq!(displayed_color, None);
+    /// ```
+    </span><span class="attribute">#[must_use]
+    </span><span class="kw">pub fn </span>into_displayed_track_color(<span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>&gt; {
+        <span class="kw">match </span><span class="self">self </span>{
+            Color {
+                red: <span class="number">0xFF</span>,
+                green: <span class="number">0xFF</span>,
+                blue: <span class="number">0xFF</span>,
             } =&gt; <span class="prelude-val">None</span>,
-            <span class="kw">_</span> =&gt; <span class="prelude-val">Some</span>(<span class="ident">Color::from</span>(<span class="ident">stored_to_displayed_track_color_code</span>(
-                <span class="self">self</span>.<span class="ident">into</span>(),
+            <span class="kw">_ </span>=&gt; <span class="prelude-val">Some</span>(Color::from(stored_to_displayed_track_color_code(
+                <span class="self">self</span>.into(),
             ))),
         }
     }
 
-    <span class="doccomment">/// Return the stored track color from the displayed track color value.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// Serato stores Track colors differently from how they are displayed in</span>
-    <span class="doccomment">/// the library column. Instead of the color from the library view, the</span>
-    <span class="doccomment">/// value from the color picker is stored instead (which is different).</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// use triseratops::tag::color::Color;</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// let displayed_color = Color {red: 0x99, green: 0x33, blue: 0x99 };</span>
-    <span class="doccomment">/// let stored_color = Color::from_displayed_track_color(Some(displayed_color));</span>
-    <span class="doccomment">/// assert_eq!(stored_color, Color { red: 0xFF, green: 0x99, blue: 0xFF });</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// let stored_color = Color::from_displayed_track_color(None);</span>
-    <span class="doccomment">/// assert_eq!(stored_color, Color { red: 0xFF, green: 0xFF, blue: 0xFF });</span>
-    <span class="doccomment">/// ```</span>
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_displayed_track_color</span>(<span class="ident">color</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>) -&gt; <span class="self">Self</span> {
-        <span class="kw">let</span> <span class="ident">code</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">color</span> {
-            <span class="prelude-val">Some</span>(<span class="ident">color</span>) =&gt; <span class="ident">color</span>.<span class="ident">into</span>(),
-            <span class="prelude-val">None</span> =&gt; {
-                <span class="kw">return</span> <span class="ident">Color</span> {
-                    <span class="ident">red</span>: <span class="number">0xFF</span>,
-                    <span class="ident">green</span>: <span class="number">0xFF</span>,
-                    <span class="ident">blue</span>: <span class="number">0xFF</span>,
+    <span class="doccomment">/// Return the stored track color from the displayed track color value.
+    ///
+    /// Serato stores Track colors differently from how they are displayed in
+    /// the library column. Instead of the color from the library view, the
+    /// value from the color picker is stored instead (which is different).
+    ///
+    /// ```
+    /// use triseratops::tag::color::Color;
+    ///
+    /// let displayed_color = Color {red: 0x99, green: 0x33, blue: 0x99 };
+    /// let stored_color = Color::from_displayed_track_color(Some(displayed_color));
+    /// assert_eq!(stored_color, Color { red: 0xFF, green: 0x99, blue: 0xFF });
+    ///
+    /// let stored_color = Color::from_displayed_track_color(None);
+    /// assert_eq!(stored_color, Color { red: 0xFF, green: 0xFF, blue: 0xFF });
+    /// ```
+    </span><span class="attribute">#[must_use]
+    </span><span class="kw">pub fn </span>from_displayed_track_color(color: <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>&gt;) -&gt; <span class="self">Self </span>{
+        <span class="kw">let </span>code: u32 = <span class="kw">match </span>color {
+            <span class="prelude-val">Some</span>(color) =&gt; color.into(),
+            <span class="prelude-val">None </span>=&gt; {
+                <span class="kw">return </span>Color {
+                    red: <span class="number">0xFF</span>,
+                    green: <span class="number">0xFF</span>,
+                    blue: <span class="number">0xFF</span>,
                 };
             }
         };
 
-        <span class="ident">Color::from</span>(<span class="ident">displayed_to_stored_track_color_code</span>(<span class="ident">code</span>))
+        Color::from(displayed_to_stored_track_color_code(code))
     }
 }
 
-<span class="kw">const</span> <span class="kw">fn</span> <span class="ident">displayed_to_stored_track_color_code</span>(<span class="ident">code</span>: <span class="ident">u32</span>) -&gt; <span class="ident">u32</span> {
-    <span class="kw">match</span> <span class="ident">code</span> {
-        <span class="number">0x090909</span> =&gt; <span class="number">0x999999</span>,
-        <span class="number">0x333333</span> =&gt; <span class="number">0x000000</span>,
-        <span class="comment">// Special case: 0x999999 and 0x99999A are not representable as Serato</span>
-        <span class="comment">// track color We&#39;ll just modify them a little, so that the look the</span>
-        <span class="comment">// same in Serato.</span>
-        <span class="number">0x999999</span> =&gt; <span class="number">0x999998</span>,
-        <span class="number">0x99999A</span> =&gt; <span class="number">0x99999B</span>,
-        <span class="kw">_</span> =&gt; {
-            <span class="kw">if</span> <span class="ident">code</span> <span class="op">&lt;</span> <span class="number">0x99999A</span> {
-                <span class="ident">code</span> <span class="op">+</span> <span class="number">0x666666</span>
-            } <span class="kw">else</span> {
-                <span class="ident">code</span> <span class="op">-</span> <span class="number">0x99999A</span>
-            }
+<span class="kw">const fn </span>displayed_to_stored_track_color_code(code: u32) -&gt; u32 {
+    <span class="kw">match </span>code {
+        <span class="number">0x090909 </span>=&gt; <span class="number">0x999999</span>,
+        <span class="number">0x333333 </span>=&gt; <span class="number">0x000000</span>,
+        <span class="comment">// Special case: 0x999999 and 0x99999A are not representable as Serato
+        // track color We&#39;ll just modify them a little, so that the look the
+        // same in Serato.
+        </span><span class="number">0x999999 </span>=&gt; <span class="number">0x999998</span>,
+        <span class="number">0x99999A </span>=&gt; <span class="number">0x99999B</span>,
+        <span class="kw">_ </span>=&gt; {
+            <span class="kw">if </span>code &lt; <span class="number">0x99999A </span>{
+                code + <span class="number">0x666666
+            </span>} <span class="kw">else </span>{
+                code - <span class="number">0x99999A
+            </span>}
         }
     }
 }
 
-<span class="kw">const</span> <span class="kw">fn</span> <span class="ident">stored_to_displayed_track_color_code</span>(<span class="ident">code</span>: <span class="ident">u32</span>) -&gt; <span class="ident">u32</span> {
-    <span class="kw">match</span> <span class="ident">code</span> {
-        <span class="number">0x999999</span> =&gt; <span class="number">0x090909</span>,
-        <span class="number">0x000000</span> =&gt; <span class="number">0x333333</span>,
-        <span class="kw">_</span> =&gt; {
-            <span class="kw">if</span> <span class="ident">code</span> <span class="op">&lt;</span> <span class="number">0x666666</span> {
-                <span class="ident">code</span> <span class="op">+</span> <span class="number">0x99999A</span>
-            } <span class="kw">else</span> {
-                <span class="ident">code</span> <span class="op">-</span> <span class="number">0x666666</span>
-            }
+<span class="kw">const fn </span>stored_to_displayed_track_color_code(code: u32) -&gt; u32 {
+    <span class="kw">match </span>code {
+        <span class="number">0x999999 </span>=&gt; <span class="number">0x090909</span>,
+        <span class="number">0x000000 </span>=&gt; <span class="number">0x333333</span>,
+        <span class="kw">_ </span>=&gt; {
+            <span class="kw">if </span>code &lt; <span class="number">0x666666 </span>{
+                code + <span class="number">0x99999A
+            </span>} <span class="kw">else </span>{
+                code - <span class="number">0x666666
+            </span>}
         }
     }
 }
 
-<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Color</span> {
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">code</span>: <span class="ident">u32</span>) -&gt; <span class="self">Self</span> {
-        <span class="kw">let</span> <span class="ident">blue</span> <span class="op">=</span> (<span class="ident">code</span> <span class="op">&amp;</span> <span class="number">0xFF</span>) <span class="kw">as</span> <span class="ident">u8</span>;
-        <span class="kw">let</span> <span class="ident">green</span> <span class="op">=</span> ((<span class="ident">code</span> <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">8</span>) <span class="op">&amp;</span> <span class="number">0xFF</span>) <span class="kw">as</span> <span class="ident">u8</span>;
-        <span class="kw">let</span> <span class="ident">red</span> <span class="op">=</span> ((<span class="ident">code</span> <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">16</span>) <span class="op">&amp;</span> <span class="number">0xFF</span>) <span class="kw">as</span> <span class="ident">u8</span>;
-        <span class="ident">Color</span> { <span class="ident">red</span>, <span class="ident">green</span>, <span class="ident">blue</span> }
+<span class="kw">impl </span>From&lt;u32&gt; <span class="kw">for </span>Color {
+    <span class="kw">fn </span>from(code: u32) -&gt; <span class="self">Self </span>{
+        <span class="kw">let </span>blue = (code &amp; <span class="number">0xFF</span>) <span class="kw">as </span>u8;
+        <span class="kw">let </span>green = ((code &gt;&gt; <span class="number">8</span>) &amp; <span class="number">0xFF</span>) <span class="kw">as </span>u8;
+        <span class="kw">let </span>red = ((code &gt;&gt; <span class="number">16</span>) &amp; <span class="number">0xFF</span>) <span class="kw">as </span>u8;
+        Color { red, green, blue }
     }
 }
 
-<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">Color</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">u32</span> {
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">color</span>: <span class="ident">Color</span>) -&gt; <span class="self">Self</span> {
-        <span class="kw">let</span> <span class="ident">Color</span> { <span class="ident">blue</span>, <span class="ident">green</span>, <span class="ident">red</span> } <span class="op">=</span> <span class="ident">color</span>;
-        <span class="ident">u32::from</span>(<span class="ident">red</span>) <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">16</span> <span class="op">|</span> <span class="ident">u32::from</span>(<span class="ident">green</span>) <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">8</span> <span class="op">|</span> <span class="ident">u32::from</span>(<span class="ident">blue</span>)
+<span class="kw">impl </span>From&lt;Color&gt; <span class="kw">for </span>u32 {
+    <span class="kw">fn </span>from(color: Color) -&gt; <span class="self">Self </span>{
+        <span class="kw">let </span>Color { blue, green, red } = color;
+        u32::from(red) &lt;&lt; <span class="number">16 </span>| u32::from(green) &lt;&lt; <span class="number">8 </span>| u32::from(blue)
     }
 }
 
-<span class="kw">const</span> <span class="ident">HOTCUE_COLORS_INTRO</span>: [<span class="ident">Color</span>; <span class="number">18</span>] <span class="op">=</span> [
-    <span class="ident">Color</span> {
-        <span class="ident">red</span>: <span class="number">0xCC</span>,
-        <span class="ident">green</span>: <span class="number">0x00</span>,
-        <span class="ident">blue</span>: <span class="number">0x00</span>,
+<span class="kw">const </span>HOTCUE_COLORS_INTRO: [Color; <span class="number">18</span>] = [
+    Color {
+        red: <span class="number">0xCC</span>,
+        green: <span class="number">0x00</span>,
+        blue: <span class="number">0x00</span>,
     },
-    <span class="ident">Color</span> {
-        <span class="ident">red</span>: <span class="number">0xCC</span>,
-        <span class="ident">green</span>: <span class="number">0x44</span>,
-        <span class="ident">blue</span>: <span class="number">0x00</span>,
+    Color {
+        red: <span class="number">0xCC</span>,
+        green: <span class="number">0x44</span>,
+        blue: <span class="number">0x00</span>,
     },
-    <span class="ident">Color</span> {
-        <span class="ident">red</span>: <span class="number">0xCC</span>,
-        <span class="ident">green</span>: <span class="number">0x88</span>,
-        <span class="ident">blue</span>: <span class="number">0x00</span>,
+    Color {
+        red: <span class="number">0xCC</span>,
+        green: <span class="number">0x88</span>,
+        blue: <span class="number">0x00</span>,
     },
-    <span class="ident">Color</span> {
-        <span class="ident">red</span>: <span class="number">0xCC</span>,
-        <span class="ident">green</span>: <span class="number">0xCC</span>,
-        <span class="ident">blue</span>: <span class="number">0x00</span>,
+    Color {
+        red: <span class="number">0xCC</span>,
+        green: <span class="number">0xCC</span>,
+        blue: <span class="number">0x00</span>,
     },
-    <span class="ident">Color</span> {
-        <span class="ident">red</span>: <span class="number">0x88</span>,
-        <span class="ident">green</span>: <span class="number">0xCC</span>,
-        <span class="ident">blue</span>: <span class="number">0x00</span>,
+    Color {
+        red: <span class="number">0x88</span>,
+        green: <span class="number">0xCC</span>,
+        blue: <span class="number">0x00</span>,
     },
-    <span class="ident">Color</span> {
-        <span class="ident">red</span>: <span class="number">0x44</span>,
-        <span class="ident">green</span>: <span class="number">0xCC</span>,
-        <span class="ident">blue</span>: <span class="number">0x00</span>,
+    Color {
+        red: <span class="number">0x44</span>,
+        green: <span class="number">0xCC</span>,
+        blue: <span class="number">0x00</span>,
     },
-    <span class="ident">Color</span> {
-        <span class="ident">red</span>: <span class="number">0x00</span>,
-        <span class="ident">green</span>: <span class="number">0xCC</span>,
-        <span class="ident">blue</span>: <span class="number">0x00</span>,
+    Color {
+        red: <span class="number">0x00</span>,
+        green: <span class="number">0xCC</span>,
+        blue: <span class="number">0x00</span>,
     },
-    <span class="ident">Color</span> {
-        <span class="ident">red</span>: <span class="number">0x00</span>,
-        <span class="ident">green</span>: <span class="number">0xCC</span>,
-        <span class="ident">blue</span>: <span class="number">0x44</span>,
+    Color {
+        red: <span class="number">0x00</span>,
+        green: <span class="number">0xCC</span>,
+        blue: <span class="number">0x44</span>,
     },
-    <span class="ident">Color</span> {
-        <span class="ident">red</span>: <span class="number">0x00</span>,
-        <span class="ident">green</span>: <span class="number">0xCC</span>,
-        <span class="ident">blue</span>: <span class="number">0x88</span>,
+    Color {
+        red: <span class="number">0x00</span>,
+        green: <span class="number">0xCC</span>,
+        blue: <span class="number">0x88</span>,
     },
-    <span class="ident">Color</span> {
-        <span class="ident">red</span>: <span class="number">0x00</span>,
-        <span class="ident">green</span>: <span class="number">0xCC</span>,
-        <span class="ident">blue</span>: <span class="number">0xCC</span>,
+    Color {
+        red: <span class="number">0x00</span>,
+        green: <span class="number">0xCC</span>,
+        blue: <span class="number">0xCC</span>,
     },
-    <span class="ident">Color</span> {
-        <span class="ident">red</span>: <span class="number">0x00</span>,
-        <span class="ident">green</span>: <span class="number">0x88</span>,
-        <span class="ident">blue</span>: <span class="number">0xCC</span>,
+    Color {
+        red: <span class="number">0x00</span>,
+        green: <span class="number">0x88</span>,
+        blue: <span class="number">0xCC</span>,
     },
-    <span class="ident">Color</span> {
-        <span class="ident">red</span>: <span class="number">0x00</span>,
-        <span class="ident">green</span>: <span class="number">0x44</span>,
-        <span class="ident">blue</span>: <span class="number">0xCC</span>,
+    Color {
+        red: <span class="number">0x00</span>,
+        green: <span class="number">0x44</span>,
+        blue: <span class="number">0xCC</span>,
     },
-    <span class="ident">Color</span> {
-        <span class="ident">red</span>: <span class="number">0x00</span>,
-        <span class="ident">green</span>: <span class="number">0x00</span>,
-        <span class="ident">blue</span>: <span class="number">0xCC</span>,
+    Color {
+        red: <span class="number">0x00</span>,
+        green: <span class="number">0x00</span>,
+        blue: <span class="number">0xCC</span>,
     },
-    <span class="ident">Color</span> {
-        <span class="ident">red</span>: <span class="number">0x44</span>,
-        <span class="ident">green</span>: <span class="number">0x00</span>,
-        <span class="ident">blue</span>: <span class="number">0xCC</span>,
+    Color {
+        red: <span class="number">0x44</span>,
+        green: <span class="number">0x00</span>,
+        blue: <span class="number">0xCC</span>,
     },
-    <span class="ident">Color</span> {
-        <span class="ident">red</span>: <span class="number">0x88</span>,
-        <span class="ident">green</span>: <span class="number">0x00</span>,
-        <span class="ident">blue</span>: <span class="number">0xCC</span>,
+    Color {
+        red: <span class="number">0x88</span>,
+        green: <span class="number">0x00</span>,
+        blue: <span class="number">0xCC</span>,
     },
-    <span class="ident">Color</span> {
-        <span class="ident">red</span>: <span class="number">0xCC</span>,
-        <span class="ident">green</span>: <span class="number">0x00</span>,
-        <span class="ident">blue</span>: <span class="number">0xCC</span>,
+    Color {
+        red: <span class="number">0xCC</span>,
+        green: <span class="number">0x00</span>,
+        blue: <span class="number">0xCC</span>,
     },
-    <span class="ident">Color</span> {
-        <span class="ident">red</span>: <span class="number">0xCC</span>,
-        <span class="ident">green</span>: <span class="number">0x00</span>,
-        <span class="ident">blue</span>: <span class="number">0x88</span>,
+    Color {
+        red: <span class="number">0xCC</span>,
+        green: <span class="number">0x00</span>,
+        blue: <span class="number">0x88</span>,
     },
-    <span class="ident">Color</span> {
-        <span class="ident">red</span>: <span class="number">0xCC</span>,
-        <span class="ident">green</span>: <span class="number">0x00</span>,
-        <span class="ident">blue</span>: <span class="number">0x44</span>,
+    Color {
+        red: <span class="number">0xCC</span>,
+        green: <span class="number">0x00</span>,
+        blue: <span class="number">0x44</span>,
     },
 ];
 
-<span class="kw">const</span> <span class="ident">HOTCUE_COLORS_PRO</span>: [<span class="ident">Color</span>; <span class="number">18</span>] <span class="op">=</span> [
-    <span class="ident">Color</span> {
-        <span class="ident">red</span>: <span class="number">0xC0</span>,
-        <span class="ident">green</span>: <span class="number">0x26</span>,
-        <span class="ident">blue</span>: <span class="number">0x26</span>,
+<span class="kw">const </span>HOTCUE_COLORS_PRO: [Color; <span class="number">18</span>] = [
+    Color {
+        red: <span class="number">0xC0</span>,
+        green: <span class="number">0x26</span>,
+        blue: <span class="number">0x26</span>,
     },
-    <span class="ident">Color</span> {
-        <span class="ident">red</span>: <span class="number">0xDB</span>,
-        <span class="ident">green</span>: <span class="number">0x4E</span>,
-        <span class="ident">blue</span>: <span class="number">0x27</span>,
+    Color {
+        red: <span class="number">0xDB</span>,
+        green: <span class="number">0x4E</span>,
+        blue: <span class="number">0x27</span>,
     },
-    <span class="ident">Color</span> {
-        <span class="ident">red</span>: <span class="number">0xF8</span>,
-        <span class="ident">green</span>: <span class="number">0x82</span>,
-        <span class="ident">blue</span>: <span class="number">0x1A</span>,
+    Color {
+        red: <span class="number">0xF8</span>,
+        green: <span class="number">0x82</span>,
+        blue: <span class="number">0x1A</span>,
     },
-    <span class="ident">Color</span> {
-        <span class="ident">red</span>: <span class="number">0xFA</span>,
-        <span class="ident">green</span>: <span class="number">0xC3</span>,
-        <span class="ident">blue</span>: <span class="number">0x13</span>,
+    Color {
+        red: <span class="number">0xFA</span>,
+        green: <span class="number">0xC3</span>,
+        blue: <span class="number">0x13</span>,
     },
-    <span class="ident">Color</span> {
-        <span class="ident">red</span>: <span class="number">0x4E</span>,
-        <span class="ident">green</span>: <span class="number">0xB6</span>,
-        <span class="ident">blue</span>: <span class="number">0x48</span>,
+    Color {
+        red: <span class="number">0x4E</span>,
+        green: <span class="number">0xB6</span>,
+        blue: <span class="number">0x48</span>,
     },
-    <span class="ident">Color</span> {
-        <span class="ident">red</span>: <span class="number">0x00</span>,
-        <span class="ident">green</span>: <span class="number">0x68</span>,
-        <span class="ident">blue</span>: <span class="number">0x38</span>,
+    Color {
+        red: <span class="number">0x00</span>,
+        green: <span class="number">0x68</span>,
+        blue: <span class="number">0x38</span>,
     },
-    <span class="ident">Color</span> {
-        <span class="ident">red</span>: <span class="number">0x1F</span>,
-        <span class="ident">green</span>: <span class="number">0xAD</span>,
-        <span class="ident">blue</span>: <span class="number">0x26</span>,
+    Color {
+        red: <span class="number">0x1F</span>,
+        green: <span class="number">0xAD</span>,
+        blue: <span class="number">0x26</span>,
     },
-    <span class="ident">Color</span> {
-        <span class="ident">red</span>: <span class="number">0x8D</span>,
-        <span class="ident">green</span>: <span class="number">0xC6</span>,
-        <span class="ident">blue</span>: <span class="number">0x3F</span>,
+    Color {
+        red: <span class="number">0x8D</span>,
+        green: <span class="number">0xC6</span>,
+        blue: <span class="number">0x3F</span>,
     },
-    <span class="ident">Color</span> {
-        <span class="ident">red</span>: <span class="number">0x2B</span>,
-        <span class="ident">green</span>: <span class="number">0x36</span>,
-        <span class="ident">blue</span>: <span class="number">0x73</span>,
+    Color {
+        red: <span class="number">0x2B</span>,
+        green: <span class="number">0x36</span>,
+        blue: <span class="number">0x73</span>,
     },
-    <span class="ident">Color</span> {
-        <span class="ident">red</span>: <span class="number">0x1D</span>,
-        <span class="ident">green</span>: <span class="number">0xBE</span>,
-        <span class="ident">blue</span>: <span class="number">0xBD</span>,
+    Color {
+        red: <span class="number">0x1D</span>,
+        green: <span class="number">0xBE</span>,
+        blue: <span class="number">0xBD</span>,
     },
-    <span class="ident">Color</span> {
-        <span class="ident">red</span>: <span class="number">0x0F</span>,
-        <span class="ident">green</span>: <span class="number">0x88</span>,
-        <span class="ident">blue</span>: <span class="number">0xCA</span>,
+    Color {
+        red: <span class="number">0x0F</span>,
+        green: <span class="number">0x88</span>,
+        blue: <span class="number">0xCA</span>,
     },
-    <span class="ident">Color</span> {
-        <span class="ident">red</span>: <span class="number">0x16</span>,
-        <span class="ident">green</span>: <span class="number">0x30</span>,
-        <span class="ident">blue</span>: <span class="number">0x8B</span>,
+    Color {
+        red: <span class="number">0x16</span>,
+        green: <span class="number">0x30</span>,
+        blue: <span class="number">0x8B</span>,
     },
-    <span class="ident">Color</span> {
-        <span class="ident">red</span>: <span class="number">0x17</span>,
-        <span class="ident">green</span>: <span class="number">0x3B</span>,
-        <span class="ident">blue</span>: <span class="number">0xA2</span>,
+    Color {
+        red: <span class="number">0x17</span>,
+        green: <span class="number">0x3B</span>,
+        blue: <span class="number">0xA2</span>,
     },
-    <span class="ident">Color</span> {
-        <span class="ident">red</span>: <span class="number">0x5C</span>,
-        <span class="ident">green</span>: <span class="number">0x3F</span>,
-        <span class="ident">blue</span>: <span class="number">0x97</span>,
+    Color {
+        red: <span class="number">0x5C</span>,
+        green: <span class="number">0x3F</span>,
+        blue: <span class="number">0x97</span>,
     },
-    <span class="ident">Color</span> {
-        <span class="ident">red</span>: <span class="number">0x68</span>,
-        <span class="ident">green</span>: <span class="number">0x23</span>,
-        <span class="ident">blue</span>: <span class="number">0xB6</span>,
+    Color {
+        red: <span class="number">0x68</span>,
+        green: <span class="number">0x23</span>,
+        blue: <span class="number">0xB6</span>,
     },
-    <span class="ident">Color</span> {
-        <span class="ident">red</span>: <span class="number">0xCE</span>,
-        <span class="ident">green</span>: <span class="number">0x35</span>,
-        <span class="ident">blue</span>: <span class="number">0x9E</span>,
+    Color {
+        red: <span class="number">0xCE</span>,
+        green: <span class="number">0x35</span>,
+        blue: <span class="number">0x9E</span>,
     },
-    <span class="ident">Color</span> {
-        <span class="ident">red</span>: <span class="number">0xDC</span>,
-        <span class="ident">green</span>: <span class="number">0x1D</span>,
-        <span class="ident">blue</span>: <span class="number">0x49</span>,
+    Color {
+        red: <span class="number">0xDC</span>,
+        green: <span class="number">0x1D</span>,
+        blue: <span class="number">0x49</span>,
     },
-    <span class="ident">Color</span> {
-        <span class="ident">red</span>: <span class="number">0xC7</span>,
-        <span class="ident">green</span>: <span class="number">0x11</span>,
-        <span class="ident">blue</span>: <span class="number">0x36</span>,
+    Color {
+        red: <span class="number">0xC7</span>,
+        green: <span class="number">0x11</span>,
+        blue: <span class="number">0x36</span>,
     },
 ];
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="triseratops" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0 (7737e0b5c 2022-04-04)" ></div>
-</body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="triseratops" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.1 (90743e729 2023-01-10)" ></div></body></html>

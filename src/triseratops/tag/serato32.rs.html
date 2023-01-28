@@ -1,107 +1,102 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/tag/serato32.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>serato32.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script src="../../../crates.js"></script><script defer src="../../../main.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script>
-    <noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../../triseratops/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div>
-        </a><h2 class="location"></h2>
-    </nav>
-    <nav class="sidebar"><a class="sidebar-logo" href="../../../triseratops/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div>
-        </a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../triseratops/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><nav class="sub"><div class="theme-picker hidden"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="22" height="22" alt="Pick another theme!" src="../../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
-<span id="2">  2</span>
-<span id="3">  3</span>
-<span id="4">  4</span>
-<span id="5">  5</span>
-<span id="6">  6</span>
-<span id="7">  7</span>
-<span id="8">  8</span>
-<span id="9">  9</span>
-<span id="10"> 10</span>
-<span id="11"> 11</span>
-<span id="12"> 12</span>
-<span id="13"> 13</span>
-<span id="14"> 14</span>
-<span id="15"> 15</span>
-<span id="16"> 16</span>
-<span id="17"> 17</span>
-<span id="18"> 18</span>
-<span id="19"> 19</span>
-<span id="20"> 20</span>
-<span id="21"> 21</span>
-<span id="22"> 22</span>
-<span id="23"> 23</span>
-<span id="24"> 24</span>
-<span id="25"> 25</span>
-<span id="26"> 26</span>
-<span id="27"> 27</span>
-<span id="28"> 28</span>
-<span id="29"> 29</span>
-<span id="30"> 30</span>
-<span id="31"> 31</span>
-<span id="32"> 32</span>
-<span id="33"> 33</span>
-<span id="34"> 34</span>
-<span id="35"> 35</span>
-<span id="36"> 36</span>
-<span id="37"> 37</span>
-<span id="38"> 38</span>
-<span id="39"> 39</span>
-<span id="40"> 40</span>
-<span id="41"> 41</span>
-<span id="42"> 42</span>
-<span id="43"> 43</span>
-<span id="44"> 44</span>
-<span id="45"> 45</span>
-<span id="46"> 46</span>
-<span id="47"> 47</span>
-<span id="48"> 48</span>
-<span id="49"> 49</span>
-<span id="50"> 50</span>
-<span id="51"> 51</span>
-<span id="52"> 52</span>
-<span id="53"> 53</span>
-<span id="54"> 54</span>
-<span id="55"> 55</span>
-<span id="56"> 56</span>
-<span id="57"> 57</span>
-<span id="58"> 58</span>
-<span id="59"> 59</span>
-<span id="60"> 60</span>
-<span id="61"> 61</span>
-<span id="62"> 62</span>
-<span id="63"> 63</span>
-<span id="64"> 64</span>
-<span id="65"> 65</span>
-<span id="66"> 66</span>
-<span id="67"> 67</span>
-<span id="68"> 68</span>
-<span id="69"> 69</span>
-<span id="70"> 70</span>
-<span id="71"> 71</span>
-<span id="72"> 72</span>
-<span id="73"> 73</span>
-<span id="74"> 74</span>
-<span id="75"> 75</span>
-<span id="76"> 76</span>
-<span id="77"> 77</span>
-<span id="78"> 78</span>
-<span id="79"> 79</span>
-<span id="80"> 80</span>
-<span id="81"> 81</span>
-<span id="82"> 82</span>
-<span id="83"> 83</span>
-<span id="84"> 84</span>
-<span id="85"> 85</span>
-<span id="86"> 86</span>
-<span id="87"> 87</span>
-<span id="88"> 88</span>
-<span id="89"> 89</span>
-<span id="90"> 90</span>
-<span id="91"> 91</span>
-<span id="92"> 92</span>
-<span id="93"> 93</span>
-<span id="94"> 94</span>
-<span id="95"> 95</span>
-<span id="96"> 96</span>
-<span id="97"> 97</span>
-<span id="98"> 98</span>
-<span id="99"> 99</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/tag/serato32.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>serato32.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../../normalize.css"><link rel="stylesheet" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../../ayu.css" disabled><link rel="stylesheet" href="../../../dark.css" disabled><link rel="stylesheet" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../main.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../../triseratops/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
+<span id="2">2</span>
+<span id="3">3</span>
+<span id="4">4</span>
+<span id="5">5</span>
+<span id="6">6</span>
+<span id="7">7</span>
+<span id="8">8</span>
+<span id="9">9</span>
+<span id="10">10</span>
+<span id="11">11</span>
+<span id="12">12</span>
+<span id="13">13</span>
+<span id="14">14</span>
+<span id="15">15</span>
+<span id="16">16</span>
+<span id="17">17</span>
+<span id="18">18</span>
+<span id="19">19</span>
+<span id="20">20</span>
+<span id="21">21</span>
+<span id="22">22</span>
+<span id="23">23</span>
+<span id="24">24</span>
+<span id="25">25</span>
+<span id="26">26</span>
+<span id="27">27</span>
+<span id="28">28</span>
+<span id="29">29</span>
+<span id="30">30</span>
+<span id="31">31</span>
+<span id="32">32</span>
+<span id="33">33</span>
+<span id="34">34</span>
+<span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
+<span id="38">38</span>
+<span id="39">39</span>
+<span id="40">40</span>
+<span id="41">41</span>
+<span id="42">42</span>
+<span id="43">43</span>
+<span id="44">44</span>
+<span id="45">45</span>
+<span id="46">46</span>
+<span id="47">47</span>
+<span id="48">48</span>
+<span id="49">49</span>
+<span id="50">50</span>
+<span id="51">51</span>
+<span id="52">52</span>
+<span id="53">53</span>
+<span id="54">54</span>
+<span id="55">55</span>
+<span id="56">56</span>
+<span id="57">57</span>
+<span id="58">58</span>
+<span id="59">59</span>
+<span id="60">60</span>
+<span id="61">61</span>
+<span id="62">62</span>
+<span id="63">63</span>
+<span id="64">64</span>
+<span id="65">65</span>
+<span id="66">66</span>
+<span id="67">67</span>
+<span id="68">68</span>
+<span id="69">69</span>
+<span id="70">70</span>
+<span id="71">71</span>
+<span id="72">72</span>
+<span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
+<span id="76">76</span>
+<span id="77">77</span>
+<span id="78">78</span>
+<span id="79">79</span>
+<span id="80">80</span>
+<span id="81">81</span>
+<span id="82">82</span>
+<span id="83">83</span>
+<span id="84">84</span>
+<span id="85">85</span>
+<span id="86">86</span>
+<span id="87">87</span>
+<span id="88">88</span>
+<span id="89">89</span>
+<span id="90">90</span>
+<span id="91">91</span>
+<span id="92">92</span>
+<span id="93">93</span>
+<span id="94">94</span>
+<span id="95">95</span>
+<span id="96">96</span>
+<span id="97">97</span>
+<span id="98">98</span>
+<span id="99">99</span>
 <span id="100">100</span>
 <span id="101">101</span>
 <span id="102">102</span>
@@ -156,159 +151,174 @@
 <span id="151">151</span>
 <span id="152">152</span>
 <span id="153">153</span>
-</pre><pre class="rust"><code><span class="doccomment">//! These functions convert between a custom 4-byte format (that we&#39;ll call `serato32` for brevity)</span>
-<span class="doccomment">//! and 3-byte plaintext (both `u32`). Serato&#39;s custom format inserts a single null bit after every 7</span>
-<span class="doccomment">//! payload bits, starting from the rightmost bit.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! This format is used to encode the 3-byte RGB color values (track color, cue colors) and the cue</span>
-<span class="doccomment">//! positions and the `Serato Markers_` tag.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! # Binary Format Details</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! ```text</span>
-<span class="doccomment">//! serato32     |     Byte1     |     Byte2     |     Byte3     |     Byte4     |</span>
-<span class="doccomment">//!              | Nibb1 | Nibb2 | Nibb3 | Nibb4 | Nibb5 | Nibb6 | Nibb7 | Nibb8 |</span>
-<span class="doccomment">//! Bits         |A A A A B B B B C C C C D D D D E E E E F F F F G G G G H H H H|</span>
-<span class="doccomment">//! Ignored Bits |^ ^ ^ ^ ^       ^               ^               ^              |</span>
-<span class="doccomment">//! Plaintext    |||||||||||     Byte1       |      Byte2      |      Byte3      |</span>
-<span class="doccomment">//!              |||||||||||  Nibb1  | Nibb2 |  Nibb3  | Nibb4 |  Nibb5  | Nibb6 |</span>
-<span class="doccomment">//! ```</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! More information can be found in the [format</span>
-<span class="doccomment">//! documentation](https://github.com/Holzhaus/serato-tags/blob/master/docs/serato_markers_.md#custom-serato32-binary-format).</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! ## Example</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! |                  | Hex           | Binary</span>
-<span class="doccomment">//! | ---------------- | ------------- | ----------------------------------</span>
-<span class="doccomment">//! | 3-byte plaintext | `   00 00 cc` | `     000 0000000 0000001 1001100`</span>
-<span class="doccomment">//! | `serato32` value | `00 00 01 4c` | `00000000000000000000000101001100`</span>
-<span class="doccomment">//! |                  |</span>
-<span class="doccomment">//! | 3-byte plaintext | `   cc 88 00` | `     110 0110010 0010000 0000000`</span>
-<span class="doccomment">//! | `serato32` value | `06 32 10 00` | `00000110001100100001000000000000`</span>
+<span id="154">154</span>
+<span id="155">155</span>
+<span id="156">156</span>
+<span id="157">157</span>
+<span id="158">158</span>
+<span id="159">159</span>
+<span id="160">160</span>
+<span id="161">161</span>
+</pre><pre class="rust"><code><span class="comment">// Copyright (c) 2023 0000001 1001100`
+//
+// This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy
+// of the MPL was not distributed with this file, You can obtain one at
+// http://mozilla.org/MPL/2.0/.
+//
+// SPDX-License-Identifier: MPL-2.0
 
-<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::color::Color</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::error::Error</span>;
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::util::Res</span>;
-<span class="kw">use</span> <span class="ident">nom::number::complete::u8</span>;
-<span class="kw">use</span> <span class="ident">std::io</span>;
+</span><span class="doccomment">//! These functions convert between a custom 4-byte format (that we&#39;ll call `serato32` for brevity)
+//! and 3-byte plaintext (both `u32`). Serato&#39;s custom format inserts a single null bit after every 7
+//! payload bits, starting from the rightmost bit.
+//!
+//! This format is used to encode the 3-byte RGB color values (track color, cue colors) and the cue
+//! positions and the `Serato Markers_` tag.
+//!
+//! # Binary Format Details
+//!
+//! ```text
+//! serato32     |     Byte1     |     Byte2     |     Byte3     |     Byte4     |
+//!              | Nibb1 | Nibb2 | Nibb3 | Nibb4 | Nibb5 | Nibb6 | Nibb7 | Nibb8 |
+//! Bits         |A A A A B B B B C C C C D D D D E E E E F F F F G G G G H H H H|
+//! Ignored Bits |^ ^ ^ ^ ^       ^               ^               ^              |
+//! Plaintext    |||||||||||     Byte1       |      Byte2      |      Byte3      |
+//!              |||||||||||  Nibb1  | Nibb2 |  Nibb3  | Nibb4 |  Nibb5  | Nibb6 |
+//! ```
+//!
+//! More information can be found in the [format
+//! documentation](https://github.com/Holzhaus/serato-tags/blob/master/docs/serato_markers_.md#custom-serato32-binary-format).
+//!
+//! ## Example
+//!
+//! |                  | Hex           | Binary
+//! | ---------------- | ------------- | ----------------------------------
+//! | 3-byte plaintext | `   00 00 cc` | `     000 0000000 0000001 1001100`
+//! | `serato32` value | `00 00 01 4c` | `00000000000000000000000101001100`
+//! |                  |
+//! | 3-byte plaintext | `   cc 88 00` | `     110 0110010 0010000 0000000`
+//! | `serato32` value | `06 32 10 00` | `00000110001100100001000000000000`
 
-<span class="doccomment">/// Decodes value from Serato&#39;s 32-bit custom format to 24-bit plaintext.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// # Example</span>
-<span class="doccomment">/// ```rust</span>
-<span class="doccomment">/// use triseratops::tag::serato32::{decode, encode};</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// assert_eq!(decode(0x00, 0x00, 0x01, 0x4C), (0x00, 0x00, 0xCC));</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// let (a, b, c, d) = encode(0x00, 0x00, 0xCC);</span>
-<span class="doccomment">/// assert_eq!(decode(a, b, c, d), (0x00, 0x00, 0xCC));</span>
-<span class="doccomment">/// ```</span>
-<span class="attribute">#[<span class="ident">must_use</span>]</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">decode</span>(<span class="ident">enc1</span>: <span class="ident">u8</span>, <span class="ident">enc2</span>: <span class="ident">u8</span>, <span class="ident">enc3</span>: <span class="ident">u8</span>, <span class="ident">enc4</span>: <span class="ident">u8</span>) -&gt; (<span class="ident">u8</span>, <span class="ident">u8</span>, <span class="ident">u8</span>) {
-    <span class="kw">let</span> <span class="ident">dec3</span>: <span class="ident">u8</span> <span class="op">=</span> (<span class="ident">enc4</span> <span class="op">&amp;</span> <span class="number">0x7F</span>) <span class="op">|</span> ((<span class="ident">enc3</span> <span class="op">&amp;</span> <span class="number">0x01</span>) <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">7</span>);
-    <span class="kw">let</span> <span class="ident">dec2</span>: <span class="ident">u8</span> <span class="op">=</span> ((<span class="ident">enc3</span> <span class="op">&amp;</span> <span class="number">0x7F</span>) <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">1</span>) <span class="op">|</span> ((<span class="ident">enc2</span> <span class="op">&amp;</span> <span class="number">0x03</span>) <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">6</span>);
-    <span class="kw">let</span> <span class="ident">dec1</span>: <span class="ident">u8</span> <span class="op">=</span> ((<span class="ident">enc2</span> <span class="op">&amp;</span> <span class="number">0x7F</span>) <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">2</span>) <span class="op">|</span> ((<span class="ident">enc1</span> <span class="op">&amp;</span> <span class="number">0x07</span>) <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">5</span>);
-    (<span class="ident">dec1</span>, <span class="ident">dec2</span>, <span class="ident">dec3</span>)
+</span><span class="kw">use </span><span class="kw">super</span>::color::Color;
+<span class="kw">use </span><span class="kw">crate</span>::error::Error;
+<span class="kw">use </span><span class="kw">crate</span>::util::Res;
+<span class="kw">use </span>nom::number::complete::u8;
+<span class="kw">use </span>std::io;
+
+<span class="doccomment">/// Decodes value from Serato&#39;s 32-bit custom format to 24-bit plaintext.
+///
+/// # Example
+/// ```rust
+/// use triseratops::tag::serato32::{decode, encode};
+///
+/// assert_eq!(decode(0x00, 0x00, 0x01, 0x4C), (0x00, 0x00, 0xCC));
+///
+/// let (a, b, c, d) = encode(0x00, 0x00, 0xCC);
+/// assert_eq!(decode(a, b, c, d), (0x00, 0x00, 0xCC));
+/// ```
+</span><span class="attribute">#[must_use]
+</span><span class="kw">pub const fn </span>decode(enc1: u8, enc2: u8, enc3: u8, enc4: u8) -&gt; (u8, u8, u8) {
+    <span class="kw">let </span>dec3: u8 = (enc4 &amp; <span class="number">0x7F</span>) | ((enc3 &amp; <span class="number">0x01</span>) &lt;&lt; <span class="number">7</span>);
+    <span class="kw">let </span>dec2: u8 = ((enc3 &amp; <span class="number">0x7F</span>) &gt;&gt; <span class="number">1</span>) | ((enc2 &amp; <span class="number">0x03</span>) &lt;&lt; <span class="number">6</span>);
+    <span class="kw">let </span>dec1: u8 = ((enc2 &amp; <span class="number">0x7F</span>) &gt;&gt; <span class="number">2</span>) | ((enc1 &amp; <span class="number">0x07</span>) &lt;&lt; <span class="number">5</span>);
+    (dec1, dec2, dec3)
 }
 
-<span class="doccomment">/// Encodes 3-byte value to to Serato&#39;s 32-bit custom format.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// # Example</span>
-<span class="doccomment">/// ```rust</span>
-<span class="doccomment">/// use triseratops::tag::serato32::{decode, encode};</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// assert_eq!(encode(0x00, 0x00, 0xCC), (0x00, 0x00, 0x01, 0x4C));</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// let (x, y, z) = decode(0x00, 0x00, 0x01, 0x4C);</span>
-<span class="doccomment">/// assert_eq!(encode(x, y, z), (0x00, 0x00, 0x01, 0x4C));</span>
-<span class="doccomment">/// ```</span>
-<span class="attribute">#[<span class="ident">must_use</span>]</span>
-<span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">encode</span>(<span class="ident">dec1</span>: <span class="ident">u8</span>, <span class="ident">dec2</span>: <span class="ident">u8</span>, <span class="ident">dec3</span>: <span class="ident">u8</span>) -&gt; (<span class="ident">u8</span>, <span class="ident">u8</span>, <span class="ident">u8</span>, <span class="ident">u8</span>) {
-    <span class="kw">let</span> <span class="ident">enc4</span>: <span class="ident">u8</span> <span class="op">=</span> <span class="ident">dec3</span> <span class="op">&amp;</span> <span class="number">0x7F</span>;
-    <span class="kw">let</span> <span class="ident">enc3</span>: <span class="ident">u8</span> <span class="op">=</span> ((<span class="ident">dec3</span> <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">7</span>) <span class="op">|</span> (<span class="ident">dec2</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">1</span>)) <span class="op">&amp;</span> <span class="number">0x7F</span>;
-    <span class="kw">let</span> <span class="ident">enc2</span>: <span class="ident">u8</span> <span class="op">=</span> ((<span class="ident">dec2</span> <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">6</span>) <span class="op">|</span> (<span class="ident">dec1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">2</span>)) <span class="op">&amp;</span> <span class="number">0x7F</span>;
-    <span class="kw">let</span> <span class="ident">enc1</span>: <span class="ident">u8</span> <span class="op">=</span> <span class="ident">dec1</span> <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">5</span>;
-    (<span class="ident">enc1</span>, <span class="ident">enc2</span>, <span class="ident">enc3</span>, <span class="ident">enc4</span>)
+<span class="doccomment">/// Encodes 3-byte value to to Serato&#39;s 32-bit custom format.
+///
+/// # Example
+/// ```rust
+/// use triseratops::tag::serato32::{decode, encode};
+///
+/// assert_eq!(encode(0x00, 0x00, 0xCC), (0x00, 0x00, 0x01, 0x4C));
+///
+/// let (x, y, z) = decode(0x00, 0x00, 0x01, 0x4C);
+/// assert_eq!(encode(x, y, z), (0x00, 0x00, 0x01, 0x4C));
+/// ```
+</span><span class="attribute">#[must_use]
+</span><span class="kw">pub const fn </span>encode(dec1: u8, dec2: u8, dec3: u8) -&gt; (u8, u8, u8, u8) {
+    <span class="kw">let </span>enc4: u8 = dec3 &amp; <span class="number">0x7F</span>;
+    <span class="kw">let </span>enc3: u8 = ((dec3 &gt;&gt; <span class="number">7</span>) | (dec2 &lt;&lt; <span class="number">1</span>)) &amp; <span class="number">0x7F</span>;
+    <span class="kw">let </span>enc2: u8 = ((dec2 &gt;&gt; <span class="number">6</span>) | (dec1 &lt;&lt; <span class="number">2</span>)) &amp; <span class="number">0x7F</span>;
+    <span class="kw">let </span>enc1: u8 = dec1 &gt;&gt; <span class="number">5</span>;
+    (enc1, enc2, enc3, enc4)
 }
 
-<span class="doccomment">/// Returns a 3-byte tuple decoded from the first 4 input bytes.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// # Example</span>
-<span class="doccomment">/// ```</span>
-<span class="doccomment">/// use triseratops::tag::serato32::take;</span>
-<span class="doccomment">/// use nom::Err;</span>
-<span class="doccomment">/// use nom::error::{Error, ErrorKind};</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// assert_eq!(take(&amp;[0x00, 0x00, 0x01, 0x4C]), Ok((&amp;[][..], (0x00, 0x00, 0xCC))));</span>
-<span class="doccomment">/// assert_eq!(take(&amp;[0x00, 0x00, 0x01, 0x4C, 0x7F]), Ok((&amp;[0x07F][..], (0x00, 0x00, 0xCC))));</span>
-<span class="doccomment">/// assert!(take(&amp;[0x00, 0x00, 0x01]).is_err());</span>
-<span class="doccomment">/// ```</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">take</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) -&gt; <span class="ident">Res</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], (<span class="ident">u8</span>, <span class="ident">u8</span>, <span class="ident">u8</span>)<span class="op">&gt;</span> {
-    <span class="kw">let</span> (<span class="ident">input</span>, <span class="ident">bytes</span>) <span class="op">=</span> <span class="ident">nom::bytes::complete::take</span>(<span class="number">4usize</span>)(<span class="ident">input</span>)<span class="question-mark">?</span>;
-    <span class="kw">let</span> (<span class="ident">bytes</span>, <span class="ident">byte1</span>) <span class="op">=</span> <span class="ident">u8</span>(<span class="ident">bytes</span>)<span class="question-mark">?</span>;
-    <span class="kw">let</span> (<span class="ident">bytes</span>, <span class="ident">byte2</span>) <span class="op">=</span> <span class="ident">u8</span>(<span class="ident">bytes</span>)<span class="question-mark">?</span>;
-    <span class="kw">let</span> (<span class="ident">bytes</span>, <span class="ident">byte3</span>) <span class="op">=</span> <span class="ident">u8</span>(<span class="ident">bytes</span>)<span class="question-mark">?</span>;
-    <span class="kw">let</span> (<span class="kw">_</span>, <span class="ident">byte4</span>) <span class="op">=</span> <span class="ident">nom::combinator::all_consuming</span>(<span class="ident">u8</span>)(<span class="ident">bytes</span>)<span class="question-mark">?</span>;
-    <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">decode</span>(<span class="ident">byte1</span>, <span class="ident">byte2</span>, <span class="ident">byte3</span>, <span class="ident">byte4</span>);
-    <span class="prelude-val">Ok</span>((<span class="ident">input</span>, <span class="ident">value</span>))
+<span class="doccomment">/// Returns a 3-byte tuple decoded from the first 4 input bytes.
+///
+/// # Example
+/// ```
+/// use triseratops::tag::serato32::take;
+/// use nom::Err;
+/// use nom::error::{Error, ErrorKind};
+///
+/// assert_eq!(take(&amp;[0x00, 0x00, 0x01, 0x4C]), Ok((&amp;[][..], (0x00, 0x00, 0xCC))));
+/// assert_eq!(take(&amp;[0x00, 0x00, 0x01, 0x4C, 0x7F]), Ok((&amp;[0x07F][..], (0x00, 0x00, 0xCC))));
+/// assert!(take(&amp;[0x00, 0x00, 0x01]).is_err());
+/// ```
+</span><span class="kw">pub fn </span>take(input: <span class="kw-2">&amp;</span>[u8]) -&gt; Res&lt;<span class="kw-2">&amp;</span>[u8], (u8, u8, u8)&gt; {
+    <span class="kw">let </span>(input, bytes) = nom::bytes::complete::take(<span class="number">4usize</span>)(input)<span class="question-mark">?</span>;
+    <span class="kw">let </span>(bytes, byte1) = u8(bytes)<span class="question-mark">?</span>;
+    <span class="kw">let </span>(bytes, byte2) = u8(bytes)<span class="question-mark">?</span>;
+    <span class="kw">let </span>(bytes, byte3) = u8(bytes)<span class="question-mark">?</span>;
+    <span class="kw">let </span>(<span class="kw">_</span>, byte4) = nom::combinator::all_consuming(u8)(bytes)<span class="question-mark">?</span>;
+    <span class="kw">let </span>value = decode(byte1, byte2, byte3, byte4);
+    <span class="prelude-val">Ok</span>((input, value))
 }
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">write</span>(<span class="ident">writer</span>: <span class="kw-2">&amp;mut</span> <span class="kw">impl</span> <span class="ident">io::Write</span>, <span class="ident">data</span>: (<span class="ident">u8</span>, <span class="ident">u8</span>, <span class="ident">u8</span>)) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> (<span class="ident">in1</span>, <span class="ident">in2</span>, <span class="ident">in3</span>) <span class="op">=</span> <span class="ident">data</span>;
-    <span class="kw">let</span> (<span class="ident">byte1</span>, <span class="ident">byte2</span>, <span class="ident">byte3</span>, <span class="ident">byte4</span>) <span class="op">=</span> <span class="ident">encode</span>(<span class="ident">in1</span>, <span class="ident">in2</span>, <span class="ident">in3</span>);
-    <span class="prelude-val">Ok</span>(<span class="ident">writer</span>.<span class="ident">write</span>(<span class="kw-2">&amp;</span>[<span class="ident">byte1</span>, <span class="ident">byte2</span>, <span class="ident">byte3</span>, <span class="ident">byte4</span>])<span class="question-mark">?</span>)
+<span class="kw">pub fn </span>write(writer: <span class="kw-2">&amp;mut </span><span class="kw">impl </span>io::Write, data: (u8, u8, u8)) -&gt; <span class="prelude-ty">Result</span>&lt;usize, Error&gt; {
+    <span class="kw">let </span>(in1, in2, in3) = data;
+    <span class="kw">let </span>(byte1, byte2, byte3, byte4) = encode(in1, in2, in3);
+    <span class="prelude-val">Ok</span>(writer.write(<span class="kw-2">&amp;</span>[byte1, byte2, byte3, byte4])<span class="question-mark">?</span>)
 }
 
-<span class="doccomment">/// Returns a `Color` decoded from the first 4 input bytes.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// # Example</span>
-<span class="doccomment">/// ```</span>
-<span class="doccomment">/// use triseratops::tag::color::Color;</span>
-<span class="doccomment">/// use triseratops::tag::serato32::take_color;</span>
-<span class="doccomment">/// use nom::Err;</span>
-<span class="doccomment">/// use nom::error::{Error, ErrorKind};</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// assert_eq!(take_color(&amp;[0x00, 0x00, 0x01, 0x4C]), Ok((&amp;[][..], Color { red: 0x00, green: 0x00, blue: 0xCC})));</span>
-<span class="doccomment">/// assert_eq!(take_color(&amp;[0x00, 0x00, 0x01, 0x4C, 0x7F]), Ok((&amp;[0x07F][..], Color { red: 0x00, green: 0x00, blue: 0xCC})));</span>
-<span class="doccomment">/// assert!(take_color(&amp;[0x00, 0x00, 0x01]).is_err());</span>
-<span class="doccomment">/// ```</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">take_color</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) -&gt; <span class="ident">Res</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">Color</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> (<span class="ident">input</span>, (<span class="ident">red</span>, <span class="ident">green</span>, <span class="ident">blue</span>)) <span class="op">=</span> <span class="ident">take</span>(<span class="ident">input</span>)<span class="question-mark">?</span>;
-    <span class="kw">let</span> <span class="ident">color</span> <span class="op">=</span> <span class="ident">Color</span> { <span class="ident">red</span>, <span class="ident">green</span>, <span class="ident">blue</span> };
-    <span class="prelude-val">Ok</span>((<span class="ident">input</span>, <span class="ident">color</span>))
+<span class="doccomment">/// Returns a `Color` decoded from the first 4 input bytes.
+///
+/// # Example
+/// ```
+/// use triseratops::tag::color::Color;
+/// use triseratops::tag::serato32::take_color;
+/// use nom::Err;
+/// use nom::error::{Error, ErrorKind};
+///
+/// assert_eq!(take_color(&amp;[0x00, 0x00, 0x01, 0x4C]), Ok((&amp;[][..], Color { red: 0x00, green: 0x00, blue: 0xCC})));
+/// assert_eq!(take_color(&amp;[0x00, 0x00, 0x01, 0x4C, 0x7F]), Ok((&amp;[0x07F][..], Color { red: 0x00, green: 0x00, blue: 0xCC})));
+/// assert!(take_color(&amp;[0x00, 0x00, 0x01]).is_err());
+/// ```
+</span><span class="kw">pub fn </span>take_color(input: <span class="kw-2">&amp;</span>[u8]) -&gt; Res&lt;<span class="kw-2">&amp;</span>[u8], Color&gt; {
+    <span class="kw">let </span>(input, (red, green, blue)) = take(input)<span class="question-mark">?</span>;
+    <span class="kw">let </span>color = Color { red, green, blue };
+    <span class="prelude-val">Ok</span>((input, color))
 }
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">write_color</span>(<span class="ident">writer</span>: <span class="kw-2">&amp;mut</span> <span class="kw">impl</span> <span class="ident">io::Write</span>, <span class="ident">color</span>: <span class="ident">Color</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-    <span class="ident">write</span>(<span class="ident">writer</span>, (<span class="ident">color</span>.<span class="ident">red</span>, <span class="ident">color</span>.<span class="ident">green</span>, <span class="ident">color</span>.<span class="ident">blue</span>))
+<span class="kw">pub fn </span>write_color(writer: <span class="kw-2">&amp;mut </span><span class="kw">impl </span>io::Write, color: Color) -&gt; <span class="prelude-ty">Result</span>&lt;usize, Error&gt; {
+    write(writer, (color.red, color.green, color.blue))
 }
 
-<span class="doccomment">/// Returns a `u32` decoded from the first 4 input bytes.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// The first 8 bits are always 0.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// # Example</span>
-<span class="doccomment">/// ```</span>
-<span class="doccomment">/// use triseratops::tag::serato32::take_u32;</span>
-<span class="doccomment">/// use nom::Err;</span>
-<span class="doccomment">/// use nom::error::{Error, ErrorKind};</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// assert_eq!(take_u32(&amp;[0x00, 0x00, 0x01, 0x4C]), Ok((&amp;[][..], 0x0000CC)));</span>
-<span class="doccomment">/// assert_eq!(take_u32(&amp;[0x00, 0x00, 0x01, 0x4C, 0x7F]), Ok((&amp;[0x07F][..], 0x0000CC)));</span>
-<span class="doccomment">/// assert!(take_u32(&amp;[0x00, 0x00, 0x01]).is_err());</span>
-<span class="doccomment">/// ```</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">take_u32</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) -&gt; <span class="ident">Res</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">u32</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> (<span class="ident">input</span>, (<span class="ident">a</span>, <span class="ident">b</span>, <span class="ident">c</span>)) <span class="op">=</span> <span class="ident">take</span>(<span class="ident">input</span>)<span class="question-mark">?</span>;
-    <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> (<span class="ident">a</span> <span class="kw">as</span> <span class="ident">u32</span>) <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">16</span> <span class="op">|</span> (<span class="ident">b</span> <span class="kw">as</span> <span class="ident">u32</span>) <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">8</span> <span class="op">|</span> <span class="ident">c</span> <span class="kw">as</span> <span class="ident">u32</span>;
-    <span class="prelude-val">Ok</span>((<span class="ident">input</span>, <span class="ident">value</span>))
+<span class="doccomment">/// Returns a `u32` decoded from the first 4 input bytes.
+///
+/// The first 8 bits are always 0.
+///
+/// # Example
+/// ```
+/// use triseratops::tag::serato32::take_u32;
+/// use nom::Err;
+/// use nom::error::{Error, ErrorKind};
+///
+/// assert_eq!(take_u32(&amp;[0x00, 0x00, 0x01, 0x4C]), Ok((&amp;[][..], 0x0000CC)));
+/// assert_eq!(take_u32(&amp;[0x00, 0x00, 0x01, 0x4C, 0x7F]), Ok((&amp;[0x07F][..], 0x0000CC)));
+/// assert!(take_u32(&amp;[0x00, 0x00, 0x01]).is_err());
+/// ```
+</span><span class="kw">pub fn </span>take_u32(input: <span class="kw-2">&amp;</span>[u8]) -&gt; Res&lt;<span class="kw-2">&amp;</span>[u8], u32&gt; {
+    <span class="kw">let </span>(input, (a, b, c)) = take(input)<span class="question-mark">?</span>;
+    <span class="kw">let </span>value = (a <span class="kw">as </span>u32) &lt;&lt; <span class="number">16 </span>| (b <span class="kw">as </span>u32) &lt;&lt; <span class="number">8 </span>| c <span class="kw">as </span>u32;
+    <span class="prelude-val">Ok</span>((input, value))
 }
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">write_u32</span>(<span class="ident">writer</span>: <span class="kw-2">&amp;mut</span> <span class="kw">impl</span> <span class="ident">io::Write</span>, <span class="ident">value</span>: <span class="ident">u32</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> <span class="ident">byte1</span> <span class="op">=</span> ((<span class="ident">value</span> <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">16</span>) <span class="op">&amp;</span> <span class="number">0xFF</span>) <span class="kw">as</span> <span class="ident">u8</span>;
-    <span class="kw">let</span> <span class="ident">byte2</span> <span class="op">=</span> ((<span class="ident">value</span> <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">8</span>) <span class="op">&amp;</span> <span class="number">0xFF</span>) <span class="kw">as</span> <span class="ident">u8</span>;
-    <span class="kw">let</span> <span class="ident">byte3</span> <span class="op">=</span> (<span class="ident">value</span> <span class="op">&amp;</span> <span class="number">0xFF</span>) <span class="kw">as</span> <span class="ident">u8</span>;
-    <span class="ident">write</span>(<span class="ident">writer</span>, (<span class="ident">byte1</span>, <span class="ident">byte2</span>, <span class="ident">byte3</span>))
+<span class="kw">pub fn </span>write_u32(writer: <span class="kw-2">&amp;mut </span><span class="kw">impl </span>io::Write, value: u32) -&gt; <span class="prelude-ty">Result</span>&lt;usize, Error&gt; {
+    <span class="kw">let </span>byte1 = ((value &gt;&gt; <span class="number">16</span>) &amp; <span class="number">0xFF</span>) <span class="kw">as </span>u8;
+    <span class="kw">let </span>byte2 = ((value &gt;&gt; <span class="number">8</span>) &amp; <span class="number">0xFF</span>) <span class="kw">as </span>u8;
+    <span class="kw">let </span>byte3 = (value &amp; <span class="number">0xFF</span>) <span class="kw">as </span>u8;
+    write(writer, (byte1, byte2, byte3))
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="triseratops" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0 (7737e0b5c 2022-04-04)" ></div>
-</body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="triseratops" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.1 (90743e729 2023-01-10)" ></div></body></html>

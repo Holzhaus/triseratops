@@ -1,107 +1,102 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/tag/container.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>container.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script src="../../../crates.js"></script><script defer src="../../../main.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script>
-    <noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../../triseratops/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div>
-        </a><h2 class="location"></h2>
-    </nav>
-    <nav class="sidebar"><a class="sidebar-logo" href="../../../triseratops/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div>
-        </a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../triseratops/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><nav class="sub"><div class="theme-picker hidden"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="22" height="22" alt="Pick another theme!" src="../../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
-<span id="2">  2</span>
-<span id="3">  3</span>
-<span id="4">  4</span>
-<span id="5">  5</span>
-<span id="6">  6</span>
-<span id="7">  7</span>
-<span id="8">  8</span>
-<span id="9">  9</span>
-<span id="10"> 10</span>
-<span id="11"> 11</span>
-<span id="12"> 12</span>
-<span id="13"> 13</span>
-<span id="14"> 14</span>
-<span id="15"> 15</span>
-<span id="16"> 16</span>
-<span id="17"> 17</span>
-<span id="18"> 18</span>
-<span id="19"> 19</span>
-<span id="20"> 20</span>
-<span id="21"> 21</span>
-<span id="22"> 22</span>
-<span id="23"> 23</span>
-<span id="24"> 24</span>
-<span id="25"> 25</span>
-<span id="26"> 26</span>
-<span id="27"> 27</span>
-<span id="28"> 28</span>
-<span id="29"> 29</span>
-<span id="30"> 30</span>
-<span id="31"> 31</span>
-<span id="32"> 32</span>
-<span id="33"> 33</span>
-<span id="34"> 34</span>
-<span id="35"> 35</span>
-<span id="36"> 36</span>
-<span id="37"> 37</span>
-<span id="38"> 38</span>
-<span id="39"> 39</span>
-<span id="40"> 40</span>
-<span id="41"> 41</span>
-<span id="42"> 42</span>
-<span id="43"> 43</span>
-<span id="44"> 44</span>
-<span id="45"> 45</span>
-<span id="46"> 46</span>
-<span id="47"> 47</span>
-<span id="48"> 48</span>
-<span id="49"> 49</span>
-<span id="50"> 50</span>
-<span id="51"> 51</span>
-<span id="52"> 52</span>
-<span id="53"> 53</span>
-<span id="54"> 54</span>
-<span id="55"> 55</span>
-<span id="56"> 56</span>
-<span id="57"> 57</span>
-<span id="58"> 58</span>
-<span id="59"> 59</span>
-<span id="60"> 60</span>
-<span id="61"> 61</span>
-<span id="62"> 62</span>
-<span id="63"> 63</span>
-<span id="64"> 64</span>
-<span id="65"> 65</span>
-<span id="66"> 66</span>
-<span id="67"> 67</span>
-<span id="68"> 68</span>
-<span id="69"> 69</span>
-<span id="70"> 70</span>
-<span id="71"> 71</span>
-<span id="72"> 72</span>
-<span id="73"> 73</span>
-<span id="74"> 74</span>
-<span id="75"> 75</span>
-<span id="76"> 76</span>
-<span id="77"> 77</span>
-<span id="78"> 78</span>
-<span id="79"> 79</span>
-<span id="80"> 80</span>
-<span id="81"> 81</span>
-<span id="82"> 82</span>
-<span id="83"> 83</span>
-<span id="84"> 84</span>
-<span id="85"> 85</span>
-<span id="86"> 86</span>
-<span id="87"> 87</span>
-<span id="88"> 88</span>
-<span id="89"> 89</span>
-<span id="90"> 90</span>
-<span id="91"> 91</span>
-<span id="92"> 92</span>
-<span id="93"> 93</span>
-<span id="94"> 94</span>
-<span id="95"> 95</span>
-<span id="96"> 96</span>
-<span id="97"> 97</span>
-<span id="98"> 98</span>
-<span id="99"> 99</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/tag/container.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>container.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../../normalize.css"><link rel="stylesheet" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../../ayu.css" disabled><link rel="stylesheet" href="../../../dark.css" disabled><link rel="stylesheet" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../main.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../../triseratops/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
+<span id="2">2</span>
+<span id="3">3</span>
+<span id="4">4</span>
+<span id="5">5</span>
+<span id="6">6</span>
+<span id="7">7</span>
+<span id="8">8</span>
+<span id="9">9</span>
+<span id="10">10</span>
+<span id="11">11</span>
+<span id="12">12</span>
+<span id="13">13</span>
+<span id="14">14</span>
+<span id="15">15</span>
+<span id="16">16</span>
+<span id="17">17</span>
+<span id="18">18</span>
+<span id="19">19</span>
+<span id="20">20</span>
+<span id="21">21</span>
+<span id="22">22</span>
+<span id="23">23</span>
+<span id="24">24</span>
+<span id="25">25</span>
+<span id="26">26</span>
+<span id="27">27</span>
+<span id="28">28</span>
+<span id="29">29</span>
+<span id="30">30</span>
+<span id="31">31</span>
+<span id="32">32</span>
+<span id="33">33</span>
+<span id="34">34</span>
+<span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
+<span id="38">38</span>
+<span id="39">39</span>
+<span id="40">40</span>
+<span id="41">41</span>
+<span id="42">42</span>
+<span id="43">43</span>
+<span id="44">44</span>
+<span id="45">45</span>
+<span id="46">46</span>
+<span id="47">47</span>
+<span id="48">48</span>
+<span id="49">49</span>
+<span id="50">50</span>
+<span id="51">51</span>
+<span id="52">52</span>
+<span id="53">53</span>
+<span id="54">54</span>
+<span id="55">55</span>
+<span id="56">56</span>
+<span id="57">57</span>
+<span id="58">58</span>
+<span id="59">59</span>
+<span id="60">60</span>
+<span id="61">61</span>
+<span id="62">62</span>
+<span id="63">63</span>
+<span id="64">64</span>
+<span id="65">65</span>
+<span id="66">66</span>
+<span id="67">67</span>
+<span id="68">68</span>
+<span id="69">69</span>
+<span id="70">70</span>
+<span id="71">71</span>
+<span id="72">72</span>
+<span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
+<span id="76">76</span>
+<span id="77">77</span>
+<span id="78">78</span>
+<span id="79">79</span>
+<span id="80">80</span>
+<span id="81">81</span>
+<span id="82">82</span>
+<span id="83">83</span>
+<span id="84">84</span>
+<span id="85">85</span>
+<span id="86">86</span>
+<span id="87">87</span>
+<span id="88">88</span>
+<span id="89">89</span>
+<span id="90">90</span>
+<span id="91">91</span>
+<span id="92">92</span>
+<span id="93">93</span>
+<span id="94">94</span>
+<span id="95">95</span>
+<span id="96">96</span>
+<span id="97">97</span>
+<span id="98">98</span>
+<span id="99">99</span>
 <span id="100">100</span>
 <span id="101">101</span>
 <span id="102">102</span>
@@ -428,431 +423,446 @@
 <span id="423">423</span>
 <span id="424">424</span>
 <span id="425">425</span>
-</pre><pre class="rust"><code><span class="doccomment">//! Provides the [`TagContainer` struct](TagContainer), a simple interface to access data in</span>
-<span class="doccomment">//! Serato&#39;s tags.</span>
-<span class="kw">use</span> <span class="kw">super</span>::{
-    <span class="ident">beatgrid</span>, <span class="ident">color::Color</span>, <span class="ident">format::flac::FLACTag</span>, <span class="ident">format::id3::ID3Tag</span>, <span class="ident">format::mp4::MP4Tag</span>,
-    <span class="ident">format::ogg::OggTag</span>, <span class="ident">generic</span>, <span class="ident">markers</span>, <span class="ident">Autotags</span>, <span class="ident">Beatgrid</span>, <span class="ident">Markers</span>, <span class="ident">Markers2</span>, <span class="ident">Overview</span>,
+<span id="426">426</span>
+<span id="427">427</span>
+<span id="428">428</span>
+<span id="429">429</span>
+<span id="430">430</span>
+<span id="431">431</span>
+<span id="432">432</span>
+<span id="433">433</span>
+</pre><pre class="rust"><code><span class="comment">// Copyright (c) 2023 Jan Holthuis &lt;jan.holthuis@rub.de&gt;
+//
+// This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy
+// of the MPL was not distributed with this file, You can obtain one at
+// http://mozilla.org/MPL/2.0/.
+//
+// SPDX-License-Identifier: MPL-2.0
+
+</span><span class="doccomment">//! Provides the [`TagContainer` struct](TagContainer), a simple interface to access data in
+//! Serato&#39;s tags.
+</span><span class="kw">use super</span>::{
+    beatgrid, color::Color, format::flac::FLACTag, format::id3::ID3Tag, format::mp4::MP4Tag,
+    format::ogg::OggTag, generic, markers, Autotags, Beatgrid, Markers, Markers2, Overview,
 };
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::error::Error</span>;
-<span class="kw">use</span> <span class="ident">std::io</span>;
+<span class="kw">use </span><span class="kw">crate</span>::error::Error;
+<span class="kw">use </span>std::io;
 
-<span class="doccomment">/// Provides a streamlined interface for retrieving Serato tag data.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// If you&#39;re not interested in the low-level format details, just use this instead of the</span>
-<span class="doccomment">/// low-level structs (e.g. [`Markers`](Markers), [`Markers2`](Markers2), etc.)</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// Some of the data in Serato&#39;s tags is redundant and may contradict each other. This class</span>
-<span class="doccomment">/// implements the same merge strategies for inconsistent data that Serato uses, too.</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">TagContainer</span> {
-    <span class="ident">autotags</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Autotags</span><span class="op">&gt;</span>,
-    <span class="ident">beatgrid</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Beatgrid</span><span class="op">&gt;</span>,
-    <span class="ident">markers</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Markers</span><span class="op">&gt;</span>,
-    <span class="ident">markers2</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Markers2</span><span class="op">&gt;</span>,
-    <span class="ident">overview</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Overview</span><span class="op">&gt;</span>,
+<span class="doccomment">/// Provides a streamlined interface for retrieving Serato tag data.
+///
+/// If you&#39;re not interested in the low-level format details, just use this instead of the
+/// low-level structs (e.g. [`Markers`](Markers), [`Markers2`](Markers2), etc.)
+///
+/// Some of the data in Serato&#39;s tags is redundant and may contradict each other. This class
+/// implements the same merge strategies for inconsistent data that Serato uses, too.
+</span><span class="attribute">#[derive(Debug, Clone)]
+</span><span class="kw">pub struct </span>TagContainer {
+    autotags: <span class="prelude-ty">Option</span>&lt;Autotags&gt;,
+    beatgrid: <span class="prelude-ty">Option</span>&lt;Beatgrid&gt;,
+    markers: <span class="prelude-ty">Option</span>&lt;Markers&gt;,
+    markers2: <span class="prelude-ty">Option</span>&lt;Markers2&gt;,
+    overview: <span class="prelude-ty">Option</span>&lt;Overview&gt;,
 }
 
-<span class="doccomment">/// The tag type of the data.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// The format of the Serato tag data differs between tag types.</span>
-<span class="doccomment">/// Therefore it&#39;s necessary to tell the parser from what kind of the the data originates from.</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
-<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">TagFormat</span> {
-    <span class="ident">ID3</span>,
-    <span class="ident">FLAC</span>,
-    <span class="ident">MP4</span>,
-    <span class="ident">Ogg</span>,
+<span class="doccomment">/// The tag type of the data.
+///
+/// The format of the Serato tag data differs between tag types.
+/// Therefore it&#39;s necessary to tell the parser from what kind of the the data originates from.
+</span><span class="attribute">#[derive(Debug, Clone, Copy)]
+</span><span class="kw">pub enum </span>TagFormat {
+    ID3,
+    FLAC,
+    MP4,
+    Ogg,
 }
 
-<span class="kw">impl</span> <span class="ident">TagContainer</span> {
-    <span class="doccomment">/// Create an empty Serato tag container.</span>
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">const</span> <span class="kw">fn</span> <span class="ident">new</span>() -&gt; <span class="self">Self</span> {
-        <span class="self">Self</span> {
-            <span class="ident">autotags</span>: <span class="prelude-val">None</span>,
-            <span class="ident">beatgrid</span>: <span class="prelude-val">None</span>,
-            <span class="ident">markers</span>: <span class="prelude-val">None</span>,
-            <span class="ident">markers2</span>: <span class="prelude-val">None</span>,
-            <span class="ident">overview</span>: <span class="prelude-val">None</span>,
+<span class="kw">impl </span>TagContainer {
+    <span class="doccomment">/// Create an empty Serato tag container.
+    </span><span class="attribute">#[must_use]
+    </span><span class="kw">pub const fn </span>new() -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            autotags: <span class="prelude-val">None</span>,
+            beatgrid: <span class="prelude-val">None</span>,
+            markers: <span class="prelude-val">None</span>,
+            markers2: <span class="prelude-val">None</span>,
+            overview: <span class="prelude-val">None</span>,
         }
     }
 
-    <span class="doccomment">/// Parse the [`Serato Autotags`](Autotags) tag.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_autotags</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">tag_format</span>: <span class="ident">TagFormat</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">match</span> <span class="ident">tag_format</span> {
-            <span class="ident">TagFormat::ID3</span> =&gt; {
-                <span class="self">self</span>.<span class="ident">autotags</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Autotags::parse_id3</span>(<span class="ident">input</span>)<span class="question-mark">?</span>);
+    <span class="doccomment">/// Parse the [`Serato Autotags`](Autotags) tag.
+    </span><span class="kw">pub fn </span>parse_autotags(<span class="kw-2">&amp;mut </span><span class="self">self</span>, input: <span class="kw-2">&amp;</span>[u8], tag_format: TagFormat) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+        <span class="kw">match </span>tag_format {
+            TagFormat::ID3 =&gt; {
+                <span class="self">self</span>.autotags = <span class="prelude-val">Some</span>(Autotags::parse_id3(input)<span class="question-mark">?</span>);
             }
-            <span class="ident">TagFormat::FLAC</span> =&gt; {
-                <span class="self">self</span>.<span class="ident">autotags</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Autotags::parse_flac</span>(<span class="ident">input</span>)<span class="question-mark">?</span>);
+            TagFormat::FLAC =&gt; {
+                <span class="self">self</span>.autotags = <span class="prelude-val">Some</span>(Autotags::parse_flac(input)<span class="question-mark">?</span>);
             }
-            <span class="ident">TagFormat::MP4</span> =&gt; {
-                <span class="self">self</span>.<span class="ident">autotags</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Autotags::parse_mp4</span>(<span class="ident">input</span>)<span class="question-mark">?</span>);
+            TagFormat::MP4 =&gt; {
+                <span class="self">self</span>.autotags = <span class="prelude-val">Some</span>(Autotags::parse_mp4(input)<span class="question-mark">?</span>);
             }
-            <span class="kw">_</span> =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::UnsupportedTagFormat</span>),
+            <span class="kw">_ </span>=&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(Error::UnsupportedTagFormat),
         }
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="doccomment">/// Write the [`Serato Autotags`](Autotags) tag.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">write_autotags</span>(
+    <span class="doccomment">/// Write the [`Serato Autotags`](Autotags) tag.
+    </span><span class="kw">pub fn </span>write_autotags(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        <span class="ident">writer</span>: <span class="kw-2">&amp;mut</span> <span class="kw">impl</span> <span class="ident">io::Write</span>,
-        <span class="ident">tag_format</span>: <span class="ident">TagFormat</span>,
-    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">tag</span> <span class="op">=</span> <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">autotags</span> {
-            <span class="prelude-val">Some</span>(<span class="ident">x</span>) =&gt; <span class="ident">x</span>,
-            <span class="prelude-val">None</span> =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::NoTagDataAvailable</span>),
+        writer: <span class="kw-2">&amp;mut </span><span class="kw">impl </span>io::Write,
+        tag_format: TagFormat,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;usize, Error&gt; {
+        <span class="kw">let </span>tag = <span class="kw">match </span><span class="kw-2">&amp;</span><span class="self">self</span>.autotags {
+            <span class="prelude-val">Some</span>(x) =&gt; x,
+            <span class="prelude-val">None </span>=&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(Error::NoTagDataAvailable),
         };
-        <span class="kw">match</span> <span class="ident">tag_format</span> {
-            <span class="ident">TagFormat::ID3</span> =&gt; <span class="ident">tag</span>.<span class="ident">write_id3</span>(<span class="ident">writer</span>),
-            <span class="ident">TagFormat::FLAC</span> =&gt; <span class="ident">tag</span>.<span class="ident">write_flac</span>(<span class="ident">writer</span>),
-            <span class="ident">TagFormat::MP4</span> =&gt; <span class="ident">tag</span>.<span class="ident">write_mp4</span>(<span class="ident">writer</span>),
-            <span class="kw">_</span> =&gt; <span class="prelude-val">Err</span>(<span class="ident">Error::UnsupportedTagFormat</span>),
+        <span class="kw">match </span>tag_format {
+            TagFormat::ID3 =&gt; tag.write_id3(writer),
+            TagFormat::FLAC =&gt; tag.write_flac(writer),
+            TagFormat::MP4 =&gt; tag.write_mp4(writer),
+            <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(Error::UnsupportedTagFormat),
         }
     }
 
-    <span class="doccomment">/// Parse the [`Serato BeatGrid`](Beatgrid) tag.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_beatgrid</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">tag_format</span>: <span class="ident">TagFormat</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">match</span> <span class="ident">tag_format</span> {
-            <span class="ident">TagFormat::ID3</span> =&gt; {
-                <span class="self">self</span>.<span class="ident">beatgrid</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Beatgrid::parse_id3</span>(<span class="ident">input</span>)<span class="question-mark">?</span>);
+    <span class="doccomment">/// Parse the [`Serato BeatGrid`](Beatgrid) tag.
+    </span><span class="kw">pub fn </span>parse_beatgrid(<span class="kw-2">&amp;mut </span><span class="self">self</span>, input: <span class="kw-2">&amp;</span>[u8], tag_format: TagFormat) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+        <span class="kw">match </span>tag_format {
+            TagFormat::ID3 =&gt; {
+                <span class="self">self</span>.beatgrid = <span class="prelude-val">Some</span>(Beatgrid::parse_id3(input)<span class="question-mark">?</span>);
             }
-            <span class="ident">TagFormat::FLAC</span> =&gt; {
-                <span class="self">self</span>.<span class="ident">beatgrid</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Beatgrid::parse_flac</span>(<span class="ident">input</span>)<span class="question-mark">?</span>);
+            TagFormat::FLAC =&gt; {
+                <span class="self">self</span>.beatgrid = <span class="prelude-val">Some</span>(Beatgrid::parse_flac(input)<span class="question-mark">?</span>);
             }
-            <span class="ident">TagFormat::MP4</span> =&gt; {
-                <span class="self">self</span>.<span class="ident">beatgrid</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Beatgrid::parse_mp4</span>(<span class="ident">input</span>)<span class="question-mark">?</span>);
+            TagFormat::MP4 =&gt; {
+                <span class="self">self</span>.beatgrid = <span class="prelude-val">Some</span>(Beatgrid::parse_mp4(input)<span class="question-mark">?</span>);
             }
-            <span class="kw">_</span> =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::UnsupportedTagFormat</span>),
+            <span class="kw">_ </span>=&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(Error::UnsupportedTagFormat),
         }
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="doccomment">/// Write the [`Serato BeatGrid`](Beatgrid) tag.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">write_beatgrid</span>(
+    <span class="doccomment">/// Write the [`Serato BeatGrid`](Beatgrid) tag.
+    </span><span class="kw">pub fn </span>write_beatgrid(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        <span class="ident">writer</span>: <span class="kw-2">&amp;mut</span> <span class="kw">impl</span> <span class="ident">io::Write</span>,
-        <span class="ident">tag_format</span>: <span class="ident">TagFormat</span>,
-    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">tag</span> <span class="op">=</span> <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">beatgrid</span> {
-            <span class="prelude-val">Some</span>(<span class="ident">x</span>) =&gt; <span class="ident">x</span>,
-            <span class="prelude-val">None</span> =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::NoTagDataAvailable</span>),
+        writer: <span class="kw-2">&amp;mut </span><span class="kw">impl </span>io::Write,
+        tag_format: TagFormat,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;usize, Error&gt; {
+        <span class="kw">let </span>tag = <span class="kw">match </span><span class="kw-2">&amp;</span><span class="self">self</span>.beatgrid {
+            <span class="prelude-val">Some</span>(x) =&gt; x,
+            <span class="prelude-val">None </span>=&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(Error::NoTagDataAvailable),
         };
-        <span class="kw">match</span> <span class="ident">tag_format</span> {
-            <span class="ident">TagFormat::ID3</span> =&gt; <span class="ident">tag</span>.<span class="ident">write_id3</span>(<span class="ident">writer</span>),
-            <span class="ident">TagFormat::FLAC</span> =&gt; <span class="ident">tag</span>.<span class="ident">write_flac</span>(<span class="ident">writer</span>),
-            <span class="ident">TagFormat::MP4</span> =&gt; <span class="ident">tag</span>.<span class="ident">write_mp4</span>(<span class="ident">writer</span>),
-            <span class="kw">_</span> =&gt; <span class="prelude-val">Err</span>(<span class="ident">Error::UnsupportedTagFormat</span>),
+        <span class="kw">match </span>tag_format {
+            TagFormat::ID3 =&gt; tag.write_id3(writer),
+            TagFormat::FLAC =&gt; tag.write_flac(writer),
+            TagFormat::MP4 =&gt; tag.write_mp4(writer),
+            <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(Error::UnsupportedTagFormat),
         }
     }
 
-    <span class="doccomment">/// Parse the [`Serato Markers_`](Markers) tag.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_markers</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">tag_format</span>: <span class="ident">TagFormat</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">match</span> <span class="ident">tag_format</span> {
-            <span class="ident">TagFormat::ID3</span> =&gt; {
-                <span class="self">self</span>.<span class="ident">markers</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Markers::parse_id3</span>(<span class="ident">input</span>)<span class="question-mark">?</span>);
+    <span class="doccomment">/// Parse the [`Serato Markers_`](Markers) tag.
+    </span><span class="kw">pub fn </span>parse_markers(<span class="kw-2">&amp;mut </span><span class="self">self</span>, input: <span class="kw-2">&amp;</span>[u8], tag_format: TagFormat) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+        <span class="kw">match </span>tag_format {
+            TagFormat::ID3 =&gt; {
+                <span class="self">self</span>.markers = <span class="prelude-val">Some</span>(Markers::parse_id3(input)<span class="question-mark">?</span>);
             }
-            <span class="ident">TagFormat::MP4</span> =&gt; {
-                <span class="self">self</span>.<span class="ident">markers</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Markers::parse_mp4</span>(<span class="ident">input</span>)<span class="question-mark">?</span>);
+            TagFormat::MP4 =&gt; {
+                <span class="self">self</span>.markers = <span class="prelude-val">Some</span>(Markers::parse_mp4(input)<span class="question-mark">?</span>);
             }
-            <span class="kw">_</span> =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::UnsupportedTagFormat</span>),
+            <span class="kw">_ </span>=&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(Error::UnsupportedTagFormat),
         }
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="doccomment">/// Write the [`Serato Markers_`](Markers) tag.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">write_markers</span>(
+    <span class="doccomment">/// Write the [`Serato Markers_`](Markers) tag.
+    </span><span class="kw">pub fn </span>write_markers(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        <span class="ident">writer</span>: <span class="kw-2">&amp;mut</span> <span class="kw">impl</span> <span class="ident">io::Write</span>,
-        <span class="ident">tag_format</span>: <span class="ident">TagFormat</span>,
-    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">tag</span> <span class="op">=</span> <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">markers</span> {
-            <span class="prelude-val">Some</span>(<span class="ident">x</span>) =&gt; <span class="ident">x</span>,
-            <span class="prelude-val">None</span> =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::NoTagDataAvailable</span>),
+        writer: <span class="kw-2">&amp;mut </span><span class="kw">impl </span>io::Write,
+        tag_format: TagFormat,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;usize, Error&gt; {
+        <span class="kw">let </span>tag = <span class="kw">match </span><span class="kw-2">&amp;</span><span class="self">self</span>.markers {
+            <span class="prelude-val">Some</span>(x) =&gt; x,
+            <span class="prelude-val">None </span>=&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(Error::NoTagDataAvailable),
         };
-        <span class="kw">match</span> <span class="ident">tag_format</span> {
-            <span class="ident">TagFormat::ID3</span> =&gt; <span class="ident">tag</span>.<span class="ident">write_id3</span>(<span class="ident">writer</span>),
-            <span class="ident">TagFormat::MP4</span> =&gt; <span class="ident">tag</span>.<span class="ident">write_mp4</span>(<span class="ident">writer</span>),
-            <span class="kw">_</span> =&gt; <span class="prelude-val">Err</span>(<span class="ident">Error::UnsupportedTagFormat</span>),
+        <span class="kw">match </span>tag_format {
+            TagFormat::ID3 =&gt; tag.write_id3(writer),
+            TagFormat::MP4 =&gt; tag.write_mp4(writer),
+            <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(Error::UnsupportedTagFormat),
         }
     }
 
-    <span class="doccomment">/// Parse the [`Serato Markers2`](Markers2) tag.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_markers2</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">tag_format</span>: <span class="ident">TagFormat</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">match</span> <span class="ident">tag_format</span> {
-            <span class="ident">TagFormat::ID3</span> =&gt; {
-                <span class="self">self</span>.<span class="ident">markers2</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Markers2::parse_id3</span>(<span class="ident">input</span>)<span class="question-mark">?</span>);
+    <span class="doccomment">/// Parse the [`Serato Markers2`](Markers2) tag.
+    </span><span class="kw">pub fn </span>parse_markers2(<span class="kw-2">&amp;mut </span><span class="self">self</span>, input: <span class="kw-2">&amp;</span>[u8], tag_format: TagFormat) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+        <span class="kw">match </span>tag_format {
+            TagFormat::ID3 =&gt; {
+                <span class="self">self</span>.markers2 = <span class="prelude-val">Some</span>(Markers2::parse_id3(input)<span class="question-mark">?</span>);
             }
-            <span class="ident">TagFormat::FLAC</span> =&gt; {
-                <span class="self">self</span>.<span class="ident">markers2</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Markers2::parse_flac</span>(<span class="ident">input</span>)<span class="question-mark">?</span>);
+            TagFormat::FLAC =&gt; {
+                <span class="self">self</span>.markers2 = <span class="prelude-val">Some</span>(Markers2::parse_flac(input)<span class="question-mark">?</span>);
             }
-            <span class="ident">TagFormat::MP4</span> =&gt; {
-                <span class="self">self</span>.<span class="ident">markers2</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Markers2::parse_mp4</span>(<span class="ident">input</span>)<span class="question-mark">?</span>);
+            TagFormat::MP4 =&gt; {
+                <span class="self">self</span>.markers2 = <span class="prelude-val">Some</span>(Markers2::parse_mp4(input)<span class="question-mark">?</span>);
             }
-            <span class="ident">TagFormat::Ogg</span> =&gt; {
-                <span class="self">self</span>.<span class="ident">markers2</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Markers2::parse_ogg</span>(<span class="ident">input</span>)<span class="question-mark">?</span>);
+            TagFormat::Ogg =&gt; {
+                <span class="self">self</span>.markers2 = <span class="prelude-val">Some</span>(Markers2::parse_ogg(input)<span class="question-mark">?</span>);
             }
         }
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="doccomment">/// Write the [`Serato Markers2`](Markers2) tag.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">write_markers2</span>(
+    <span class="doccomment">/// Write the [`Serato Markers2`](Markers2) tag.
+    </span><span class="kw">pub fn </span>write_markers2(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        <span class="ident">writer</span>: <span class="kw-2">&amp;mut</span> <span class="kw">impl</span> <span class="ident">io::Write</span>,
-        <span class="ident">tag_format</span>: <span class="ident">TagFormat</span>,
-    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">tag</span> <span class="op">=</span> <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">markers2</span> {
-            <span class="prelude-val">Some</span>(<span class="ident">x</span>) =&gt; <span class="ident">x</span>,
-            <span class="prelude-val">None</span> =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::NoTagDataAvailable</span>),
+        writer: <span class="kw-2">&amp;mut </span><span class="kw">impl </span>io::Write,
+        tag_format: TagFormat,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;usize, Error&gt; {
+        <span class="kw">let </span>tag = <span class="kw">match </span><span class="kw-2">&amp;</span><span class="self">self</span>.markers2 {
+            <span class="prelude-val">Some</span>(x) =&gt; x,
+            <span class="prelude-val">None </span>=&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(Error::NoTagDataAvailable),
         };
-        <span class="kw">match</span> <span class="ident">tag_format</span> {
-            <span class="ident">TagFormat::ID3</span> =&gt; <span class="ident">tag</span>.<span class="ident">write_id3</span>(<span class="ident">writer</span>),
-            <span class="ident">TagFormat::FLAC</span> =&gt; <span class="ident">tag</span>.<span class="ident">write_flac</span>(<span class="ident">writer</span>),
-            <span class="ident">TagFormat::MP4</span> =&gt; <span class="ident">tag</span>.<span class="ident">write_mp4</span>(<span class="ident">writer</span>),
-            <span class="kw">_</span> =&gt; <span class="prelude-val">Err</span>(<span class="ident">Error::UnsupportedTagFormat</span>),
+        <span class="kw">match </span>tag_format {
+            TagFormat::ID3 =&gt; tag.write_id3(writer),
+            TagFormat::FLAC =&gt; tag.write_flac(writer),
+            TagFormat::MP4 =&gt; tag.write_mp4(writer),
+            <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(Error::UnsupportedTagFormat),
         }
     }
 
-    <span class="doccomment">/// Parse the [`Serato Overview`](Overview) tag.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse_overview</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">tag_format</span>: <span class="ident">TagFormat</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">match</span> <span class="ident">tag_format</span> {
-            <span class="ident">TagFormat::ID3</span> =&gt; {
-                <span class="self">self</span>.<span class="ident">overview</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Overview::parse_id3</span>(<span class="ident">input</span>)<span class="question-mark">?</span>);
+    <span class="doccomment">/// Parse the [`Serato Overview`](Overview) tag.
+    </span><span class="kw">pub fn </span>parse_overview(<span class="kw-2">&amp;mut </span><span class="self">self</span>, input: <span class="kw-2">&amp;</span>[u8], tag_format: TagFormat) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+        <span class="kw">match </span>tag_format {
+            TagFormat::ID3 =&gt; {
+                <span class="self">self</span>.overview = <span class="prelude-val">Some</span>(Overview::parse_id3(input)<span class="question-mark">?</span>);
             }
-            <span class="ident">TagFormat::FLAC</span> =&gt; {
-                <span class="self">self</span>.<span class="ident">overview</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Overview::parse_flac</span>(<span class="ident">input</span>)<span class="question-mark">?</span>);
+            TagFormat::FLAC =&gt; {
+                <span class="self">self</span>.overview = <span class="prelude-val">Some</span>(Overview::parse_flac(input)<span class="question-mark">?</span>);
             }
-            <span class="ident">TagFormat::MP4</span> =&gt; {
-                <span class="self">self</span>.<span class="ident">overview</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Overview::parse_mp4</span>(<span class="ident">input</span>)<span class="question-mark">?</span>);
+            TagFormat::MP4 =&gt; {
+                <span class="self">self</span>.overview = <span class="prelude-val">Some</span>(Overview::parse_mp4(input)<span class="question-mark">?</span>);
             }
-            <span class="kw">_</span> =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::UnsupportedTagFormat</span>),
+            <span class="kw">_ </span>=&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(Error::UnsupportedTagFormat),
         }
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="doccomment">/// Write the [`Serato Overview`](Overview) tag.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">write_overview</span>(
+    <span class="doccomment">/// Write the [`Serato Overview`](Overview) tag.
+    </span><span class="kw">pub fn </span>write_overview(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        <span class="ident">writer</span>: <span class="kw-2">&amp;mut</span> <span class="kw">impl</span> <span class="ident">io::Write</span>,
-        <span class="ident">tag_format</span>: <span class="ident">TagFormat</span>,
-    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">tag</span> <span class="op">=</span> <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">overview</span> {
-            <span class="prelude-val">Some</span>(<span class="ident">x</span>) =&gt; <span class="ident">x</span>,
-            <span class="prelude-val">None</span> =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::NoTagDataAvailable</span>),
+        writer: <span class="kw-2">&amp;mut </span><span class="kw">impl </span>io::Write,
+        tag_format: TagFormat,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;usize, Error&gt; {
+        <span class="kw">let </span>tag = <span class="kw">match </span><span class="kw-2">&amp;</span><span class="self">self</span>.overview {
+            <span class="prelude-val">Some</span>(x) =&gt; x,
+            <span class="prelude-val">None </span>=&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(Error::NoTagDataAvailable),
         };
-        <span class="kw">match</span> <span class="ident">tag_format</span> {
-            <span class="ident">TagFormat::ID3</span> =&gt; <span class="ident">tag</span>.<span class="ident">write_id3</span>(<span class="ident">writer</span>),
-            <span class="ident">TagFormat::FLAC</span> =&gt; <span class="ident">tag</span>.<span class="ident">write_flac</span>(<span class="ident">writer</span>),
-            <span class="ident">TagFormat::MP4</span> =&gt; <span class="ident">tag</span>.<span class="ident">write_mp4</span>(<span class="ident">writer</span>),
-            <span class="kw">_</span> =&gt; <span class="prelude-val">Err</span>(<span class="ident">Error::UnsupportedTagFormat</span>),
+        <span class="kw">match </span>tag_format {
+            TagFormat::ID3 =&gt; tag.write_id3(writer),
+            TagFormat::FLAC =&gt; tag.write_flac(writer),
+            TagFormat::MP4 =&gt; tag.write_mp4(writer),
+            <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(Error::UnsupportedTagFormat),
         }
     }
 
-    <span class="doccomment">/// Returns the [`auto_gain`](Autotags::auto_gain) value from the [`Serato Autotags`](Autotags) tag.</span>
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">auto_gain</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span> {
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">tag</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">autotags</span> {
-            <span class="kw">return</span> <span class="prelude-val">Some</span>(<span class="ident">tag</span>.<span class="ident">auto_gain</span>);
+    <span class="doccomment">/// Returns the [`auto_gain`](Autotags::auto_gain) value from the [`Serato Autotags`](Autotags) tag.
+    </span><span class="attribute">#[must_use]
+    </span><span class="kw">pub fn </span>auto_gain(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;f64&gt; {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(tag) = <span class="kw-2">&amp;</span><span class="self">self</span>.autotags {
+            <span class="kw">return </span><span class="prelude-val">Some</span>(tag.auto_gain);
         }
 
-        <span class="prelude-val">None</span>
-    }
+        <span class="prelude-val">None
+    </span>}
 
-    <span class="doccomment">/// Returns the [`gain_db`](Autotags::gain_db) value from the [`Serato Autotags`](Autotags) tag.</span>
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">gain_db</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span> {
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">tag</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">autotags</span> {
-            <span class="kw">return</span> <span class="prelude-val">Some</span>(<span class="ident">tag</span>.<span class="ident">gain_db</span>);
+    <span class="doccomment">/// Returns the [`gain_db`](Autotags::gain_db) value from the [`Serato Autotags`](Autotags) tag.
+    </span><span class="attribute">#[must_use]
+    </span><span class="kw">pub fn </span>gain_db(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;f64&gt; {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(tag) = <span class="kw-2">&amp;</span><span class="self">self</span>.autotags {
+            <span class="kw">return </span><span class="prelude-val">Some</span>(tag.gain_db);
         }
 
-        <span class="prelude-val">None</span>
-    }
+        <span class="prelude-val">None
+    </span>}
 
-    <span class="doccomment">/// Returns the beatgrid from the [`Serato BeatGrid`](Beatgrid) tag.</span>
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">beatgrid</span>(
+    <span class="doccomment">/// Returns the beatgrid from the [`Serato BeatGrid`](Beatgrid) tag.
+    </span><span class="attribute">#[must_use]
+    </span><span class="kw">pub fn </span>beatgrid(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-    ) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="kw-2">&amp;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">beatgrid::NonTerminalMarker</span><span class="op">&gt;</span>, <span class="kw-2">&amp;</span><span class="ident">beatgrid::TerminalMarker</span>)<span class="op">&gt;</span> {
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">tag</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">beatgrid</span> {
-            <span class="kw">return</span> <span class="prelude-val">Some</span>((<span class="kw-2">&amp;</span><span class="ident">tag</span>.<span class="ident">non_terminal_markers</span>, <span class="kw-2">&amp;</span><span class="ident">tag</span>.<span class="ident">terminal_marker</span>));
+    ) -&gt; <span class="prelude-ty">Option</span>&lt;(<span class="kw-2">&amp;</span>Vec&lt;beatgrid::NonTerminalMarker&gt;, <span class="kw-2">&amp;</span>beatgrid::TerminalMarker)&gt; {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(tag) = <span class="kw-2">&amp;</span><span class="self">self</span>.beatgrid {
+            <span class="kw">return </span><span class="prelude-val">Some</span>((<span class="kw-2">&amp;</span>tag.non_terminal_markers, <span class="kw-2">&amp;</span>tag.terminal_marker));
         }
 
-        <span class="prelude-val">None</span>
-    }
+        <span class="prelude-val">None
+    </span>}
 
-    <span class="doccomment">/// Returns BPM lock status from the [`Serato Markers2`](Markers2) tag.</span>
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">bpm_locked</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span> {
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">m</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">markers2</span> {
-            <span class="kw">return</span> <span class="ident">m</span>.<span class="ident">bpm_locked</span>();
+    <span class="doccomment">/// Returns BPM lock status from the [`Serato Markers2`](Markers2) tag.
+    </span><span class="attribute">#[must_use]
+    </span><span class="kw">pub fn </span>bpm_locked(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;bool&gt; {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(m) = <span class="kw-2">&amp;</span><span class="self">self</span>.markers2 {
+            <span class="kw">return </span>m.bpm_locked();
         }
 
-        <span class="prelude-val">None</span>
-    }
+        <span class="prelude-val">None
+    </span>}
 
-    <span class="doccomment">/// Returns cues from the [`Serato Markers_`](Markers) and [`Serato Markers2`](Markers2) tags.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// This retrieves the `Serato Markers2` cues first, then overwrite the values with those from</span>
-    <span class="doccomment">/// `Serato Markers_`. This is what Serato does too (i.e. if `Serato Markers_` and `Serato</span>
-    <span class="doccomment">/// Markers2` contradict each other, Serato will use the values from `Serato Markers_`).</span>
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">cues</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">generic::Cue</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">map</span> <span class="op">=</span> <span class="ident">std::collections::BTreeMap::new</span>();
+    <span class="doccomment">/// Returns cues from the [`Serato Markers_`](Markers) and [`Serato Markers2`](Markers2) tags.
+    ///
+    /// This retrieves the `Serato Markers2` cues first, then overwrite the values with those from
+    /// `Serato Markers_`. This is what Serato does too (i.e. if `Serato Markers_` and `Serato
+    /// Markers2` contradict each other, Serato will use the values from `Serato Markers_`).
+    </span><span class="attribute">#[must_use]
+    </span><span class="kw">pub fn </span>cues(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Vec&lt;generic::Cue&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>map = std::collections::BTreeMap::new();
 
-        <span class="comment">// First, insert all cue from the `Serato Markers2` tag into the map.</span>
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">m</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">markers2</span> {
-            <span class="kw">for</span> <span class="ident">cue</span> <span class="kw">in</span> <span class="ident">m</span>.<span class="ident">cues</span>() {
-                <span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">cue</span>.<span class="ident">index</span>, <span class="ident">cue</span>.<span class="ident">to_owned</span>());
+        <span class="comment">// First, insert all cue from the `Serato Markers2` tag into the map.
+        </span><span class="kw">if let </span><span class="prelude-val">Some</span>(m) = <span class="kw-2">&amp;</span><span class="self">self</span>.markers2 {
+            <span class="kw">for </span>cue <span class="kw">in </span>m.cues() {
+                map.insert(cue.index, cue.to_owned());
             }
         }
 
-        <span class="comment">// Now, iterate over the cue markers from the `Serato Markers_` tag.</span>
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">m</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">markers</span> {
-            <span class="kw">for</span> (<span class="ident">index</span>, <span class="ident">marker</span>) <span class="kw">in</span> <span class="ident">m</span>.<span class="ident">cues</span>() {
-                <span class="kw">match</span> <span class="ident">marker</span>.<span class="ident">marker_type</span> {
-                    <span class="comment">// If a cue is set in `Serato Markers2` but is invalid in `Serato Markers_`,</span>
-                    <span class="comment">// remove it.</span>
-                    <span class="ident">markers::MarkerType::Invalid</span> =&gt; {
-                        <span class="ident">map</span>.<span class="ident">remove</span>(<span class="kw-2">&amp;</span><span class="ident">index</span>);
+        <span class="comment">// Now, iterate over the cue markers from the `Serato Markers_` tag.
+        </span><span class="kw">if let </span><span class="prelude-val">Some</span>(m) = <span class="kw-2">&amp;</span><span class="self">self</span>.markers {
+            <span class="kw">for </span>(index, marker) <span class="kw">in </span>m.cues() {
+                <span class="kw">match </span>marker.marker_type {
+                    <span class="comment">// If a cue is set in `Serato Markers2` but is invalid in `Serato Markers_`,
+                    // remove it.
+                    </span>markers::MarkerType::Invalid =&gt; {
+                        map.remove(<span class="kw-2">&amp;</span>index);
                         <span class="kw">continue</span>;
                     }
-                    <span class="ident">markers::MarkerType::Cue</span> =&gt; {
-                        <span class="kw">if</span> <span class="ident">marker</span>.<span class="ident">start_position</span> <span class="op">==</span> <span class="prelude-val">None</span> {
-                            <span class="comment">// This shouldn&#39;t be possible if the `Serato Markers_` data is valid.</span>
-                            <span class="comment">// Ideally, this should be checked during the parsing state.</span>
-                            <span class="comment">// FIXME: Throw error here?</span>
-                            <span class="ident">map</span>.<span class="ident">remove</span>(<span class="kw-2">&amp;</span><span class="ident">index</span>);
+                    markers::MarkerType::Cue =&gt; {
+                        <span class="kw">if </span>marker.start_position == <span class="prelude-val">None </span>{
+                            <span class="comment">// This shouldn&#39;t be possible if the `Serato Markers_` data is valid.
+                            // Ideally, this should be checked during the parsing state.
+                            // FIXME: Throw error here?
+                            </span>map.remove(<span class="kw-2">&amp;</span>index);
                             <span class="kw">continue</span>;
                         }
 
-                        <span class="kw">let</span> <span class="ident">position</span> <span class="op">=</span> <span class="ident">marker</span>.<span class="ident">start_position</span>.<span class="ident">unwrap</span>();
+                        <span class="kw">let </span>position = marker.start_position.unwrap();
 
-                        <span class="comment">// If the cue is set in both `Serato Markers2` and `Serato Markers_`, use</span>
-                        <span class="comment">// the version from `Serato Markers_`, but keep the label from `Serato</span>
-                        <span class="comment">// Markers2` because the `Serato Markers_` tag doesn&#39;t contain labels.</span>
-                        <span class="kw">let</span> <span class="ident">markers2_cue</span> <span class="op">=</span> <span class="ident">map</span>.<span class="ident">remove</span>(<span class="kw-2">&amp;</span><span class="ident">index</span>);
-                        <span class="kw">let</span> <span class="ident">label</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">markers2_cue</span> {
-                            <span class="prelude-val">Some</span>(<span class="ident">c</span>) =&gt; <span class="ident">c</span>.<span class="ident">label</span>,
-                            <span class="prelude-val">None</span> =&gt; <span class="ident">String::new</span>(),
+                        <span class="comment">// If the cue is set in both `Serato Markers2` and `Serato Markers_`, use
+                        // the version from `Serato Markers_`, but keep the label from `Serato
+                        // Markers2` because the `Serato Markers_` tag doesn&#39;t contain labels.
+                        </span><span class="kw">let </span>markers2_cue = map.remove(<span class="kw-2">&amp;</span>index);
+                        <span class="kw">let </span>label = <span class="kw">match </span>markers2_cue {
+                            <span class="prelude-val">Some</span>(c) =&gt; c.label,
+                            <span class="prelude-val">None </span>=&gt; String::new(),
                         };
 
-                        <span class="ident">map</span>.<span class="ident">insert</span>(
-                            <span class="ident">index</span>,
-                            <span class="ident">generic::Cue</span> {
-                                <span class="ident">index</span>,
-                                <span class="ident">position</span>,
-                                <span class="ident">color</span>: <span class="ident">marker</span>.<span class="ident">color</span>,
-                                <span class="ident">label</span>,
+                        map.insert(
+                            index,
+                            generic::Cue {
+                                index,
+                                position,
+                                color: marker.color,
+                                label,
                             },
                         );
                     }
-                    <span class="kw">_</span> =&gt; {} <span class="comment">// Ignore loop markers</span>
-                }
+                    <span class="kw">_ </span>=&gt; {} <span class="comment">// Ignore loop markers
+                </span>}
             }
         }
 
-        <span class="comment">// Return the sorted list of cues.</span>
-        <span class="ident">map</span>.<span class="ident">into_values</span>().<span class="ident">collect</span>()
+        <span class="comment">// Return the sorted list of cues.
+        </span>map.into_values().collect()
     }
 
-    <span class="doccomment">/// Returns loops from the [`Serato Markers_`](Markers) and [`Serato Markers2`](Markers2) tags.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// This retrieves the `Serato Markers2` loops first, then overwrite the values with those from</span>
-    <span class="doccomment">/// `Serato Markers_`. This is what Serato does too (i.e. if `Serato Markers_` and `Serato</span>
-    <span class="doccomment">/// Markers2` contradict each other, Serato will use the values from `Serato Markers_`).</span>
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">loops</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">generic::Loop</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">map</span> <span class="op">=</span> <span class="ident">std::collections::BTreeMap::new</span>();
+    <span class="doccomment">/// Returns loops from the [`Serato Markers_`](Markers) and [`Serato Markers2`](Markers2) tags.
+    ///
+    /// This retrieves the `Serato Markers2` loops first, then overwrite the values with those from
+    /// `Serato Markers_`. This is what Serato does too (i.e. if `Serato Markers_` and `Serato
+    /// Markers2` contradict each other, Serato will use the values from `Serato Markers_`).
+    </span><span class="attribute">#[must_use]
+    </span><span class="kw">pub fn </span>loops(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Vec&lt;generic::Loop&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>map = std::collections::BTreeMap::new();
 
-        <span class="comment">// First, insert all cue from the `Serato Markers2` tag into the map.</span>
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">m</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">markers2</span> {
-            <span class="kw">for</span> <span class="ident">saved_loop</span> <span class="kw">in</span> <span class="ident">m</span>.<span class="ident">loops</span>() {
-                <span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">saved_loop</span>.<span class="ident">index</span>, <span class="ident">saved_loop</span>.<span class="ident">to_owned</span>());
+        <span class="comment">// First, insert all cue from the `Serato Markers2` tag into the map.
+        </span><span class="kw">if let </span><span class="prelude-val">Some</span>(m) = <span class="kw-2">&amp;</span><span class="self">self</span>.markers2 {
+            <span class="kw">for </span>saved_loop <span class="kw">in </span>m.loops() {
+                map.insert(saved_loop.index, saved_loop.to_owned());
             }
         }
 
-        <span class="comment">// Now, iterate over the cue markers from the `Serato Markers_` tag.</span>
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">m</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">markers</span> {
-            <span class="kw">for</span> (<span class="ident">index</span>, <span class="ident">marker</span>) <span class="kw">in</span> <span class="ident">m</span>.<span class="ident">loops</span>() {
-                <span class="kw">if</span> <span class="ident">marker</span>.<span class="ident">marker_type</span> <span class="op">!</span><span class="op">=</span> <span class="ident">markers::MarkerType::Loop</span> {
-                    <span class="comment">// This can only happen is `Markers::cues()` returns non-cue markers, which</span>
-                    <span class="comment">// would be a bug.</span>
-                    <span class="comment">// FIXME: Throw error here?</span>
+        <span class="comment">// Now, iterate over the cue markers from the `Serato Markers_` tag.
+        </span><span class="kw">if let </span><span class="prelude-val">Some</span>(m) = <span class="kw-2">&amp;</span><span class="self">self</span>.markers {
+            <span class="kw">for </span>(index, marker) <span class="kw">in </span>m.loops() {
+                <span class="kw">if </span>marker.marker_type != markers::MarkerType::Loop {
+                    <span class="comment">// This can only happen is `Markers::cues()` returns non-cue markers, which
+                    // would be a bug.
+                    // FIXME: Throw error here?
+                    </span><span class="kw">continue</span>;
+                }
+
+                <span class="kw">if </span>marker.start_position == <span class="prelude-val">None </span>|| marker.end_position == <span class="prelude-val">None </span>{
+                    <span class="comment">// This may happen even for valid data, because unset loops lack the start/end
+                    // position.
+                    </span>map.remove(<span class="kw-2">&amp;</span>index);
                     <span class="kw">continue</span>;
                 }
 
-                <span class="kw">if</span> <span class="ident">marker</span>.<span class="ident">start_position</span> <span class="op">==</span> <span class="prelude-val">None</span> <span class="op">|</span><span class="op">|</span> <span class="ident">marker</span>.<span class="ident">end_position</span> <span class="op">==</span> <span class="prelude-val">None</span> {
-                    <span class="comment">// This may happen even for valid data, because unset loops lack the start/end</span>
-                    <span class="comment">// position.</span>
-                    <span class="ident">map</span>.<span class="ident">remove</span>(<span class="kw-2">&amp;</span><span class="ident">index</span>);
-                    <span class="kw">continue</span>;
-                }
+                <span class="kw">let </span>start_position = marker.start_position.unwrap();
+                <span class="kw">let </span>end_position = marker.end_position.unwrap();
 
-                <span class="kw">let</span> <span class="ident">start_position</span> <span class="op">=</span> <span class="ident">marker</span>.<span class="ident">start_position</span>.<span class="ident">unwrap</span>();
-                <span class="kw">let</span> <span class="ident">end_position</span> <span class="op">=</span> <span class="ident">marker</span>.<span class="ident">end_position</span>.<span class="ident">unwrap</span>();
-
-                <span class="comment">// If the loop is set in both `Serato Markers2` and `Serato Markers_`, use</span>
-                <span class="comment">// the version from `Serato Markers_`, but keep the label from `Serato</span>
-                <span class="comment">// Markers2` because the `Serato Markers_` tag doesn&#39;t contain labels.</span>
-                <span class="kw">let</span> <span class="ident">markers2_loop</span> <span class="op">=</span> <span class="ident">map</span>.<span class="ident">remove</span>(<span class="kw-2">&amp;</span><span class="ident">index</span>);
-                <span class="kw">let</span> <span class="ident">label</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">markers2_loop</span> {
-                    <span class="prelude-val">Some</span>(<span class="ident">c</span>) =&gt; <span class="ident">c</span>.<span class="ident">label</span>,
-                    <span class="prelude-val">None</span> =&gt; <span class="ident">String::new</span>(),
+                <span class="comment">// If the loop is set in both `Serato Markers2` and `Serato Markers_`, use
+                // the version from `Serato Markers_`, but keep the label from `Serato
+                // Markers2` because the `Serato Markers_` tag doesn&#39;t contain labels.
+                </span><span class="kw">let </span>markers2_loop = map.remove(<span class="kw-2">&amp;</span>index);
+                <span class="kw">let </span>label = <span class="kw">match </span>markers2_loop {
+                    <span class="prelude-val">Some</span>(c) =&gt; c.label,
+                    <span class="prelude-val">None </span>=&gt; String::new(),
                 };
 
-                <span class="ident">map</span>.<span class="ident">insert</span>(
-                    <span class="ident">index</span>,
-                    <span class="ident">generic::Loop</span> {
-                        <span class="ident">index</span>,
-                        <span class="ident">start_position</span>,
-                        <span class="ident">end_position</span>,
-                        <span class="ident">color</span>: <span class="ident">marker</span>.<span class="ident">color</span>,
-                        <span class="ident">label</span>,
-                        <span class="ident">is_locked</span>: <span class="ident">marker</span>.<span class="ident">is_locked</span>,
+                map.insert(
+                    index,
+                    generic::Loop {
+                        index,
+                        start_position,
+                        end_position,
+                        color: marker.color,
+                        label,
+                        is_locked: marker.is_locked,
                     },
                 );
             }
         }
 
-        <span class="comment">// Return the sorted list of cues.</span>
-        <span class="ident">map</span>.<span class="ident">into_values</span>().<span class="ident">collect</span>()
+        <span class="comment">// Return the sorted list of cues.
+        </span>map.into_values().collect()
     }
 
-    <span class="doccomment">/// Returns [flips](https://serato.com/dj/pro/expansions/flip) from the [`Serato Markers2`](Markers2) tag.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">flips</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw">impl</span> <span class="ident">Iterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">generic::Flip</span><span class="op">&gt;</span><span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">markers2</span>.<span class="ident">as_ref</span>().<span class="ident">map</span>(<span class="ident">Markers2::flips</span>)
+    <span class="doccomment">/// Returns [flips](https://serato.com/dj/pro/expansions/flip) from the [`Serato Markers2`](Markers2) tag.
+    </span><span class="kw">pub fn </span>flips(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw">impl </span>Iterator&lt;Item = <span class="kw-2">&amp;</span>generic::Flip&gt;&gt; {
+        <span class="self">self</span>.markers2.as_ref().map(Markers2::flips)
     }
 
-    <span class="doccomment">/// Returns the track color from the [`Serato Markers_`](Markers) and [`Serato</span>
-    <span class="doccomment">/// Markers2`](Markers2) tags.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// If present the color in `Serato Markers_` takes precedence over that in</span>
-    <span class="doccomment">/// `Serato Markers2`. This is what Serato does too, i.e. if `Serato Markers_`</span>
-    <span class="doccomment">/// and `Serato Markers2` contradict each other, Serato will use the value</span>
-    <span class="doccomment">/// from `Serato Markers_`.</span>
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">track_color</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Color</span><span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">markers</span>
-            .<span class="ident">as_ref</span>()
-            .<span class="ident">map</span>(<span class="ident">Markers::track_color</span>)
-            .<span class="ident">or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">markers2</span>.<span class="ident">as_ref</span>().<span class="ident">and_then</span>(<span class="ident">Markers2::track_color</span>))
+    <span class="doccomment">/// Returns the track color from the [`Serato Markers_`](Markers) and [`Serato
+    /// Markers2`](Markers2) tags.
+    ///
+    /// If present the color in `Serato Markers_` takes precedence over that in
+    /// `Serato Markers2`. This is what Serato does too, i.e. if `Serato Markers_`
+    /// and `Serato Markers2` contradict each other, Serato will use the value
+    /// from `Serato Markers_`.
+    </span><span class="attribute">#[must_use]
+    </span><span class="kw">pub fn </span>track_color(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Color&gt; {
+        <span class="self">self</span>.markers
+            .as_ref()
+            .map(Markers::track_color)
+            .or_else(|| <span class="self">self</span>.markers2.as_ref().and_then(Markers2::track_color))
     }
 
-    <span class="doccomment">/// Returns the waveform overview data color from the [`Serato Overview`](Overview) tag.</span>
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">overview_data</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>]<span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">overview</span>.<span class="ident">as_ref</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">overview</span><span class="op">|</span> <span class="kw-2">&amp;</span><span class="ident">overview</span>.<span class="ident">data</span>[..])
+    <span class="doccomment">/// Returns the waveform overview data color from the [`Serato Overview`](Overview) tag.
+    </span><span class="attribute">#[must_use]
+    </span><span class="kw">pub fn </span>overview_data(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>[Vec&lt;u8&gt;]&gt; {
+        <span class="self">self</span>.overview.as_ref().map(|overview| <span class="kw-2">&amp;</span>overview.data[..])
     }
 }
 
-<span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">TagContainer</span> {
-    <span class="kw">fn</span> <span class="ident">default</span>() -&gt; <span class="self">Self</span> {
-        <span class="ident"><span class="self">Self</span>::new</span>()
+<span class="kw">impl </span>Default <span class="kw">for </span>TagContainer {
+    <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>::new()
     }
 }
 </code></pre></div>
-</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="triseratops" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.60.0 (7737e0b5c 2022-04-04)" ></div>
-</body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="triseratops" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.1 (90743e729 2023-01-10)" ></div></body></html>

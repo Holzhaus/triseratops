@@ -1,1 +1,1 @@
-initSidebarItems({"trait":[["MP4Tag",""]]});
+window.SIDEBAR_ITEMS = {"trait":[["MP4Tag",""]]};
