@@ -85,7 +85,7 @@
 //! | 21 | ![999999](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_picker_999999.gif) `#999999` | ![090909](https://raw.githubusercontent.com/Holzhaus/triseratops/main/assets/colors/track_library_090909.gif) `#090909` |
 
 /// Represents a 3-Byte RGB color value.
-#[derive(Debug, PartialEq, Copy, Clone)]
+#[derive(Debug, PartialEq, Eq, Copy, Clone)]
 pub struct Color {
     pub red: u8,
     pub green: u8,
