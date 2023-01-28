@@ -24,9 +24,11 @@ repos:
   rev: v2.2.2
   hooks:
   - id: codespell
-    args: [
-      --ignore-words=.codespellignore
-    ]
+    args:
+        [
+            --ignore-words=.codespellignore,
+            --exclude-file=.codespellignorelines,
+        ]
 - repo: https://github.com/doublify/pre-commit-rust
   rev: v1.0
   hooks:
