@@ -61,3 +61,7 @@ repos:
             #b
             #     [error] No matching files. Patterns: .git/COMMIT_EDITMSG
             exclude: ^\.git/COMMIT_EDITMSG$
+    - repo: https://github.com/Holzhaus/sourceheaders
+      rev: v0.0.4
+      hooks:
+          - id: sourceheaders
