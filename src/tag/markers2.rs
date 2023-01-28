@@ -1,3 +1,11 @@
+// Copyright (c) 2023 Jan Holthuis <jan.holthuis@rub.de>
+//
+// This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy
+// of the MPL was not distributed with this file, You can obtain one at
+// http://mozilla.org/MPL/2.0/.
+//
+// SPDX-License-Identifier: MPL-2.0
+
 //! The `Serato Markers2` tag stores various kinds of track "markers" like Cue Points, Saved Loops, Flips.
 //!
 //! It also stores information about the tracks' color in the tracklist and if the track's beatgrid is locked.

@@ -1,3 +1,11 @@
+// Copyright (c) 2023 Jan Holthuis <jan.holthuis@rub.de>
+//
+// This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy
+// of the MPL was not distributed with this file, You can obtain one at
+// http://mozilla.org/MPL/2.0/.
+//
+// SPDX-License-Identifier: MPL-2.0
+
 //! The `Serato Markers_` tag stores information about the first 5 Cues, 9 Loops and the track
 //! color.
 //!

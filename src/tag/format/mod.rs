@@ -1,3 +1,11 @@
+// Copyright (c) 2023 Jan Holthuis <jan.holthuis@rub.de>
+//
+// This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy
+// of the MPL was not distributed with this file, You can obtain one at
+// http://mozilla.org/MPL/2.0/.
+//
+// SPDX-License-Identifier: MPL-2.0
+
 //! Traits for the different tag types ([ID3](id3::ID3Tag), [FLAC](flac::FLACTag), etc.)
 
 pub mod enveloped;

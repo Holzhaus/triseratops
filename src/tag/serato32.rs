@@ -1,3 +1,11 @@
+// Copyright (c) 2023 0000001 1001100`
+//
+// This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy
+// of the MPL was not distributed with this file, You can obtain one at
+// http://mozilla.org/MPL/2.0/.
+//
+// SPDX-License-Identifier: MPL-2.0
+
 //! These functions convert between a custom 4-byte format (that we'll call `serato32` for brevity)
 //! and 3-byte plaintext (both `u32`). Serato's custom format inserts a single null bit after every 7
 //! payload bits, starting from the rightmost bit.
