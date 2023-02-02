@@ -15,7 +15,7 @@ use std::path::Path;
 fn main() {
     let out_dir = env::var("OUT_DIR").unwrap();
     let out_dir = Path::new(&out_dir);
-    println!("Writing tests to: {:?}", out_dir);
+    println!("Writing tests to: {out_dir:?}");
     write_tag_tests(out_dir);
     write_database_tests(out_dir);
 }
@@ -66,7 +66,7 @@ fn write_tag_test(test_file: &mut File, filepath: &Path, tag_name: &str) {
     let tag_type: &str = stem_split[0];
     let filename: &str = stem_split[1];
 
-    let test_name = format!("serato_{}_{}_{}", tag_name, filename, tag_type);
+    let test_name = format!("serato_{tag_name}_{filename}_{tag_type}");
 
     let parser = match tag_name {
         "analysis" => "Analysis",
@@ -125,7 +125,7 @@ use triseratops::library::database;
 }
 
 fn write_database_test(test_file: &mut File, filepath: &Path, db_name: &str) {
-    let test_name = format!("serato_database_{}", db_name);
+    let test_name = format!("serato_database_{db_name}");
     write!(
         test_file,
         include_str!("./tests/database_parse.rs.in"),
