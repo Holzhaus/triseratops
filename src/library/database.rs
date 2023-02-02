@@ -127,7 +127,7 @@ fn parse_bool(input: &[u8]) -> Res<&[u8], bool> {
     Ok((input, value))
 }
 
-fn parse_field<'a, 'b>(input: &'a [u8], name: &'b [u8], field_type: u8) -> Res<&'a [u8], Field> {
+fn parse_field<'a>(input: &'a [u8], name: &[u8], field_type: u8) -> Res<&'a [u8], Field> {
     match field_type {
         FIELD_BOOL => {
             let (input, value) = nom::combinator::all_consuming(parse_bool)(input)?;

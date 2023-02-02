@@ -22,13 +22,13 @@ fn main() -> Result<(), triseratops::error::Error> {
     let library = Library::read_from_path(path)?;
     let tracks: Vec<_> = library.tracks().collect();
     println!("Library ({} tracks)", tracks.len());
-    println!("{:#?}", tracks);
+    println!("{tracks:#?}");
     let subcrates = library.subcrates();
     for subcrate in subcrates {
         let subcrate_tracks: Vec<_> = library.subcrate(&subcrate)?.collect();
         println!();
         print!("Subcrate: {} ({} tracks)", &subcrate, subcrate_tracks.len());
-        println!("{:#?}", subcrate_tracks);
+        println!("{subcrate_tracks:#?}");
     }
 
     Ok(())

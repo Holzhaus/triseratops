@@ -21,11 +21,11 @@ fn main() -> Result<(), triseratops::error::Error> {
     }
     let filename = args.remove(0);
 
-    let mut file = File::open(&filename).expect("Failed to open file!");
+    let mut file = File::open(filename).expect("Failed to open file!");
     let mut data = vec![];
     file.read_to_end(&mut data).expect("Failed to read data!");
 
     let fields = database::parse(&data)?;
-    println!("{:#?}", fields);
+    println!("{fields:#?}");
     Ok(())
 }

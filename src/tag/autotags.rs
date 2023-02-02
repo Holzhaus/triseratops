@@ -112,7 +112,7 @@ pub fn write_double_str(
     number: f64,
     width: usize,
 ) -> Result<usize, Error> {
-    let number_str = format!("{:.*}\0", width, number);
+    let number_str = format!("{number:.width$}\0");
     Ok(writer.write(number_str.as_bytes())?)
 }
 

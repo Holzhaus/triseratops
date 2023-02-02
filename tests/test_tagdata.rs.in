@@ -6,7 +6,7 @@ fn {name}() {{
     let value = match triseratops::tag::{parser}::parse_{tag_type}(&input[..]) {{
         Ok(value) => value,
         Err(err) => {{
-            eprintln!("Error: {{:?}}", err);
+            eprintln!("Error: {{err:?}}");
             unreachable!();
         }}
     }};
@@ -15,7 +15,7 @@ fn {name}() {{
     let bytes_written = match value.write_{tag_type}(&mut writer) {{
         Ok(x) => x,
         Err(err) => {{
-            eprintln!("Error: {{:?}}", err);
+            eprintln!("Error: {{err:?}}");
             unreachable!();
         }}
     }};

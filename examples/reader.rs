@@ -31,36 +31,36 @@ fn main() -> Result<(), triseratops::error::Error> {
         match &geob.description[..] {
             triseratops::tag::Analysis::ID3_TAG => {
                 let tag = triseratops::tag::Analysis::parse_id3(&geob.data)?;
-                let output = format!("{:#?}", tag);
+                let output = format!("{tag:#?}");
                 println!("{}", textwrap::indent(&output, "    "));
             }
             triseratops::tag::Autotags::ID3_TAG => {
                 let tag = triseratops::tag::Autotags::parse_id3(&geob.data)?;
-                let output = format!("{:#?}", tag);
+                let output = format!("{tag:#?}");
                 println!("{}", textwrap::indent(&output, "    "));
                 container.parse_autotags(&geob.data, TagFormat::ID3)?;
             }
             triseratops::tag::Beatgrid::ID3_TAG => {
                 let tag = triseratops::tag::Beatgrid::parse_id3(&geob.data)?;
-                let output = format!("{:#?}", tag);
+                let output = format!("{tag:#?}");
                 println!("{}", textwrap::indent(&output, "    "));
                 container.parse_beatgrid(&geob.data, TagFormat::ID3)?;
             }
             triseratops::tag::Markers::ID3_TAG => {
                 let tag = triseratops::tag::Markers::parse_id3(&geob.data)?;
-                let output = format!("{:#?}", tag);
+                let output = format!("{tag:#?}");
                 println!("{}", textwrap::indent(&output, "    "));
                 container.parse_markers(&geob.data, TagFormat::ID3)?;
             }
             triseratops::tag::Markers2::ID3_TAG => {
                 let tag = triseratops::tag::Markers2::parse_id3(&geob.data)?;
-                let output = format!("{:#?}", tag);
+                let output = format!("{tag:#?}");
                 println!("{}", textwrap::indent(&output, "    "));
                 container.parse_markers2(&geob.data, TagFormat::ID3)?;
             }
             triseratops::tag::Overview::ID3_TAG => {
                 let tag = triseratops::tag::Overview::parse_id3(&geob.data)?;
-                let output = format!("{:#?}", tag);
+                let output = format!("{tag:#?}");
                 println!("{}", textwrap::indent(&output, "    "));
                 container.parse_overview(&geob.data, TagFormat::ID3)?;
             }

@@ -298,7 +298,7 @@ impl TagContainer {
                         continue;
                     }
                     markers::MarkerType::Cue => {
-                        if marker.start_position == None {
+                        if marker.start_position.is_none() {
                             // This shouldn't be possible if the `Serato Markers_` data is valid.
                             // Ideally, this should be checked during the parsing state.
                             // FIXME: Throw error here?
@@ -362,7 +362,7 @@ impl TagContainer {
                     continue;
                 }
 
-                if marker.start_position == None || marker.end_position == None {
+                if marker.start_position.is_none() || marker.end_position.is_none() {
                     // This may happen even for valid data, because unset loops lack the start/end
                     // position.
                     map.remove(&index);

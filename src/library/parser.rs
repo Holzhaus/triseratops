@@ -206,7 +206,7 @@ impl Library {
 
     /// Get a list of tracks from the subcrate with the given name.
     pub fn subcrate(&self, name: &str) -> Result<impl Iterator<Item = &Track>, Error> {
-        let filename = format!("{}.{}", name, CRATE_EXTENSION);
+        let filename = format!("{name}.{CRATE_EXTENSION}");
         let crate_path = self.serato_path().join(SUBCRATE_DIR).join(filename);
         let mut file = BufReader::new(File::open(crate_path)?);
         let mut data = vec![];
