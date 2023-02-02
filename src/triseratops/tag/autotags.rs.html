@@ -237,7 +237,7 @@
     number: f64,
     width: usize,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;usize, Error&gt; {
-    <span class="kw">let </span>number_str = <span class="macro">format!</span>(<span class="string">&quot;{:.*}\0&quot;</span>, width, number);
+    <span class="kw">let </span>number_str = <span class="macro">format!</span>(<span class="string">&quot;{number:.width$}\0&quot;</span>);
     <span class="prelude-val">Ok</span>(writer.write(number_str.as_bytes())<span class="question-mark">?</span>)
 }
 

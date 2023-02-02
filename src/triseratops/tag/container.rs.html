@@ -731,7 +731,7 @@
                         <span class="kw">continue</span>;
                     }
                     markers::MarkerType::Cue =&gt; {
-                        <span class="kw">if </span>marker.start_position == <span class="prelude-val">None </span>{
+                        <span class="kw">if </span>marker.start_position.is_none() {
                             <span class="comment">// This shouldn&#39;t be possible if the `Serato Markers_` data is valid.
                             // Ideally, this should be checked during the parsing state.
                             // FIXME: Throw error here?
@@ -795,7 +795,7 @@
                     </span><span class="kw">continue</span>;
                 }
 
-                <span class="kw">if </span>marker.start_position == <span class="prelude-val">None </span>|| marker.end_position == <span class="prelude-val">None </span>{
+                <span class="kw">if </span>marker.start_position.is_none() || marker.end_position.is_none() {
                     <span class="comment">// This may happen even for valid data, because unset loops lack the start/end
                     // position.
                     </span>map.remove(<span class="kw-2">&amp;</span>index);

@@ -463,7 +463,7 @@
 
     <span class="doccomment">/// Get a list of tracks from the subcrate with the given name.
     </span><span class="kw">pub fn </span>subcrate(<span class="kw-2">&amp;</span><span class="self">self</span>, name: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw">impl </span>Iterator&lt;Item = <span class="kw-2">&amp;</span>Track&gt;, Error&gt; {
-        <span class="kw">let </span>filename = <span class="macro">format!</span>(<span class="string">&quot;{}.{}&quot;</span>, name, CRATE_EXTENSION);
+        <span class="kw">let </span>filename = <span class="macro">format!</span>(<span class="string">&quot;{name}.{CRATE_EXTENSION}&quot;</span>);
         <span class="kw">let </span>crate_path = <span class="self">self</span>.serato_path().join(SUBCRATE_DIR).join(filename);
         <span class="kw">let </span><span class="kw-2">mut </span>file = BufReader::new(File::open(crate_path)<span class="question-mark">?</span>);
         <span class="kw">let </span><span class="kw-2">mut </span>data = <span class="macro">vec!</span>[];

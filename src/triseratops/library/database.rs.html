@@ -410,7 +410,7 @@
     <span class="prelude-val">Ok</span>((input, value))
 }
 
-<span class="kw">fn </span>parse_field&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span>&gt;(input: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8], name: <span class="kw-2">&amp;</span><span class="lifetime">&#39;b </span>[u8], field_type: u8) -&gt; Res&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8], Field&gt; {
+<span class="kw">fn </span>parse_field&lt;<span class="lifetime">&#39;a</span>&gt;(input: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8], name: <span class="kw-2">&amp;</span>[u8], field_type: u8) -&gt; Res&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8], Field&gt; {
     <span class="kw">match </span>field_type {
         FIELD_BOOL =&gt; {
             <span class="kw">let </span>(input, value) = nom::combinator::all_consuming(parse_bool)(input)<span class="question-mark">?</span>;
