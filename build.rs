@@ -22,7 +22,7 @@ fn main() {
 
 fn write_tag_tests(path: &Path) {
     let destination = path.join("tests.rs");
-    let mut test_file = File::create(&destination).unwrap();
+    let mut test_file = File::create(destination).unwrap();
 
     // write test file header, put `use`, `const` etc there
     write!(
@@ -95,7 +95,7 @@ fn write_tag_test(test_file: &mut File, filepath: &Path, tag_name: &str) {
 
 fn write_database_tests(path: &Path) {
     let destination = path.join("database_tests.rs");
-    let mut test_file = File::create(&destination).unwrap();
+    let mut test_file = File::create(destination).unwrap();
 
     // write test file header, put `use`, `const` etc there
     write!(
