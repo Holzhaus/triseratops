@@ -8,11 +8,14 @@
 
 //! Helper for FLAC and MP4 tags
 
+use std::io;
+use std::io::Cursor;
+
+use base64::Engine as _;
+
 use super::Tag;
 use crate::error::Error;
 use crate::util::{take_utf8, Res};
-use std::io;
-use std::io::Cursor;
 
 pub trait EnvelopedTag: Tag {
     fn parse_enveloped(input: &[u8]) -> Result<Self, Error> {
@@ -49,14 +52,18 @@ pub fn take_base64_with_newline(input: &[u8]) -> Res<&[u8], &[u8]> {
     nom::bytes::complete::take_while(|b| is_base64(b) || is_newline(b))(input)
 }
 
-const BASE64_FORGIVING: base64::Config = base64::STANDARD_NO_PAD.decode_allow_trailing_bits(true);
+const BASE64_FORGIVING: base64::engine::GeneralPurpose =
+    base64::engine::general_purpose::GeneralPurpose::new(
+        &base64::alphabet::STANDARD,
+        base64::engine::general_purpose::NO_PAD.with_decode_allow_trailing_bits(true),
+    );
 
 pub fn base64_decode(input: &[u8]) -> Result<Vec<u8>, Error> {
     let mut encoded: Vec<u8> = input.iter().filter(|&b| !is_newline(*b)).copied().collect();
     if encoded.len() % 4 != 2 {
         encoded.pop();
     }
-    let decoded = base64::decode_config(encoded, BASE64_FORGIVING);
+    let decoded = BASE64_FORGIVING.decode(encoded);
     match decoded {
         Ok(data) => Ok(data),
         Err(e) => Err(Error::Base64DecodeError { source: e }),
@@ -70,7 +77,9 @@ pub fn base64_encode(writer: &mut impl io::Write, input: &[u8]) -> Result<usize,
     for (i, chunk) in chunks.enumerate() {
         let mut buf = Vec::new();
         buf.resize(72, 0);
-        let bytes_encoded = base64::encode_config_slice(chunk, BASE64_FORGIVING, &mut buf);
+        let bytes_encoded = BASE64_FORGIVING
+            .encode_slice(chunk, &mut buf)
+            .expect("should never fail");
         bytes_written += writer.write(&buf[..bytes_encoded])?;
         if i == last_chunk_index {
             if bytes_encoded % 4 != 2 {

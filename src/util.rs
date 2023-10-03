@@ -10,12 +10,12 @@
 
 use nom::bytes::complete::take_until;
 
-pub type Res<T, U> = nom::IResult<T, U, nom::error::VerboseError<T>>;
+pub(crate) type Res<T, U> = nom::IResult<T, U, nom::error::VerboseError<T>>;
 
 pub(crate) const NULL: &[u8] = &[0x00];
 
 /// Returns the input slice until the first occurrence of a null byte.
-pub fn take_until_nullbyte(input: &[u8]) -> Res<&[u8], &[u8]> {
+pub(crate) fn take_until_nullbyte(input: &[u8]) -> Res<&[u8], &[u8]> {
     take_until(NULL)(input)
 }
 
@@ -32,7 +32,7 @@ fn test_take_until_nullbyte() {
     assert!(take_until_nullbyte(&[0xAB, 0xCD]).is_err());
 }
 
-pub fn parse_utf8(input: &[u8]) -> Res<&[u8], &str> {
+pub(crate) fn parse_utf8(input: &[u8]) -> Res<&[u8], &str> {
     std::str::from_utf8(input)
         .map(|s| (&b""[..], s))
         .map_err(|_| nom::Err::Incomplete(nom::Needed::Unknown))
@@ -43,7 +43,7 @@ fn test_parse_utf8() {
     assert_eq!(parse_utf8(&[0x41, 0x42]), Ok((&b""[..], "AB")));
 }
 
-pub fn take_utf8(input: &[u8]) -> Res<&[u8], &str> {
+pub(crate) fn take_utf8(input: &[u8]) -> Res<&[u8], &str> {
     let (input, data) = take_until_nullbyte(input)?;
     let (_, value) = parse_utf8(data)?;
     let (input, _) = nom::bytes::complete::take(1usize)(input)?;

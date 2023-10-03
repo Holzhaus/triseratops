@@ -115,7 +115,7 @@ fn take_u16_bytes(input: &[u8]) -> Res<&[u8], Vec<u16>> {
 
 fn parse_u16_text(input: &[u8]) -> Res<&[u8], String> {
     let (input, bytes) = nom::combinator::all_consuming(take_u16_bytes)(input)?;
-    let text = std::char::decode_utf16(bytes.into_iter())
+    let text = std::char::decode_utf16(bytes)
         .map(|r| r.unwrap_or(std::char::REPLACEMENT_CHARACTER))
         .collect::<String>();
     Ok((input, text))
