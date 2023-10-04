@@ -14,6 +14,12 @@
 //!
 //! The minimum length of this tag seems to be 470 bytes, and shorter contents are padded with null bytes.
 
+use std::io;
+use std::io::Cursor;
+
+use base64::Engine as _;
+use nom::error::ParseError;
+
 use super::color::Color;
 use super::format::{enveloped, flac, id3, mp4, ogg, Tag};
 use super::generic::{
@@ -23,9 +29,6 @@ use super::generic::{
 use super::util::{take_color, take_version, write_color, write_version};
 use crate::error::Error;
 use crate::util::{take_utf8, Res, NULL};
-use nom::error::ParseError;
-use std::io;
-use std::io::Cursor;
 
 /// A marker in the `Serato Markers2` tag.
 ///
@@ -263,12 +266,14 @@ fn decode_base64_chunks(
         }
         let mut buf = [0; 54];
         // TODO: Add proper error handling here
-        let mut res = base64::decode_config_slice(chunk, base64::STANDARD, &mut buf);
-        if let Err(base64::DecodeError::InvalidLength) = res {
+        let res = base64::engine::general_purpose::STANDARD.decode_slice(chunk, &mut buf);
+        if let Err(base64::DecodeSliceError::OutputSliceTooSmall) = res {
             let mut v = Vec::new();
             v.extend_from_slice(chunk);
             v.push(b'A');
-            res = base64::decode_config_slice(v.as_slice(), base64::STANDARD, &mut buf);
+            base64::engine::general_purpose::STANDARD
+                .decode_slice(chunk, &mut buf)
+                .expect("should never fail");
         }
         let num_bytes = res.unwrap();
         decoded_data.extend_from_slice(&buf[..num_bytes]);

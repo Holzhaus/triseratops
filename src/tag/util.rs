@@ -16,7 +16,7 @@ use nom::bytes::complete::take;
 use std::io;
 
 /// Returns a `Color` struct parsed from the first 3 input bytes.
-pub fn take_color(input: &[u8]) -> Res<&[u8], Color> {
+pub(crate) fn take_color(input: &[u8]) -> Res<&[u8], Color> {
     let (input, bytes) = nom::bytes::complete::take(3usize)(input)?;
     let (bytes, red) = nom::number::complete::u8(bytes)?;
     let (bytes, green) = nom::number::complete::u8(bytes)?;
@@ -51,13 +51,13 @@ fn test_take_color() {
     assert!(take_color(&[0xAB, 0xCD]).is_err());
 }
 
-pub fn write_color(writer: &mut impl io::Write, color: Color) -> Result<usize, Error> {
+pub(crate) fn write_color(writer: &mut impl io::Write, color: Color) -> Result<usize, Error> {
     let Color { blue, green, red } = color;
     Ok(writer.write(&[red, green, blue])?)
 }
 
 /// Returns a `Version` struct parsed from the first 2 input bytes.
-pub fn take_version(input: &[u8]) -> Res<&[u8], Version> {
+pub(crate) fn take_version(input: &[u8]) -> Res<&[u8], Version> {
     let (input, version) = take(2usize)(input)?;
     Ok((
         input,
@@ -81,7 +81,7 @@ fn test_take_version() {
     assert!(take_version(&[0x0A]).is_err());
 }
 
-pub fn write_version(writer: &mut impl io::Write, version: Version) -> Result<usize, Error> {
+pub(crate) fn write_version(writer: &mut impl io::Write, version: Version) -> Result<usize, Error> {
     let Version { major, minor } = version;
     Ok(writer.write(&[major, minor])?)
 }

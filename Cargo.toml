@@ -11,10 +11,10 @@ categories = ["parser-implementations"]
 edition = "2021"
 
 [dependencies]
-nom = "7"
-base64 = "0.13"
-thiserror = "1"
+nom = "7.1"
+base64 = "0.21"
+thiserror = "1.0"
 
 [dev-dependencies]
-id3 = "1"
-textwrap = "0.14"
+id3 = "1.8"
+textwrap = "0.16"

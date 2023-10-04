@@ -110,21 +110,25 @@
 //! possible, but since this feature is still under development, the API is *not* stable yet and
 //! might change in the future.
 
+// Opt-in for allowed-by-default lints (in alphabetical order)
+// See also: <https://doc.rust-lang.org/rustc/lints>
+#![warn(future_incompatible)]
+#![warn(let_underscore)]
+#![warn(missing_debug_implementations)]
+//#![warn(missing_docs)] // TODO
+#![warn(rust_2018_idioms)]
+#![warn(rust_2021_compatibility)]
+#![warn(unreachable_pub)]
 #![warn(unsafe_code)]
-#![cfg_attr(not(debug_assertions), deny(warnings))]
-#![deny(rust_2018_idioms)]
-#![deny(rust_2021_compatibility)]
-#![deny(missing_debug_implementations)]
-// TODO: Add missing docs
-//#![deny(missing_docs)]
-#![deny(rustdoc::broken_intra_doc_links)]
-#![deny(clippy::all)]
-#![deny(clippy::explicit_deref_methods)]
-#![deny(clippy::explicit_into_iter_loop)]
-#![deny(clippy::explicit_iter_loop)]
-#![deny(clippy::must_use_candidate)]
-#![cfg_attr(not(test), deny(clippy::panic_in_result_fn))]
-#![cfg_attr(not(debug_assertions), deny(clippy::used_underscore_binding))]
+#![warn(unused)]
+// Clippy lints
+//#![warn(clippy::pedantic)] // TODO
+// Additional restrictions
+#![warn(clippy::clone_on_ref_ptr)]
+//#![warn(clippy::missing_const_for_fn)] // TODO
+// Relaxations
+#![allow(clippy::module_name_repetitions)] // OK
+#![allow(clippy::needless_pub_self)] // TODO
 
 pub mod error;
 pub mod library;
