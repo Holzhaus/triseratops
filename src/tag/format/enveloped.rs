@@ -68,8 +68,7 @@ pub fn base64_encode(writer: &mut impl io::Write, input: &[u8]) -> Result<usize,
     let chunks = input.chunks(54);
     let last_chunk_index = chunks.len() - 1;
     for (i, chunk) in chunks.enumerate() {
-        let mut buf = Vec::new();
-        buf.resize(72, 0);
+        let mut buf = vec![0; 72];
         let bytes_encoded = base64::encode_config_slice(chunk, BASE64_FORGIVING, &mut buf);
         bytes_written += writer.write(&buf[..bytes_encoded])?;
         if i == last_chunk_index {
