@@ -11,6 +11,7 @@
 use super::Tag;
 use crate::error::Error;
 use crate::util::{take_utf8, Res};
+use base64::Engine;
 use std::io;
 use std::io::Cursor;
 
@@ -49,14 +50,21 @@ pub fn take_base64_with_newline(input: &[u8]) -> Res<&[u8], &[u8]> {
     nom::bytes::complete::take_while(|b| is_base64(b) || is_newline(b))(input)
 }
 
-const BASE64_FORGIVING: base64::Config = base64::STANDARD_NO_PAD.decode_allow_trailing_bits(true);
+const BASE64_FORGIVING: base64::engine::general_purpose::GeneralPurpose =
+    base64::engine::general_purpose::GeneralPurpose::new(
+        &base64::alphabet::STANDARD,
+        base64::engine::general_purpose::GeneralPurposeConfig::new()
+            .with_encode_padding(false)
+            .with_decode_allow_trailing_bits(true)
+            .with_decode_padding_mode(base64::engine::DecodePaddingMode::RequireNone),
+    );
 
 pub fn base64_decode(input: &[u8]) -> Result<Vec<u8>, Error> {
     let mut encoded: Vec<u8> = input.iter().filter(|&b| !is_newline(*b)).copied().collect();
     if encoded.len() % 4 != 2 {
         encoded.pop();
     }
-    let decoded = base64::decode_config(encoded, BASE64_FORGIVING);
+    let decoded = BASE64_FORGIVING.decode(encoded);
     match decoded {
         Ok(data) => Ok(data),
         Err(e) => Err(Error::Base64DecodeError { source: e }),
@@ -69,7 +77,9 @@ pub fn base64_encode(writer: &mut impl io::Write, input: &[u8]) -> Result<usize,
     let last_chunk_index = chunks.len() - 1;
     for (i, chunk) in chunks.enumerate() {
         let mut buf = vec![0; 72];
-        let bytes_encoded = base64::encode_config_slice(chunk, BASE64_FORGIVING, &mut buf);
+        let bytes_encoded = BASE64_FORGIVING
+            .encode_slice(chunk, &mut buf)
+            .map_err(|e| Error::Base64EncodeError { source: e })?;
         bytes_written += writer.write(&buf[..bytes_encoded])?;
         if i == last_chunk_index {
             if bytes_encoded % 4 != 2 {

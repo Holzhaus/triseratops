@@ -30,6 +30,10 @@ pub enum Error {
     },
 
     /// Represents decode error.
+    #[error("Failed to encode base64 data")]
+    Base64EncodeError { source: base64::EncodeSliceError },
+
+    /// Represents decode error.
     #[error("Malformed base64 data")]
     Base64DecodeError { source: base64::DecodeError },
 

@@ -23,6 +23,7 @@ use super::generic::{
 use super::util::{take_color, take_version, write_color, write_version};
 use crate::error::Error;
 use crate::util::{take_utf8, Res, NULL};
+use base64::Engine;
 use nom::error::ParseError;
 use std::io;
 use std::io::Cursor;
@@ -263,12 +264,17 @@ fn decode_base64_chunks(
         }
         let mut buf = [0; 54];
         // TODO: Add proper error handling here
-        let mut res = base64::decode_config_slice(chunk, base64::STANDARD, &mut buf);
+        // We can use the unchecked decoding variant here, because we already ensured that the
+        // chunk is not longer than 72 characters (which means that the result can not exceed 54
+        // bytes.
+        let mut res = base64::engine::general_purpose::STANDARD_NO_PAD
+            .decode_slice_unchecked(chunk, &mut buf);
         if let Err(base64::DecodeError::InvalidLength) = res {
             let mut v = Vec::new();
             v.extend_from_slice(chunk);
             v.push(b'A');
-            res = base64::decode_config_slice(v.as_slice(), base64::STANDARD, &mut buf);
+            res = base64::engine::general_purpose::STANDARD_NO_PAD
+                .decode_slice_unchecked(v.as_slice(), &mut buf);
         }
         let num_bytes = res.unwrap();
         decoded_data.extend_from_slice(&buf[..num_bytes]);
