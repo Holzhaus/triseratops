@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"trait":[["OggTag",""]]};
+window.SIDEBAR_ITEMS = {"trait":["OggTag"]};

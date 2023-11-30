@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":[["database",""]],"struct":[["Library","DAO that reads Serato libraries from the file system."],["Track",""]]};
+window.SIDEBAR_ITEMS = {"mod":["database"],"struct":["Library","Track"]};

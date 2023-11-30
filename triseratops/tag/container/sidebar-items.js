@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":[["TagFormat","The tag type of the data."]],"struct":[["TagContainer","Provides a streamlined interface for retrieving Serato tag data."]]};
+window.SIDEBAR_ITEMS = {"enum":["TagFormat"],"struct":["TagContainer"]};

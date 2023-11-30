@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["write_autotags",""],["write_double_str",""]],"struct":[["Autotags","Represents the  `Serato AutoTags` tag."]]};
+window.SIDEBAR_ITEMS = {"fn":["write_autotags","write_double_str"],"struct":["Autotags"]};

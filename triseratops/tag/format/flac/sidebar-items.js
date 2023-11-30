@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"trait":[["FLACTag",""]]};
+window.SIDEBAR_ITEMS = {"trait":["FLACTag"]};

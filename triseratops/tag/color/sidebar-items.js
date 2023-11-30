@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["Color","Represents a 3-Byte RGB color value."]]};
+window.SIDEBAR_ITEMS = {"struct":["Color"]};

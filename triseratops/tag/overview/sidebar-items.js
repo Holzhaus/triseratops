@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["write_overview",""]],"struct":[["Overview","Represents the `Serato Overview` tag."]]};
+window.SIDEBAR_ITEMS = {"fn":["write_overview"],"struct":["Overview"]};

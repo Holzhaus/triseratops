@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["base64_decode",""],["base64_encode",""],["envelope_decode",""],["envelope_decode_with_name",""],["envelope_encode_with_name",""],["is_base64",""],["is_newline",""],["parse_envelope",""],["take_base64_with_newline",""]],"trait":[["EnvelopedTag",""]]};
+window.SIDEBAR_ITEMS = {"fn":["base64_decode","base64_encode","envelope_decode","envelope_decode_with_name","envelope_encode_with_name","is_base64","is_newline","parse_envelope","take_base64_with_newline"],"trait":["EnvelopedTag"]};

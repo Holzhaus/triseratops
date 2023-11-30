@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":[["Field",""]],"fn":[["parse",""]],"type":[["Path",""]]};
+window.SIDEBAR_ITEMS = {"enum":["Field"],"fn":["parse"],"type":["Path"]};
