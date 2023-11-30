@@ -12,9 +12,9 @@ edition = "2021"
 
 [dependencies]
 nom = "7"
-base64 = "0.13"
+base64 = "0.21"
 thiserror = "1"
 
 [dev-dependencies]
 id3 = "1"
-textwrap = "0.14"
+textwrap = "0.16"

@@ -11,7 +11,7 @@ pub mod color;
 pub mod format;
 pub mod generic;
 pub mod serato32;
-pub(self) mod util;
+mod util;
 
 pub mod container;
 pub use container::TagContainer;
