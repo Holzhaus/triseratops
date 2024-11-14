@@ -39,6 +39,6 @@ parser in Rust.
 
 ## License
 
-This software is licensed under the terms of the [Affero GPL
-v3](https://www.gnu.org/licenses/agpl-3.0.html), or
-(at your discretion) any later version.
+This software is licensed under the terms of the [Mozilla Public License
+2.0](https://www.mozilla.org/en-US/MPL/2.0/). Please also have a look at the
+[license FAQ](https://www.mozilla.org/en-US/MPL/2.0/FAQ/).
