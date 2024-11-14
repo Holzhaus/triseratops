@@ -86,7 +86,7 @@ pub fn base64_encode(writer: &mut impl io::Write, input: &[u8]) -> Result<usize,
                 bytes_written += writer.write(b"A")?;
             }
         } else {
-            bytes_written += writer.write(&[b'\n'])?;
+            bytes_written += writer.write(b"\n")?;
         }
     }
     Ok(bytes_written)
