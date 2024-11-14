@@ -1,4 +1,4 @@
-// Copyright (c) 2023 Jan Holthuis <jan.holthuis@rub.de>
+// Copyright (c) 2024 Jan Holthuis <jan.holthuis@rub.de>
 //
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy
 // of the MPL was not distributed with this file, You can obtain one at
@@ -92,7 +92,7 @@
 //! - The `Serato RelVolAd` and the `Serato VidAssoc` tags haven't been reverse engineed yet, but
 //!   preliminary support has been added. For now, they just return a tag version and a byte vector.
 //! - AAC files (among others) do not store metadata in tags, and use XML files in the
-//! `_Serato_/Metadata` directory instead. No support has been added yet.
+//!   `_Serato_/Metadata` directory instead. No support has been added yet.
 //! - The cue colors stored in the metadata are *not* the same as displayed in Serato DJ Pro.
 //!   Instead, they uses the color palette from Serato DJ Into. Serato then maps them to a new
 //!   color palette. Support for converting between the two is currently missing.

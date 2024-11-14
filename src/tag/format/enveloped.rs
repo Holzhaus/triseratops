@@ -1,4 +1,4 @@
-// Copyright (c) 2023 Jan Holthuis <jan.holthuis@rub.de>
+// Copyright (c) 2024 Jan Holthuis <jan.holthuis@rub.de>
 //
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy
 // of the MPL was not distributed with this file, You can obtain one at
@@ -86,7 +86,7 @@ pub fn base64_encode(writer: &mut impl io::Write, input: &[u8]) -> Result<usize,
                 bytes_written += writer.write(b"A")?;
             }
         } else {
-            bytes_written += writer.write(&[b'\n'])?;
+            bytes_written += writer.write(b"\n")?;
         }
     }
     Ok(bytes_written)
