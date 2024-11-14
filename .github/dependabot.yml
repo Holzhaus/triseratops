@@ -1,12 +1,12 @@
 ---
 version: 2
 updates:
-  # Check for updated Rust packages
+    # Check for updated Rust packages
     - package-ecosystem: cargo
       directory: /
       schedule:
           interval: weekly
-  # Check for updated GitHub Actions
+    # Check for updated GitHub Actions
     - package-ecosystem: github-actions
       directory: /
       schedule:
