@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/library/database.rs`."><title>database.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-fa3bb1812debf86c.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="triseratops" data-themes="" data-resource-suffix="" data-rustdoc-version="1.74.0 (79e9716c9 2023-11-13)" data-channel="1.74.0" data-search-js="search-8be46b629f5f14a8.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-c5bd66d33317d69f.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../triseratops/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/library/database.rs`."><title>database.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="triseratops" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -281,7 +281,7 @@
 <a href="#281" id="281">281</a>
 <a href="#282" id="282">282</a>
 <a href="#283" id="283">283</a>
-</pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2023 Jan Holthuis &lt;jan.holthuis@rub.de&gt;
+</pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2024 Jan Holthuis &lt;jan.holthuis@rub.de&gt;
 //
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy
 // of the MPL was not distributed with this file, You can obtain one at
@@ -295,13 +295,13 @@
 
 <span class="kw">pub type </span>Path = String;
 
-<span class="kw">const </span>FIELD_BOOL: u8 = <span class="string">b&#39;b&#39;</span>;
-<span class="kw">const </span>FIELD_CONTAINER: u8 = <span class="string">b&#39;o&#39;</span>;
-<span class="kw">const </span>FIELD_CONTAINER_R: u8 = <span class="string">b&#39;r&#39;</span>;
-<span class="kw">const </span>FIELD_PATH: u8 = <span class="string">b&#39;p&#39;</span>;
-<span class="kw">const </span>FIELD_TEXT: u8 = <span class="string">b&#39;t&#39;</span>;
-<span class="kw">const </span>FIELD_U16: u8 = <span class="string">b&#39;s&#39;</span>;
-<span class="kw">const </span>FIELD_U32: u8 = <span class="string">b&#39;u&#39;</span>;
+<span class="kw">const </span>FIELD_BOOL: u8 = <span class="string">b'b'</span>;
+<span class="kw">const </span>FIELD_CONTAINER: u8 = <span class="string">b'o'</span>;
+<span class="kw">const </span>FIELD_CONTAINER_R: u8 = <span class="string">b'r'</span>;
+<span class="kw">const </span>FIELD_PATH: u8 = <span class="string">b'p'</span>;
+<span class="kw">const </span>FIELD_TEXT: u8 = <span class="string">b't'</span>;
+<span class="kw">const </span>FIELD_U16: u8 = <span class="string">b's'</span>;
+<span class="kw">const </span>FIELD_U32: u8 = <span class="string">b'u'</span>;
 
 <span class="attr">#[derive(Debug)]
 </span><span class="kw">pub enum </span>Field {
@@ -410,24 +410,24 @@
     <span class="prelude-val">Ok</span>((input, value))
 }
 
-<span class="kw">fn </span>parse_field&lt;<span class="lifetime">&#39;a</span>&gt;(input: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8], name: <span class="kw-2">&amp;</span>[u8], field_type: u8) -&gt; Res&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8], Field&gt; {
+<span class="kw">fn </span>parse_field&lt;<span class="lifetime">'a</span>&gt;(input: <span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8], name: <span class="kw-2">&amp;</span>[u8], field_type: u8) -&gt; Res&lt;<span class="kw-2">&amp;</span><span class="lifetime">'a </span>[u8], Field&gt; {
     <span class="kw">match </span>field_type {
         FIELD_BOOL =&gt; {
             <span class="kw">let </span>(input, value) = nom::combinator::all_consuming(parse_bool)(input)<span class="question-mark">?</span>;
             <span class="kw">let </span>field = <span class="kw">match </span>name {
-                <span class="string">b&quot;bgl&quot; </span>=&gt; Field::BeatgridLocked(value),
-                <span class="string">b&quot;mis&quot; </span>=&gt; Field::Missing(value),
-                <span class="string">b&quot;rev&quot; </span>=&gt; Field::ReverseOrder(value),
-                <span class="comment">//b&quot;crt&quot; =&gt; ???
-                //b&quot;hrt&quot; =&gt; ???
-                //b&quot;iro&quot; =&gt; ???
-                //b&quot;itu&quot; =&gt; ???
-                //b&quot;krk&quot; =&gt; ???
-                //b&quot;ovc&quot; =&gt; ???
-                //b&quot;ply&quot; =&gt; ???
-                //b&quot;uns&quot; =&gt; ???
-                //b&quot;wlb&quot; =&gt; ???
-                //b&quot;wll&quot; =&gt; ???
+                <span class="string">b"bgl" </span>=&gt; Field::BeatgridLocked(value),
+                <span class="string">b"mis" </span>=&gt; Field::Missing(value),
+                <span class="string">b"rev" </span>=&gt; Field::ReverseOrder(value),
+                <span class="comment">//b"crt" =&gt; ???
+                //b"hrt" =&gt; ???
+                //b"iro" =&gt; ???
+                //b"itu" =&gt; ???
+                //b"krk" =&gt; ???
+                //b"ovc" =&gt; ???
+                //b"ply" =&gt; ???
+                //b"uns" =&gt; ???
+                //b"wlb" =&gt; ???
+                //b"wll" =&gt; ???
                 </span><span class="kw">_ </span>=&gt; Field::UnknownBoolean {
                     name: name.to_owned(),
                     value,
@@ -442,19 +442,19 @@
                 name: name.to_owned(),
                 value,
             };
-            <span class="comment">//b&quot;bav&quot; =&gt; ???
+            <span class="comment">//b"bav" =&gt; ???
             </span><span class="prelude-val">Ok</span>((input, field))
         }
         FIELD_U32 =&gt; {
             <span class="kw">let </span>(input, value) =
                 nom::combinator::all_consuming(nom::number::complete::be_u32)(input)<span class="question-mark">?</span>;
             <span class="kw">let </span>field = <span class="kw">match </span>name {
-                <span class="string">b&quot;add&quot; </span>=&gt; Field::DateAdded(value),
-                <span class="string">b&quot;tme&quot; </span>=&gt; Field::FileTime(value),
-                <span class="comment">//b&quot;lbl&quot; =&gt; ???
-                //b&quot;fsb&quot; =&gt; ???
-                //b&quot;tkn&quot; =&gt; ???
-                //b&quot;dsc&quot; =&gt; ???
+                <span class="string">b"add" </span>=&gt; Field::DateAdded(value),
+                <span class="string">b"tme" </span>=&gt; Field::FileTime(value),
+                <span class="comment">//b"lbl" =&gt; ???
+                //b"fsb" =&gt; ???
+                //b"tkn" =&gt; ???
+                //b"dsc" =&gt; ???
                 </span><span class="kw">_ </span>=&gt; Field::UnknownU32Field {
                     name: name.to_owned(),
                     value,
@@ -466,8 +466,8 @@
             <span class="kw">let </span>(input, path) = parse_u16_text(input)<span class="question-mark">?</span>;
             <span class="kw">let </span>path = PathBuf::from(path);
             <span class="kw">let </span>field = <span class="kw">match </span>name {
-                <span class="string">b&quot;fil&quot; </span>=&gt; Field::FilePath(path),
-                <span class="string">b&quot;trk&quot; </span>=&gt; Field::TrackPath(path),
+                <span class="string">b"fil" </span>=&gt; Field::FilePath(path),
+                <span class="string">b"trk" </span>=&gt; Field::TrackPath(path),
                 <span class="kw">_ </span>=&gt; Field::UnknownPathField {
                     name: name.to_owned(),
                     path,
@@ -478,26 +478,26 @@
         FIELD_TEXT =&gt; {
             <span class="kw">let </span>(input, text) = parse_u16_text(input)<span class="question-mark">?</span>;
             <span class="kw">let </span>field = <span class="kw">match </span>name {
-                <span class="string">b&quot;add&quot; </span>=&gt; Field::DateAddedStr(text),
-                <span class="string">b&quot;alb&quot; </span>=&gt; Field::Album(text),
-                <span class="string">b&quot;art&quot; </span>=&gt; Field::Artist(text),
-                <span class="string">b&quot;bit&quot; </span>=&gt; Field::Bitrate(text),
-                <span class="string">b&quot;bpm&quot; </span>=&gt; Field::BPM(text),
-                <span class="string">b&quot;cmp&quot; </span>=&gt; Field::Composer(text),
-                <span class="string">b&quot;com&quot; </span>=&gt; Field::Comment(text),
-                <span class="string">b&quot;gen&quot; </span>=&gt; Field::Genre(text),
-                <span class="string">b&quot;grp&quot; </span>=&gt; Field::Grouping(text),
-                <span class="string">b&quot;key&quot; </span>=&gt; Field::Key(text),
-                <span class="string">b&quot;lbl&quot; </span>=&gt; Field::Label(text),
-                <span class="string">b&quot;len&quot; </span>=&gt; Field::Length(text),
-                <span class="string">b&quot;siz&quot; </span>=&gt; Field::FileSize(text),
-                <span class="string">b&quot;smp&quot; </span>=&gt; Field::SampleRate(text),
-                <span class="string">b&quot;sng&quot; </span>=&gt; Field::SongTitle(text),
-                <span class="string">b&quot;typ&quot; </span>=&gt; Field::FileType(text),
-                <span class="string">b&quot;tyr&quot; </span>=&gt; Field::Year(text),
-                <span class="string">b&quot;vcn&quot; </span>=&gt; Field::ColumnName(text),
-                <span class="string">b&quot;vcw&quot; </span>=&gt; Field::ColumnWidth(text),
-                <span class="string">b&quot;vrsn&quot; </span>=&gt; Field::Version(text),
+                <span class="string">b"add" </span>=&gt; Field::DateAddedStr(text),
+                <span class="string">b"alb" </span>=&gt; Field::Album(text),
+                <span class="string">b"art" </span>=&gt; Field::Artist(text),
+                <span class="string">b"bit" </span>=&gt; Field::Bitrate(text),
+                <span class="string">b"bpm" </span>=&gt; Field::BPM(text),
+                <span class="string">b"cmp" </span>=&gt; Field::Composer(text),
+                <span class="string">b"com" </span>=&gt; Field::Comment(text),
+                <span class="string">b"gen" </span>=&gt; Field::Genre(text),
+                <span class="string">b"grp" </span>=&gt; Field::Grouping(text),
+                <span class="string">b"key" </span>=&gt; Field::Key(text),
+                <span class="string">b"lbl" </span>=&gt; Field::Label(text),
+                <span class="string">b"len" </span>=&gt; Field::Length(text),
+                <span class="string">b"siz" </span>=&gt; Field::FileSize(text),
+                <span class="string">b"smp" </span>=&gt; Field::SampleRate(text),
+                <span class="string">b"sng" </span>=&gt; Field::SongTitle(text),
+                <span class="string">b"typ" </span>=&gt; Field::FileType(text),
+                <span class="string">b"tyr" </span>=&gt; Field::Year(text),
+                <span class="string">b"vcn" </span>=&gt; Field::ColumnName(text),
+                <span class="string">b"vcw" </span>=&gt; Field::ColumnWidth(text),
+                <span class="string">b"vrsn" </span>=&gt; Field::Version(text),
                 <span class="kw">_ </span>=&gt; Field::UnknownTextField {
                     name: name.to_owned(),
                     text,
@@ -508,9 +508,9 @@
         FIELD_CONTAINER =&gt; {
             <span class="kw">let </span>(input, fields) = nom::combinator::all_consuming(take_fields)(input)<span class="question-mark">?</span>;
             <span class="kw">let </span>field = <span class="kw">match </span>name {
-                <span class="string">b&quot;srt&quot; </span>=&gt; Field::Sorting(fields),
-                <span class="string">b&quot;trk&quot; </span>=&gt; Field::Track(fields),
-                <span class="string">b&quot;vct&quot; </span>=&gt; Field::ColumnTitle(fields),
+                <span class="string">b"srt" </span>=&gt; Field::Sorting(fields),
+                <span class="string">b"trk" </span>=&gt; Field::Track(fields),
+                <span class="string">b"vct" </span>=&gt; Field::ColumnTitle(fields),
                 <span class="kw">_ </span>=&gt; Field::UnknownContainerField {
                     name: name.to_owned(),
                     fields,
@@ -530,7 +530,7 @@
             <span class="kw">let </span>name = name.to_owned();
             <span class="kw">let </span>content = input.to_owned();
             <span class="prelude-val">Ok</span>((
-                <span class="string">b&quot;&quot;</span>,
+                <span class="string">b""</span>,
                 Field::Unknown {
                     field_type,
                     name,
@@ -546,7 +546,7 @@
     <span class="kw">let </span>(input, content) = take_field_content(input)<span class="question-mark">?</span>;
     <span class="kw">let </span>(<span class="kw">_</span>, field) = <span class="kw">match </span>desc {
         <span class="comment">// Special case: `vrsn` is a text field but begins with `v`
-        </span><span class="string">b&quot;vrsn&quot; </span>=&gt; parse_field(content, desc, FIELD_TEXT)<span class="question-mark">?</span>,
+        </span><span class="string">b"vrsn" </span>=&gt; parse_field(content, desc, FIELD_TEXT)<span class="question-mark">?</span>,
         <span class="kw">_ </span>=&gt; {
             <span class="kw">let </span>(desc, typ) = take_field_type(desc)<span class="question-mark">?</span>;
             <span class="kw">let </span>(<span class="kw">_</span>, name) = take_field_name(desc)<span class="question-mark">?</span>;

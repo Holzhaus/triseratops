@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/tag/markers2.rs`."><title>markers2.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-fa3bb1812debf86c.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="triseratops" data-themes="" data-resource-suffix="" data-rustdoc-version="1.74.0 (79e9716c9 2023-11-13)" data-channel="1.74.0" data-search-js="search-8be46b629f5f14a8.js" data-settings-js="settings-74424d7eec62a23e.js" ><script src="../../../static.files/storage-fec3eaa3851e447d.js"></script><script defer src="../../../static.files/src-script-3280b574d94e47b4.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-c5bd66d33317d69f.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-5d8b3c7633ad77ba.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../triseratops/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/tag/markers2.rs`."><title>markers2.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-492a78a4a87dcc01.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="triseratops" data-themes="" data-resource-suffix="" data-rustdoc-version="1.82.0 (f6e511eec 2024-10-15)" data-channel="1.82.0" data-search-js="search-a99f1315e7cc5121.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../../../static.files/src-script-e66d777a5a92e9b2.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-921df33f47b8780c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-3b12f09e550e0385.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -708,7 +708,7 @@
 <a href="#708" id="708">708</a>
 <a href="#709" id="709">709</a>
 <a href="#710" id="710">710</a>
-</pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2023 Jan Holthuis &lt;jan.holthuis@rub.de&gt;
+</pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2024 Jan Holthuis &lt;jan.holthuis@rub.de&gt;
 //
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy
 // of the MPL was not distributed with this file, You can obtain one at
@@ -716,9 +716,9 @@
 //
 // SPDX-License-Identifier: MPL-2.0
 
-</span><span class="doccomment">//! The `Serato Markers2` tag stores various kinds of track &quot;markers&quot; like Cue Points, Saved Loops, Flips.
+</span><span class="doccomment">//! The `Serato Markers2` tag stores various kinds of track "markers" like Cue Points, Saved Loops, Flips.
 //!
-//! It also stores information about the tracks&#39; color in the tracklist and if the track&#39;s beatgrid is locked.
+//! It also stores information about the tracks' color in the tracklist and if the track's beatgrid is locked.
 //!
 //! Note that some of this information is also stored in `Serato Markers_`, and Serato will prefer that data over the information stored in `Serato Markers2` if it is present.
 //!
@@ -743,7 +743,7 @@
 /// Each marker is described by a header that contains type and length. The type is a
 /// null-terminated ASCII string.
 ///
-/// The length of the entry&#39;s data depends heavily on the entry type. BPMLOCK entries contain only
+/// The length of the entry's data depends heavily on the entry type. BPMLOCK entries contain only
 /// a single byte of data, while FLIP might become quite large. By storing the length explicitly
 /// instead of deriving it from the type, a parser could ignore unknown entry types and still be
 /// able to parse known ones.
@@ -757,7 +757,7 @@
     Flip(Flip),
 }
 
-<span class="doccomment">/// An unknown marker that we don&#39;t have a parser for.
+<span class="doccomment">/// An unknown marker that we don't have a parser for.
 </span><span class="attr">#[derive(Debug, Clone)]
 </span><span class="kw">pub struct </span>UnknownMarker {
     <span class="kw">pub </span>name: String,
@@ -766,7 +766,7 @@
 
 <span class="doccomment">/// A `COLOR` marker.
 ///
-/// `COLOR` markers describe a track&#39;s color.
+/// `COLOR` markers describe a track's color.
 </span><span class="attr">#[derive(Debug, Clone)]
 </span><span class="kw">pub struct </span>TrackColorMarker {
     <span class="kw">pub </span>color: Color,
@@ -796,8 +796,8 @@
 /// // First, read the tag data from the ID3 GEOB tag (the tag name can be accessed using the
 /// // Markers2::ID3_TAG), then parse the data like this:
 /// fn parse(data: &amp;[u8]) {
-///     let content = Markers2::parse_id3(data).expect(&quot;Failed to parse data!&quot;);
-///     println!(&quot;{:?}&quot;, content);
+///     let content = Markers2::parse_id3(data).expect("Failed to parse data!");
+///     println!("{:?}", content);
 /// }
 /// ```
 </span><span class="attr">#[derive(Debug, Clone)]
@@ -861,7 +861,7 @@
 }
 
 <span class="kw">impl </span>Tag <span class="kw">for </span>Markers2 {
-    <span class="kw">const </span>NAME: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str = <span class="string">&quot;Serato Markers2&quot;</span>;
+    <span class="kw">const </span>NAME: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str = <span class="string">"Serato Markers2"</span>;
 
     <span class="kw">fn </span>parse(input: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, Error&gt; {
         <span class="kw">let </span>(<span class="kw">_</span>, autotags) = nom::combinator::all_consuming(take_markers2)(input)<span class="question-mark">?</span>;
@@ -876,13 +876,13 @@
 <span class="kw">impl </span>id3::ID3Tag <span class="kw">for </span>Markers2 {}
 <span class="kw">impl </span>enveloped::EnvelopedTag <span class="kw">for </span>Markers2 {}
 <span class="kw">impl </span>flac::FLACTag <span class="kw">for </span>Markers2 {
-    <span class="kw">const </span>FLAC_COMMENT: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str = <span class="string">&quot;SERATO_MARKERS_V2&quot;</span>;
+    <span class="kw">const </span>FLAC_COMMENT: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str = <span class="string">"SERATO_MARKERS_V2"</span>;
 }
 <span class="kw">impl </span>mp4::MP4Tag <span class="kw">for </span>Markers2 {
-    <span class="kw">const </span>MP4_ATOM_FREEFORM_NAME: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str = <span class="string">&quot;markersv2&quot;</span>;
+    <span class="kw">const </span>MP4_ATOM_FREEFORM_NAME: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str = <span class="string">"markersv2"</span>;
 }
 <span class="kw">impl </span>ogg::OggTag <span class="kw">for </span>Markers2 {
-    <span class="kw">const </span>OGG_COMMENT: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str = <span class="string">&quot;serato_markers2&quot;</span>;
+    <span class="kw">const </span>OGG_COMMENT: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str = <span class="string">"serato_markers2"</span>;
 
     <span class="kw">fn </span>parse_ogg(input: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, Error&gt; {
         <span class="kw">let </span>size = input.len();
@@ -924,29 +924,29 @@
 
 <span class="doccomment">/// Returns true if `chr` is a valid ASCII character.
 </span><span class="kw">fn </span>is_base64(chr: u8) -&gt; bool {
-    chr.is_ascii_alphanumeric() || chr == <span class="string">b&#39;+&#39; </span>|| chr == <span class="string">b&#39;/&#39;
+    chr.is_ascii_alphanumeric() || chr == <span class="string">b'+' </span>|| chr == <span class="string">b'/'
 </span>}
 
 <span class="doccomment">/// Returns a nullbyte from the input slice (non-consuming).
 </span><span class="kw">pub fn </span>peek_nullbyte(input: <span class="kw-2">&amp;</span>[u8]) -&gt; Res&lt;<span class="kw-2">&amp;</span>[u8], <span class="kw-2">&amp;</span>[u8]&gt; {
-    nom::combinator::peek(nom::bytes::complete::tag(<span class="string">b&quot;\0&quot;</span>))(input)
+    nom::combinator::peek(nom::bytes::complete::tag(<span class="string">b"\0"</span>))(input)
 }
 
 <span class="doccomment">/// Returns a nullbyte or newline character from the input slice (non-consuming).
 </span><span class="kw">pub fn </span>peek_newline_or_nullbyte(input: <span class="kw-2">&amp;</span>[u8]) -&gt; Res&lt;<span class="kw-2">&amp;</span>[u8], <span class="kw-2">&amp;</span>[u8]&gt; {
     nom::combinator::peek(nom::branch::alt((
-        nom::bytes::complete::tag(<span class="string">b&quot;\n&quot;</span>),
-        nom::bytes::complete::tag(<span class="string">b&quot;\0&quot;</span>),
+        nom::bytes::complete::tag(<span class="string">b"\n"</span>),
+        nom::bytes::complete::tag(<span class="string">b"\0"</span>),
     )))(input)
 }
 
 <span class="kw">fn </span>take_base64_chunk(input: <span class="kw-2">&amp;</span>[u8]) -&gt; Res&lt;<span class="kw-2">&amp;</span>[u8], <span class="kw-2">&amp;</span>[u8]&gt; {
     <span class="kw">let </span>(input, encoded_data) = nom::error::context(
-        <span class="string">&quot;Get base64 encoded chunk&quot;</span>,
+        <span class="string">"Get base64 encoded chunk"</span>,
         nom::bytes::complete::take_while1(is_base64),
     )(input)<span class="question-mark">?</span>;
     <span class="kw">let </span>(input, byte) = peek_newline_or_nullbyte(input)<span class="question-mark">?</span>;
-    <span class="kw">if </span>byte == [<span class="string">b&#39;\0&#39;</span>] {
+    <span class="kw">if </span>byte == [<span class="string">b'\0'</span>] {
         <span class="kw">return </span><span class="prelude-val">Ok</span>((input, encoded_data));
     }
     <span class="kw">let </span>(input, <span class="kw">_</span>) = nom::number::complete::u8(input)<span class="question-mark">?</span>;
@@ -955,7 +955,7 @@
 
 <span class="kw">fn </span>take_base64_chunks(input: <span class="kw-2">&amp;</span>[u8]) -&gt; Res&lt;<span class="kw-2">&amp;</span>[u8], Vec&lt;<span class="kw-2">&amp;</span>[u8]&gt;&gt; {
     <span class="kw">let </span>(input, (base64data, <span class="kw">_</span>)) = nom::error::context(
-        <span class="string">&quot;Get all base64 encoded chunks&quot;</span>,
+        <span class="string">"Get all base64 encoded chunks"</span>,
         nom::multi::many_till(take_base64_chunk, peek_nullbyte),
     )(input)<span class="question-mark">?</span>;
     <span class="prelude-val">Ok</span>((input, base64data))
@@ -982,7 +982,7 @@
         <span class="kw">if let </span><span class="prelude-val">Err</span>(base64::DecodeError::InvalidLength) = res {
             <span class="kw">let </span><span class="kw-2">mut </span>v = Vec::new();
             v.extend_from_slice(chunk);
-            v.push(<span class="string">b&#39;A&#39;</span>);
+            v.push(<span class="string">b'A'</span>);
             res = base64::engine::general_purpose::STANDARD_NO_PAD
                 .decode_slice_unchecked(v.as_slice(), <span class="kw-2">&amp;mut </span>buf);
         }
@@ -994,7 +994,7 @@
 }
 
 <span class="kw">fn </span>take_marker_name(input: <span class="kw-2">&amp;</span>[u8]) -&gt; Res&lt;<span class="kw-2">&amp;</span>[u8], <span class="kw-2">&amp;</span>str&gt; {
-    <span class="kw">let </span>(input, <span class="kw">_</span>) = nom::combinator::not(nom::bytes::complete::tag(<span class="string">b&quot;\0&quot;</span>))(input)<span class="question-mark">?</span>;
+    <span class="kw">let </span>(input, <span class="kw">_</span>) = nom::combinator::not(nom::bytes::complete::tag(<span class="string">b"\0"</span>))(input)<span class="question-mark">?</span>;
     <span class="kw">let </span>(input, name) = take_utf8(input)<span class="question-mark">?</span>;
     <span class="kw">if </span>name.is_empty() {
         <span class="kw">return </span><span class="prelude-val">Err</span>(nom::Err::Incomplete(nom::Needed::Unknown));
@@ -1008,11 +1008,11 @@
     <span class="kw">let </span>(input, data) = nom::multi::length_data(nom::number::complete::be_u32)(input)<span class="question-mark">?</span>;
 
     <span class="kw">let </span>(<span class="kw">_</span>, marker) = <span class="kw">match </span>name {
-        <span class="string">&quot;BPMLOCK&quot; </span>=&gt; nom::combinator::all_consuming(take_bpmlock_marker)(data)<span class="question-mark">?</span>,
-        <span class="string">&quot;COLOR&quot; </span>=&gt; nom::combinator::all_consuming(take_color_marker)(data)<span class="question-mark">?</span>,
-        <span class="string">&quot;CUE&quot; </span>=&gt; nom::combinator::all_consuming(take_cue_marker)(data)<span class="question-mark">?</span>,
-        <span class="string">&quot;LOOP&quot; </span>=&gt; nom::combinator::all_consuming(take_loop_marker)(data)<span class="question-mark">?</span>,
-        <span class="string">&quot;FLIP&quot; </span>=&gt; nom::combinator::all_consuming(take_flip_marker)(data)<span class="question-mark">?</span>,
+        <span class="string">"BPMLOCK" </span>=&gt; nom::combinator::all_consuming(take_bpmlock_marker)(data)<span class="question-mark">?</span>,
+        <span class="string">"COLOR" </span>=&gt; nom::combinator::all_consuming(take_color_marker)(data)<span class="question-mark">?</span>,
+        <span class="string">"CUE" </span>=&gt; nom::combinator::all_consuming(take_cue_marker)(data)<span class="question-mark">?</span>,
+        <span class="string">"LOOP" </span>=&gt; nom::combinator::all_consuming(take_loop_marker)(data)<span class="question-mark">?</span>,
+        <span class="string">"FLIP" </span>=&gt; nom::combinator::all_consuming(take_flip_marker)(data)<span class="question-mark">?</span>,
         <span class="kw">_ </span>=&gt; (
             input,
             Marker::Unknown(UnknownMarker {
@@ -1058,7 +1058,7 @@
     <span class="kw">let </span>(input, position) = take_position(input)<span class="question-mark">?</span>;
     <span class="kw">let </span>(input, <span class="kw">_</span>) = nom::bytes::complete::tag(NULL)(input)<span class="question-mark">?</span>;
     <span class="kw">let </span>(input, color) = take_color(input)<span class="question-mark">?</span>;
-    <span class="kw">let </span>(input, <span class="kw">_</span>) = nom::bytes::complete::tag(<span class="string">b&quot;\x00\x00&quot;</span>)(input)<span class="question-mark">?</span>;
+    <span class="kw">let </span>(input, <span class="kw">_</span>) = nom::bytes::complete::tag(<span class="string">b"\x00\x00"</span>)(input)<span class="question-mark">?</span>;
     <span class="kw">let </span>(input, label) = take_utf8(input)<span class="question-mark">?</span>;
     <span class="kw">let </span>marker = Cue {
         index,
@@ -1080,7 +1080,7 @@
     <span class="kw">let </span>end_position = <span class="kw">super</span>::generic::Position {
         millis: end_position_millis,
     };
-    <span class="kw">let </span>(input, <span class="kw">_</span>) = nom::bytes::complete::tag(<span class="string">b&quot;\xff\xff\xff\xff&quot;</span>)(input)<span class="question-mark">?</span>;
+    <span class="kw">let </span>(input, <span class="kw">_</span>) = nom::bytes::complete::tag(<span class="string">b"\xff\xff\xff\xff"</span>)(input)<span class="question-mark">?</span>;
     <span class="kw">let </span>(input, <span class="kw">_</span>) = nom::bytes::complete::tag(NULL)(input)<span class="question-mark">?</span>;
     <span class="kw">let </span>(input, color) = take_color(input)<span class="question-mark">?</span>;
     <span class="kw">let </span>(input, <span class="kw">_</span>) = nom::bytes::complete::tag(NULL)(input)<span class="question-mark">?</span>;
@@ -1167,7 +1167,7 @@
 
 <span class="kw">fn </span>take_nullbytes(input: <span class="kw-2">&amp;</span>[u8]) -&gt; Res&lt;<span class="kw-2">&amp;</span>[u8], <span class="kw-2">&amp;</span>[u8]&gt; {
     nom::error::context(
-        <span class="string">&quot;Take nullbytes&quot;</span>,
+        <span class="string">"Take nullbytes"</span>,
         nom::bytes::complete::take_while(|x| x == <span class="number">0</span>),
     )(input)
 }
@@ -1233,7 +1233,7 @@
 ) -&gt; <span class="prelude-ty">Result</span>&lt;usize, Error&gt; {
     <span class="kw">let </span>UnknownMarker { name, data } = marker;
     <span class="kw">let </span><span class="kw-2">mut </span>bytes_written = writer.write(name.as_bytes())<span class="question-mark">?</span>;
-    bytes_written += writer.write(<span class="string">b&quot;\0&quot;</span>)<span class="question-mark">?</span>;
+    bytes_written += writer.write(<span class="string">b"\0"</span>)<span class="question-mark">?</span>;
     <span class="kw">let </span>size = marker.data.len() <span class="kw">as </span>u32;
     bytes_written += writer.write(<span class="kw-2">&amp;</span>size.to_be_bytes())<span class="question-mark">?</span>;
     bytes_written += writer.write(data.as_slice())<span class="question-mark">?</span>;
@@ -1264,7 +1264,7 @@
     marker: <span class="kw-2">&amp;</span>BPMLockMarker,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;usize, Error&gt; {
     <span class="kw">let </span>BPMLockMarker { is_locked } = marker;
-    <span class="kw">let </span><span class="kw-2">mut </span>bytes_written = writer.write(<span class="string">b&quot;BPMLOCK\0&quot;</span>)<span class="question-mark">?</span>;
+    <span class="kw">let </span><span class="kw-2">mut </span>bytes_written = writer.write(<span class="string">b"BPMLOCK\0"</span>)<span class="question-mark">?</span>;
     <span class="kw">let </span>size: u32 = <span class="number">1</span>;
     bytes_written += writer.write(<span class="kw-2">&amp;</span>size.to_be_bytes())<span class="question-mark">?</span>;
     bytes_written += write_bool(writer, <span class="kw-2">*</span>is_locked)<span class="question-mark">?</span>;
@@ -1276,10 +1276,10 @@
     marker: <span class="kw-2">&amp;</span>TrackColorMarker,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;usize, Error&gt; {
     <span class="kw">let </span><span class="kw-2">&amp;</span>TrackColorMarker { color } = marker;
-    <span class="kw">let </span><span class="kw-2">mut </span>bytes_written = writer.write(<span class="string">b&quot;COLOR\0&quot;</span>)<span class="question-mark">?</span>;
+    <span class="kw">let </span><span class="kw-2">mut </span>bytes_written = writer.write(<span class="string">b"COLOR\0"</span>)<span class="question-mark">?</span>;
     <span class="kw">let </span>size: u32 = <span class="number">4</span>;
     bytes_written += writer.write(<span class="kw-2">&amp;</span>size.to_be_bytes())<span class="question-mark">?</span>;
-    bytes_written += writer.write(<span class="string">b&quot;\0&quot;</span>)<span class="question-mark">?</span>;
+    bytes_written += writer.write(<span class="string">b"\0"</span>)<span class="question-mark">?</span>;
     bytes_written += write_color(writer, color)<span class="question-mark">?</span>;
     <span class="prelude-val">Ok</span>(bytes_written)
 }
@@ -1291,17 +1291,17 @@
         label,
         position,
     } = marker;
-    <span class="kw">let </span><span class="kw-2">mut </span>bytes_written = writer.write(<span class="string">b&quot;CUE\0&quot;</span>)<span class="question-mark">?</span>;
+    <span class="kw">let </span><span class="kw-2">mut </span>bytes_written = writer.write(<span class="string">b"CUE\0"</span>)<span class="question-mark">?</span>;
     <span class="kw">let </span>size: u32 = <span class="number">13 </span>+ label.as_bytes().len() <span class="kw">as </span>u32;
     bytes_written += writer.write(<span class="kw-2">&amp;</span>size.to_be_bytes())<span class="question-mark">?</span>;
-    bytes_written += writer.write(<span class="string">b&quot;\0&quot;</span>)<span class="question-mark">?</span>;
+    bytes_written += writer.write(<span class="string">b"\0"</span>)<span class="question-mark">?</span>;
     bytes_written += writer.write(<span class="kw-2">&amp;</span>[<span class="kw-2">*</span>index])<span class="question-mark">?</span>;
     bytes_written += write_position(writer, <span class="kw-2">*</span>position)<span class="question-mark">?</span>;
-    bytes_written += writer.write(<span class="string">b&quot;\0&quot;</span>)<span class="question-mark">?</span>;
+    bytes_written += writer.write(<span class="string">b"\0"</span>)<span class="question-mark">?</span>;
     bytes_written += write_color(writer, <span class="kw-2">*</span>color)<span class="question-mark">?</span>;
-    bytes_written += writer.write(<span class="string">b&quot;\0\0&quot;</span>)<span class="question-mark">?</span>;
+    bytes_written += writer.write(<span class="string">b"\0\0"</span>)<span class="question-mark">?</span>;
     bytes_written += writer.write(label.as_bytes())<span class="question-mark">?</span>;
-    bytes_written += writer.write(<span class="string">b&quot;\0&quot;</span>)<span class="question-mark">?</span>;
+    bytes_written += writer.write(<span class="string">b"\0"</span>)<span class="question-mark">?</span>;
     <span class="prelude-val">Ok</span>(bytes_written)
 }
 
@@ -1314,19 +1314,19 @@
         color,
         is_locked,
     } = marker;
-    <span class="kw">let </span><span class="kw-2">mut </span>bytes_written = writer.write(<span class="string">b&quot;LOOP\0&quot;</span>)<span class="question-mark">?</span>;
+    <span class="kw">let </span><span class="kw-2">mut </span>bytes_written = writer.write(<span class="string">b"LOOP\0"</span>)<span class="question-mark">?</span>;
     <span class="kw">let </span>size: u32 = <span class="number">21 </span>+ marker.label.as_bytes().len() <span class="kw">as </span>u32;
     bytes_written += writer.write(<span class="kw-2">&amp;</span>size.to_be_bytes())<span class="question-mark">?</span>;
-    bytes_written += writer.write(<span class="string">b&quot;\0&quot;</span>)<span class="question-mark">?</span>;
+    bytes_written += writer.write(<span class="string">b"\0"</span>)<span class="question-mark">?</span>;
     bytes_written += writer.write(<span class="kw-2">&amp;</span>[<span class="kw-2">*</span>index])<span class="question-mark">?</span>;
     bytes_written += write_position(writer, <span class="kw-2">*</span>start_position)<span class="question-mark">?</span>;
     bytes_written += write_position(writer, <span class="kw-2">*</span>end_position)<span class="question-mark">?</span>;
-    bytes_written += writer.write(<span class="string">b&quot;\xFF\xFF\xFF\xFF\0&quot;</span>)<span class="question-mark">?</span>;
+    bytes_written += writer.write(<span class="string">b"\xFF\xFF\xFF\xFF\0"</span>)<span class="question-mark">?</span>;
     bytes_written += write_color(writer, <span class="kw-2">*</span>color)<span class="question-mark">?</span>;
-    bytes_written += writer.write(<span class="string">b&quot;\0&quot;</span>)<span class="question-mark">?</span>;
+    bytes_written += writer.write(<span class="string">b"\0"</span>)<span class="question-mark">?</span>;
     bytes_written += write_bool(writer, <span class="kw-2">*</span>is_locked)<span class="question-mark">?</span>;
     bytes_written += writer.write(label.as_bytes())<span class="question-mark">?</span>;
-    bytes_written += writer.write(<span class="string">b&quot;\0&quot;</span>)<span class="question-mark">?</span>;
+    bytes_written += writer.write(<span class="string">b"\0"</span>)<span class="question-mark">?</span>;
     <span class="prelude-val">Ok</span>(bytes_written)
 }
 
@@ -1338,7 +1338,7 @@
         is_loop,
         label,
     } = marker;
-    <span class="kw">let </span><span class="kw-2">mut </span>bytes_written = writer.write(<span class="string">b&quot;FLIP\0&quot;</span>)<span class="question-mark">?</span>;
+    <span class="kw">let </span><span class="kw-2">mut </span>bytes_written = writer.write(<span class="string">b"FLIP\0"</span>)<span class="question-mark">?</span>;
     <span class="kw">let </span><span class="kw-2">mut </span>size: u32 = <span class="number">9 </span>+ marker.label.as_bytes().len() <span class="kw">as </span>u32;
     <span class="kw">for </span>action <span class="kw">in </span><span class="kw-2">&amp;</span>marker.actions {
         size += <span class="kw">match </span>action {
@@ -1348,11 +1348,11 @@
         }
     }
     bytes_written += writer.write(<span class="kw-2">&amp;</span>size.to_be_bytes())<span class="question-mark">?</span>;
-    bytes_written += writer.write(<span class="string">b&quot;\0&quot;</span>)<span class="question-mark">?</span>;
+    bytes_written += writer.write(<span class="string">b"\0"</span>)<span class="question-mark">?</span>;
     bytes_written += writer.write(<span class="kw-2">&amp;</span>[<span class="kw-2">*</span>index])<span class="question-mark">?</span>;
     bytes_written += write_bool(writer, <span class="kw-2">*</span>is_enabled)<span class="question-mark">?</span>;
     bytes_written += writer.write(label.as_bytes())<span class="question-mark">?</span>;
-    bytes_written += writer.write(<span class="string">b&quot;\0&quot;</span>)<span class="question-mark">?</span>;
+    bytes_written += writer.write(<span class="string">b"\0"</span>)<span class="question-mark">?</span>;
     bytes_written += write_bool(writer, <span class="kw-2">*</span>is_loop)<span class="question-mark">?</span>;
     <span class="kw">let </span>num_actions = actions.len() <span class="kw">as </span>u32;
     bytes_written += writer.write(<span class="kw-2">&amp;</span>num_actions.to_be_bytes())<span class="question-mark">?</span>;
@@ -1375,7 +1375,7 @@
             <span class="prelude-val">Ok</span>(bytes_written)
         }
         FlipAction::Censor(act) =&gt; {
-            <span class="kw">let </span><span class="kw-2">mut </span>bytes_written = writer.write(<span class="string">b&quot;\x01&quot;</span>)<span class="question-mark">?</span>;
+            <span class="kw">let </span><span class="kw-2">mut </span>bytes_written = writer.write(<span class="string">b"\x01"</span>)<span class="question-mark">?</span>;
             <span class="kw">let </span>size = <span class="number">24u32</span>;
             bytes_written += writer.write(<span class="kw-2">&amp;</span>size.to_be_bytes())<span class="question-mark">?</span>;
             bytes_written += write_flip_marker_action_censor(writer, act)<span class="question-mark">?</span>;
