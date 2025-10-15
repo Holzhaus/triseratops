@@ -582,7 +582,7 @@ fn write_cue_marker(writer: &mut impl io::Write, marker: &Cue) -> Result<usize, 
         position,
     } = marker;
     let mut bytes_written = writer.write(b"CUE\0")?;
-    let size: u32 = 13 + label.as_bytes().len() as u32;
+    let size: u32 = 13 + label.len() as u32;
     bytes_written += writer.write(&size.to_be_bytes())?;
     bytes_written += writer.write(b"\0")?;
     bytes_written += writer.write(&[*index])?;
@@ -605,7 +605,7 @@ fn write_loop_marker(writer: &mut impl io::Write, marker: &Loop) -> Result<usize
         is_locked,
     } = marker;
     let mut bytes_written = writer.write(b"LOOP\0")?;
-    let size: u32 = 21 + marker.label.as_bytes().len() as u32;
+    let size: u32 = 21 + marker.label.len() as u32;
     bytes_written += writer.write(&size.to_be_bytes())?;
     bytes_written += writer.write(b"\0")?;
     bytes_written += writer.write(&[*index])?;
@@ -629,7 +629,7 @@ fn write_flip_marker(writer: &mut impl io::Write, marker: &Flip) -> Result<usize
         label,
     } = marker;
     let mut bytes_written = writer.write(b"FLIP\0")?;
-    let mut size: u32 = 9 + marker.label.as_bytes().len() as u32;
+    let mut size: u32 = 9 + marker.label.len() as u32;
     for action in &marker.actions {
         size += match action {
             FlipAction::Jump(_) => 21u32,

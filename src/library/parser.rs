@@ -230,16 +230,12 @@ impl Library {
 
 fn crate_name_from_path(path: &Path) -> Result<String, Error> {
     if !path.is_file() {
-        return Err(Error::IOError(io::Error::new(
-            io::ErrorKind::Other,
-            "crate path is not a file",
-        )));
+        return Err(Error::IOError(io::Error::other("crate path is not a file")));
     }
 
     if let Some(ext) = path.extension() {
         if ext != CRATE_EXTENSION {
-            return Err(Error::IOError(io::Error::new(
-                io::ErrorKind::Other,
+            return Err(Error::IOError(io::Error::other(
                 "crate path has no .crate extension",
             )));
         }
@@ -250,8 +246,7 @@ fn crate_name_from_path(path: &Path) -> Result<String, Error> {
         }
     }
 
-    Err(Error::IOError(io::Error::new(
-        io::ErrorKind::Other,
+    Err(Error::IOError(io::Error::other(
         "Failed to create crate name",
     )))
 }
