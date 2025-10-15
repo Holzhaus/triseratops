@@ -269,7 +269,7 @@ fn decode_base64_chunks(
         // bytes.
         let mut res = base64::engine::general_purpose::STANDARD_NO_PAD
             .decode_slice_unchecked(chunk, &mut buf);
-        if let Err(base64::DecodeError::InvalidLength) = res {
+        if let Err(base64::DecodeError::InvalidLength(_)) = res {
             let mut v = Vec::new();
             v.extend_from_slice(chunk);
             v.push(b'A');
