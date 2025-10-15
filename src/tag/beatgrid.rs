@@ -8,7 +8,7 @@
 
 //! The `Serato BeatGrid` tag stores the beatgrid markers.
 
-use super::format::{enveloped, flac, id3, mp4, Tag};
+use super::format::{Tag, enveloped, flac, id3, mp4};
 use super::generic::Version;
 use super::util::{take_version, write_version};
 use crate::error::Error;

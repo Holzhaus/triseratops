@@ -11,8 +11,8 @@ extern crate id3;
 use id3::Tag;
 use std::env;
 use std::string::String;
-use triseratops::tag::format::id3::ID3Tag;
 use triseratops::tag::TagFormat;
+use triseratops::tag::format::id3::ID3Tag;
 
 fn main() -> Result<(), triseratops::error::Error> {
     let args: Vec<String> = env::args().collect();

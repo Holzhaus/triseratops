@@ -7,11 +7,11 @@
 // SPDX-License-Identifier: MPL-2.0
 
 //! The `Serato Analysis` tag stores the analysis version.
-use super::format::{enveloped, flac, id3, mp4, ogg, Tag};
+use super::format::{Tag, enveloped, flac, id3, mp4, ogg};
 use super::generic::Version;
 use super::util::{take_version, write_version};
 use crate::error::Error;
-use crate::util::{parse_utf8, Res};
+use crate::util::{Res, parse_utf8};
 use nom::error::ParseError;
 use std::io;
 

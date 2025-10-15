@@ -8,7 +8,7 @@
 
 //! The `Serato RelVolAd` tag stores the analysis version.
 
-use super::format::{enveloped, flac, mp4, Tag};
+use super::format::{Tag, enveloped, flac, mp4};
 use super::generic::Version;
 use super::util::{take_version, write_version};
 use crate::error::Error;

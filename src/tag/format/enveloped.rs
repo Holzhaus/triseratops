@@ -10,7 +10,7 @@
 
 use super::Tag;
 use crate::error::Error;
-use crate::util::{take_utf8, Res};
+use crate::util::{Res, take_utf8};
 use base64::Engine;
 use std::io;
 use std::io::Cursor;

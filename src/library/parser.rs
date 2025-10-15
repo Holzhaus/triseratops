@@ -239,10 +239,10 @@ fn crate_name_from_path(path: &Path) -> Result<String, Error> {
                 "crate path has no .crate extension",
             )));
         }
-        if let Some(crate_name_osstr) = path.file_stem() {
-            if let Some(crate_name) = crate_name_osstr.to_str() {
-                return Ok(crate_name.to_string());
-            }
+        if let Some(crate_name_osstr) = path.file_stem()
+            && let Some(crate_name) = crate_name_osstr.to_str()
+        {
+            return Ok(crate_name.to_string());
         }
     }
 

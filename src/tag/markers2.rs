@@ -15,14 +15,14 @@
 //! The minimum length of this tag seems to be 470 bytes, and shorter contents are padded with null bytes.
 
 use super::color::Color;
-use super::format::{enveloped, flac, id3, mp4, ogg, Tag};
+use super::format::{Tag, enveloped, flac, id3, mp4, ogg};
 use super::generic::{
     CensorFlipAction, Cue, Flip, FlipAction, JumpFlipAction, Loop, Position, UnknownFlipAction,
     Version,
 };
 use super::util::{take_color, take_version, write_color, write_version};
 use crate::error::Error;
-use crate::util::{take_utf8, Res, NULL};
+use crate::util::{NULL, Res, take_utf8};
 use base64::Engine;
 use nom::error::ParseError;
 use std::io;

@@ -7,8 +7,8 @@
 // SPDX-License-Identifier: MPL-2.0
 
 use std::env;
-use std::fs::read_dir;
 use std::fs::File;
+use std::fs::read_dir;
 use std::io::Write;
 use std::path::Path;
 
@@ -49,10 +49,10 @@ use std::io::Cursor;
 
         for entry in directory.read_dir().unwrap() {
             let filepath = entry.unwrap().path();
-            if let Some(ext) = filepath.extension() {
-                if ext != "bin" {
-                    return;
-                }
+            if let Some(ext) = filepath.extension()
+                && ext != "bin"
+            {
+                return;
             }
 
             write_tag_test(&mut test_file, filepath.as_path(), tag_name);

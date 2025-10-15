@@ -8,15 +8,15 @@
 
 //! The `Serato Autotags` tag stores BPM and Gain values.
 
+use super::format::Tag;
 use super::format::enveloped;
 use super::format::flac;
 use super::format::id3;
 use super::format::mp4;
-use super::format::Tag;
 use super::generic::Version;
 use super::util::{take_version, write_version};
 use crate::error::Error;
-use crate::util::{take_until_nullbyte, Res};
+use crate::util::{Res, take_until_nullbyte};
 use std::io;
 
 /// Represents the  `Serato AutoTags` tag.
