@@ -1,4 +1,4 @@
-// Copyright (c) 2024 Jan Holthuis <jan.holthuis@rub.de>
+// Copyright (c) 2025 Jan Holthuis <jan.holthuis@rub.de>
 //
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy
 // of the MPL was not distributed with this file, You can obtain one at
@@ -230,28 +230,23 @@ impl Library {
 
 fn crate_name_from_path(path: &Path) -> Result<String, Error> {
     if !path.is_file() {
-        return Err(Error::IOError(io::Error::new(
-            io::ErrorKind::Other,
-            "crate path is not a file",
-        )));
+        return Err(Error::IOError(io::Error::other("crate path is not a file")));
     }
 
     if let Some(ext) = path.extension() {
         if ext != CRATE_EXTENSION {
-            return Err(Error::IOError(io::Error::new(
-                io::ErrorKind::Other,
+            return Err(Error::IOError(io::Error::other(
                 "crate path has no .crate extension",
             )));
         }
-        if let Some(crate_name_osstr) = path.file_stem() {
-            if let Some(crate_name) = crate_name_osstr.to_str() {
-                return Ok(crate_name.to_string());
-            }
+        if let Some(crate_name_osstr) = path.file_stem()
+            && let Some(crate_name) = crate_name_osstr.to_str()
+        {
+            return Ok(crate_name.to_string());
         }
     }
 
-    Err(Error::IOError(io::Error::new(
-        io::ErrorKind::Other,
+    Err(Error::IOError(io::Error::other(
         "Failed to create crate name",
     )))
 }

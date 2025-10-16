@@ -1,4 +1,4 @@
-// Copyright (c) 2024 Jan Holthuis <jan.holthuis@rub.de>
+// Copyright (c) 2025 Jan Holthuis <jan.holthuis@rub.de>
 //
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy
 // of the MPL was not distributed with this file, You can obtain one at
@@ -7,11 +7,11 @@
 // SPDX-License-Identifier: MPL-2.0
 
 //! The `Serato Analysis` tag stores the analysis version.
-use super::format::{enveloped, flac, id3, mp4, ogg, Tag};
+use super::format::{Tag, enveloped, flac, id3, mp4, ogg};
 use super::generic::Version;
 use super::util::{take_version, write_version};
 use crate::error::Error;
-use crate::util::{parse_utf8, Res};
+use crate::util::{Res, parse_utf8};
 use nom::error::ParseError;
 use std::io;
 

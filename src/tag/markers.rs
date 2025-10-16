@@ -1,4 +1,4 @@
-// Copyright (c) 2024 Jan Holthuis <jan.holthuis@rub.de>
+// Copyright (c) 2025 Jan Holthuis <jan.holthuis@rub.de>
 //
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy
 // of the MPL was not distributed with this file, You can obtain one at
@@ -13,12 +13,12 @@
 //! prefer information from `Serato Markers_` if it's present.
 
 use super::color::Color;
-use super::format::{enveloped, id3, mp4, Tag};
+use super::format::{Tag, enveloped, id3, mp4};
 use super::generic::{Position, Version};
 use super::serato32;
 use super::util::{take_color, take_version, write_color, write_version};
 use crate::error::Error;
-use crate::util::{Res, NULL};
+use crate::util::{NULL, Res};
 use nom::error::ParseError;
 use std::io;
 use std::io::Cursor;

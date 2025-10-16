@@ -1,4 +1,4 @@
-// Copyright (c) 2024 Jan Holthuis <jan.holthuis@rub.de>
+// Copyright (c) 2025 Jan Holthuis <jan.holthuis@rub.de>
 //
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy
 // of the MPL was not distributed with this file, You can obtain one at
@@ -9,8 +9,8 @@
 //! Provides the [`TagContainer` struct](TagContainer), a simple interface to access data in
 //! Serato's tags.
 use super::{
-    beatgrid, color::Color, format::flac::FLACTag, format::id3::ID3Tag, format::mp4::MP4Tag,
-    format::ogg::OggTag, generic, markers, Autotags, Beatgrid, Markers, Markers2, Overview,
+    Autotags, Beatgrid, Markers, Markers2, Overview, beatgrid, color::Color, format::flac::FLACTag,
+    format::id3::ID3Tag, format::mp4::MP4Tag, format::ogg::OggTag, generic, markers,
 };
 use crate::error::Error;
 use std::io;

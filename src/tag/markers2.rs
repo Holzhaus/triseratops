@@ -1,4 +1,4 @@
-// Copyright (c) 2024 Jan Holthuis <jan.holthuis@rub.de>
+// Copyright (c) 2025 Jan Holthuis <jan.holthuis@rub.de>
 //
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy
 // of the MPL was not distributed with this file, You can obtain one at
@@ -15,14 +15,14 @@
 //! The minimum length of this tag seems to be 470 bytes, and shorter contents are padded with null bytes.
 
 use super::color::Color;
-use super::format::{enveloped, flac, id3, mp4, ogg, Tag};
+use super::format::{Tag, enveloped, flac, id3, mp4, ogg};
 use super::generic::{
     CensorFlipAction, Cue, Flip, FlipAction, JumpFlipAction, Loop, Position, UnknownFlipAction,
     Version,
 };
 use super::util::{take_color, take_version, write_color, write_version};
 use crate::error::Error;
-use crate::util::{take_utf8, Res, NULL};
+use crate::util::{NULL, Res, take_utf8};
 use base64::Engine;
 use nom::error::ParseError;
 use std::io;
@@ -269,7 +269,7 @@ fn decode_base64_chunks(
         // bytes.
         let mut res = base64::engine::general_purpose::STANDARD_NO_PAD
             .decode_slice_unchecked(chunk, &mut buf);
-        if let Err(base64::DecodeError::InvalidLength) = res {
+        if let Err(base64::DecodeError::InvalidLength(_)) = res {
             let mut v = Vec::new();
             v.extend_from_slice(chunk);
             v.push(b'A');
@@ -582,7 +582,7 @@ fn write_cue_marker(writer: &mut impl io::Write, marker: &Cue) -> Result<usize, 
         position,
     } = marker;
     let mut bytes_written = writer.write(b"CUE\0")?;
-    let size: u32 = 13 + label.as_bytes().len() as u32;
+    let size: u32 = 13 + label.len() as u32;
     bytes_written += writer.write(&size.to_be_bytes())?;
     bytes_written += writer.write(b"\0")?;
     bytes_written += writer.write(&[*index])?;
@@ -605,7 +605,7 @@ fn write_loop_marker(writer: &mut impl io::Write, marker: &Loop) -> Result<usize
         is_locked,
     } = marker;
     let mut bytes_written = writer.write(b"LOOP\0")?;
-    let size: u32 = 21 + marker.label.as_bytes().len() as u32;
+    let size: u32 = 21 + marker.label.len() as u32;
     bytes_written += writer.write(&size.to_be_bytes())?;
     bytes_written += writer.write(b"\0")?;
     bytes_written += writer.write(&[*index])?;
@@ -629,7 +629,7 @@ fn write_flip_marker(writer: &mut impl io::Write, marker: &Flip) -> Result<usize
         label,
     } = marker;
     let mut bytes_written = writer.write(b"FLIP\0")?;
-    let mut size: u32 = 9 + marker.label.as_bytes().len() as u32;
+    let mut size: u32 = 9 + marker.label.len() as u32;
     for action in &marker.actions {
         size += match action {
             FlipAction::Jump(_) => 21u32,

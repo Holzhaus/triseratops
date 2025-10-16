@@ -5,14 +5,14 @@ authors = ["Jan Holthuis <jan.holthuis@ruhr-uni-bochum.de>"]
 description = "The robust, in-depth Serato Parser & Serializer."
 readme = "README.md"
 repository = "https://github.com/Holzhaus/triseratops"
-license = "AGPL-3.0-or-later"
+license = "MPL-2.0"
 keywords = ["serato", "dj", "tag", "database", "parser"]
 categories = ["parser-implementations"]
-edition = "2021"
+edition = "2024"
 
 [dependencies]
 nom = "7"
-base64 = "0.21"
+base64 = "0.22"
 thiserror = "2"
 
 [dev-dependencies]

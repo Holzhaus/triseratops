@@ -1,4 +1,4 @@
-// Copyright (c) 2024 Jan Holthuis <jan.holthuis@rub.de>
+// Copyright (c) 2025 Jan Holthuis <jan.holthuis@rub.de>
 //
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy
 // of the MPL was not distributed with this file, You can obtain one at
@@ -8,15 +8,15 @@
 
 //! The `Serato Autotags` tag stores BPM and Gain values.
 
+use super::format::Tag;
 use super::format::enveloped;
 use super::format::flac;
 use super::format::id3;
 use super::format::mp4;
-use super::format::Tag;
 use super::generic::Version;
 use super::util::{take_version, write_version};
 use crate::error::Error;
-use crate::util::{take_until_nullbyte, Res};
+use crate::util::{Res, take_until_nullbyte};
 use std::io;
 
 /// Represents the  `Serato AutoTags` tag.

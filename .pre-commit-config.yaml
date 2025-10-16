@@ -1,10 +1,10 @@
-exclude: 'tests/data/.*'
-
+---
 default_language_version:
     python: python3
+exclude: ^tests/data/.*
 repos:
     - repo: https://github.com/pre-commit/pre-commit-hooks
-      rev: v4.5.0
+      rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c  # frozen: v6.0.0
       hooks:
           - id: check-case-conflict
           - id: check-json
@@ -20,52 +20,44 @@ repos:
           - id: forbid-new-submodules
           - id: mixed-line-ending
           - id: trailing-whitespace
+            exclude: .tsv$
     - repo: https://github.com/codespell-project/codespell
-      rev: v2.2.6
+      rev: 63c8f8312b7559622c0d82815639671ae42132ac  # frozen: v2.4.1
       hooks:
           - id: codespell
-            args:
-                [
-                    --ignore-words=.codespellignore,
-                    --exclude-file=.codespellignorelines,
-                ]
+            args: [--ignore-words=.codespellignore]
+            exclude_types: [tsv, json]
+    - repo: https://github.com/jumanjihouse/pre-commit-hook-yamlfmt
+      rev: 8d1b9cadaf854cb25bb0b0f5870e1cc66a083d6b  # frozen: 0.2.3
+      hooks:
+          - id: yamlfmt
+    - repo: https://github.com/gitleaks/gitleaks
+      rev: 39fdb480a06768cc41a84ef86959c07ff33091c4  # frozen: v8.28.0
+      hooks:
+          - id: gitleaks
+    - repo: https://github.com/woodruffw/zizmor-pre-commit
+      rev: 122d24ec728f140b38330ae8b04e3c5fe8b774c5  # frozen: v1.15.2
+      hooks:
+          - id: zizmor
     - repo: https://github.com/doublify/pre-commit-rust
-      rev: v1.0
+      rev: eeee35a89e69d5772bdee97db1a6a898467b686e  # frozen: v1.0
       hooks:
           - id: fmt
             args: [--all, --]
-          - id: cargo-check
-            args: [--locked, --workspace, --all-features, --all-targets]
           - id: clippy
-            args:
-                [
-                    --locked,
-                    --workspace,
-                    --all-features,
-                    --all-targets,
-                    --,
-                    -D,
-                    warnings,
-                ]
+            args: [--locked, --workspace, --all-features, --all-targets, --, -D, warnings]
     - repo: https://github.com/DavidAnson/markdownlint-cli2
-      rev: v0.11.0
+      rev: d7a4f7cf4914d3bffb9b83bdbc45fd2a00c91ff9  # frozen: v0.18.1
       hooks:
           - id: markdownlint-cli2
-    - repo: https://github.com/pre-commit/mirrors-prettier
-      rev: v3.1.0
-      hooks:
-          - id: prettier
-            # We use markdowncli
-            exclude_types: [markdown]
-            # Avoid the following error message:
-            #b
-            #     [error] No matching files. Patterns: .git/COMMIT_EDITMSG
-            exclude: ^\.git/COMMIT_EDITMSG$
     - repo: https://github.com/Holzhaus/sourceheaders
-      rev: v0.0.4
+      rev: 37fab20a62cc63ebb9a8855a2ab90ec7dc56cadf  # frozen: v0.0.4
       hooks:
           - id: sourceheaders
     - repo: https://github.com/jorisroovers/gitlint
-      rev: v0.19.1
+      rev: acc9d9de6369b76d22cb4167029d2035e8730b98  # frozen: v0.19.1
       hooks:
           - id: gitlint
+
+ci:
+    skip: [fmt, clippy]

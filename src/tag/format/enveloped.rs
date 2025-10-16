@@ -1,4 +1,4 @@
-// Copyright (c) 2024 Jan Holthuis <jan.holthuis@rub.de>
+// Copyright (c) 2025 Jan Holthuis <jan.holthuis@rub.de>
 //
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy
 // of the MPL was not distributed with this file, You can obtain one at
@@ -10,7 +10,7 @@
 
 use super::Tag;
 use crate::error::Error;
-use crate::util::{take_utf8, Res};
+use crate::util::{Res, take_utf8};
 use base64::Engine;
 use std::io;
 use std::io::Cursor;

@@ -1,4 +1,4 @@
-// Copyright (c) 2024 Jan Holthuis <jan.holthuis@rub.de>
+// Copyright (c) 2025 Jan Holthuis <jan.holthuis@rub.de>
 //
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy
 // of the MPL was not distributed with this file, You can obtain one at
@@ -11,8 +11,8 @@ extern crate id3;
 use id3::Tag;
 use std::env;
 use std::string::String;
-use triseratops::tag::format::id3::ID3Tag;
 use triseratops::tag::TagFormat;
+use triseratops::tag::format::id3::ID3Tag;
 
 fn main() -> Result<(), triseratops::error::Error> {
     let args: Vec<String> = env::args().collect();

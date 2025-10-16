@@ -1,4 +1,4 @@
-// Copyright (c) 2024 Jan Holthuis <jan.holthuis@rub.de>
+// Copyright (c) 2025 Jan Holthuis <jan.holthuis@rub.de>
 //
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy
 // of the MPL was not distributed with this file, You can obtain one at
@@ -10,7 +10,7 @@
 //!
 //! This is probably the Serato Version number that performed the analysis.
 
-use super::format::{enveloped, flac, mp4, Tag};
+use super::format::{Tag, enveloped, flac, mp4};
 use super::generic::Version;
 use super::util::{take_version, write_version};
 use crate::error::Error;
