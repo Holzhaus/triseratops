@@ -11,7 +11,7 @@ categories = ["parser-implementations"]
 edition = "2024"
 
 [dependencies]
-nom = "7"
+nom = "8"
 base64 = "0.22"
 thiserror = "2"
 
